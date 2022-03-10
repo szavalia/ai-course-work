@@ -1,29 +1,20 @@
-#Hola equipo! Este es nuestro primer TP UwU
 from models import *
+from algorithms.BPP import search
 
-initial_state = State([[1,2,3],[4,5,6],[0,7,8]])
-root = Node(initial_state,None,None,0)
+initial_state = State([[7,8,6],[5,4,1],[2,3,0]], [2,2])
+root = Node(initial_state,None,0)
+metrics = search(root,State([[1,2,3],[4,5,6],[7,8,0]], [2,2]))
 
-#while node_list not empty
-    #get node
-    #expand and add sucessors -> getMoves
-    #order based on search method -> algorithm dependent
-
-# Input: starting node
-# Output: nodes representing possible new states
-def getMoves(node):
-    
-#DIMENSION = 3
-right(state):
-    if(j = DIMENSION)
-        return None
-    state[i][j+1]
-    
-    
-def check_move:
-
-def move:
-
-
+print("Status: " + ("success" if metrics.solved else "failure"))
+#if metrics.solution != None:
+#    print("Solution:\n")
+#    for board in metrics.solution:
+#        for row in board:
+#            print(row)
+#        print()
+print("Nodes expanded: " + str(metrics.expanded))
+print("Nodes in frontier: " + str(metrics.frontier))
+print("Time :" + str(metrics.time))
+print("Depth: " + str(metrics.depth))
 
 

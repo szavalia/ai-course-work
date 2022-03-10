@@ -1,0 +1,2 @@
+WIDTH = 3
+HEIGHT = 3
