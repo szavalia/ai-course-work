@@ -2,7 +2,7 @@ from models import *
 from constants import *
 
 # Given the previous board and position and the new position, it returns a node with the executed transition
-def shift(node, new_position):
+def shift(node : Node, new_position):
     # Copy the board
     new_board = [row[:] for row in node.state.board]
     # Switch empty space with new tile
@@ -14,7 +14,7 @@ def shift(node, new_position):
     
     return new_node
 
-def expand(node):
+def expand(node : Node):
     new_position = [0,0]
 
     if node.state.empty_coords[1] > 0: # The empty slot can be moved left   

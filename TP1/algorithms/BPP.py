@@ -2,7 +2,7 @@ from models import Metrics
 import time
 from algorithms.move_maker import *
 
-def search(root, objective):
+def search(root:Node, objective):
     frontier = [root] 
     explored = {}
     expanded = 0
@@ -23,7 +23,7 @@ def search(root, objective):
     end = time.perf_counter()
     return Metrics(False,expanded,len(frontier),end-start) 
 
-def get_solution(node):
+def get_solution(node:Node):
     solution = []
     aux_node = node
     while aux_node.prev != None:
