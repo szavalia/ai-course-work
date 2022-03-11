@@ -11,6 +11,6 @@ def total_squares(state:State):
             elif(square_val == 0 and row_index == WIDTH-1 and col_index == HEIGHT-1): #position of empty square should be in the last square of the board by finishing the game
                 squares-=1
     
-    return squares/(WIDTH*HEIGHT) 
+    return squares
 
 

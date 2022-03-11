@@ -1,6 +1,6 @@
-from models import Metrics
+from models import *
 import time
-from algorithms.move_maker import *
+from algorithms.move_maker import expand
 
 def search(root:Node, objective):
     frontier = [root] 
@@ -15,7 +15,7 @@ def search(root:Node, objective):
             solution = get_solution(node)
             end = time.perf_counter()
             return Metrics(True,expanded,len(frontier),end-start,solution,node.depth) 
-        expand(node)
+        expand(node, None)  #node, heuristic_function
         expanded+=1 
         for aux_node in node.next:
             if explored.get(str(aux_node.state)) == None:
