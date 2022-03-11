@@ -1,6 +1,6 @@
 from models import *
 import time
-from algorithms.move_maker import expand
+from algorithms.move_maker import expand,get_solution
 
 def search(root:Node, objective, heuristic_function):
     frontier = [root] 
@@ -27,14 +27,6 @@ def search(root:Node, objective, heuristic_function):
         
     end = time.perf_counter()
     return Metrics(False,expanded,len(frontier),end-start) 
-
-def get_solution(node:Node):
-    solution = []
-    aux_node = node
-    while aux_node.prev != None:
-        solution.insert(0,aux_node.state.board)
-        aux_node = aux_node.prev
-    return solution
 
 
 

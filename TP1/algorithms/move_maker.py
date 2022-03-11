@@ -49,6 +49,13 @@ def expand(node : Node, heuristic_function):
 
         node.next.append(shift(node, new_position[:], heuristic_function))
 
-
+def get_solution(node:Node):
+    solution = []
+    aux_node = node
+    while aux_node.prev != None:
+        solution.insert(0,aux_node.state.board)
+        aux_node = aux_node.prev
+    solution.insert(0,aux_node.state.board)
+    return solution
 
     

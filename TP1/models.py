@@ -1,7 +1,7 @@
 #Node represents the state in a given step
 #State represents the layout of the board
 class State:
-    def __init__(self,board,empty_coords,heuristic):
+    def __init__(self,board,empty_coords,heuristic=0):
         self.board = board
         self.empty_coords = empty_coords #coordinates x and y of empty space in list
         self.heuristic = heuristic
