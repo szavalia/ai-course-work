@@ -20,16 +20,16 @@ objective_state = State([[1,2,3],[4,5,6],[7,8,0]], [2,2])
 #A*
 metrics = execute_algorithm("A*", root, objective_state, total_manhattan)
 
-print("Status: {0}".format("success" if metrics.solved else "failure"))
-print("Depth: {0}".format(metrics.depth))
-print("Nodes expanded: {0}".format(metrics.expanded))
-print("Nodes in frontier: {0}".format(metrics.frontier))
 if metrics.solution != None:
     print("Solution:\n")
     for board in metrics.solution:
         for row in board:
             print(row)
         print()
+print("Status: {0}".format("success" if metrics.solved else "failure"))
+print("Depth: {0}".format(metrics.depth))
+print("Nodes expanded: {0}".format(metrics.expanded))
+print("Nodes in frontier: {0}".format(metrics.frontier))
 print("Time: {0} s".format(metrics.time, '{0:.2f}'))
 
 
