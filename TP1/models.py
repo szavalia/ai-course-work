@@ -1,4 +1,5 @@
-#Node represents the state in a given step
+from constants import *
+
 #State represents the layout of the board
 class State:
     def __init__(self,board,empty_coords,heuristic=0):
@@ -8,10 +9,17 @@ class State:
     
     def __eq__(self, other)->bool:
         return self.board == other.board
+
+    def board_str(self):
+        state_str = ""
+        for (row_index,row) in enumerate(self.board):
+            state_str = state_str + ' '.join(str(val) for val in row) + (' ' if row_index != HEIGHT else '')
+        return state_str
     
     def __str__(self):
-        return "Board:" + str(self.board) + "Positions:" + str(self.empty_coords)
+       return "Board:" + str(self.board) + "Positions:" + str(self.empty_coords)
 
+#Node represents the state in a given step
 class Node:
     def __init__(self, state:State,prev,depth):
         self.state = state

@@ -15,7 +15,7 @@ def search(root:Node, objective):
                 end = time.perf_counter()
                 return Metrics(False,expanded,len(frontier),end-start) 
             node = frontier.pop() 
-        explored[str(node.state)] = node
+        explored[node.state.board_str()] = node
 
         if (node.state == objective):
             solution = get_solution(node)
@@ -25,7 +25,7 @@ def search(root:Node, objective):
         expand(node, None)  #node, heuristic_function
         expanded+=1 
         for aux_node in node.next:
-            if explored.get(str(aux_node.state)) == None:
+            if explored.get(aux_node.state.board_str()) == None:
                 frontier.append(aux_node)
 
     end = time.perf_counter()
