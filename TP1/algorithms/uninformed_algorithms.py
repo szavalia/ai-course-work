@@ -16,7 +16,7 @@ def search(type, root:Node, objective):
             node = frontier.pop() # This is the LIFO way
         
 
-        while (explored.get(str(node.state)) != None):  #If it was explored already, get the next one
+        while (explored.get(str(node.state.board)) != None):  #If it was explored already, get the next one
             if (len(frontier) == 0):
                 end = time.perf_counter()
                 return Metrics(False,expanded,len(frontier),end-start)  # System is not solvable
@@ -27,7 +27,7 @@ def search(type, root:Node, objective):
                 node = frontier.pop() # This is the LIFO way
         
 
-        explored[node.state.board_str()] = node # Mark as explored
+        explored[str(node.state.board)] = node # Mark as explored
 
         if (node.state == objective): # Success!
             solution = get_solution(node)
@@ -37,7 +37,7 @@ def search(type, root:Node, objective):
         expand(node, None)  # expand(node, heuristic_function)
         expanded+=1 
         for aux_node in node.next:
-            if explored.get(aux_node.state.board_str()) == None:
+            if explored.get(str(aux_node.state.board)) == None:
                 frontier.append(aux_node)
 
     end = time.perf_counter()

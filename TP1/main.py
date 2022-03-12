@@ -1,24 +1,46 @@
 from models import *
 from heuristics import *
 from algorithm_chooser import execute_algorithm
+import json
 
-initial_state = State([[1,2,3],[5,6,4],[0,7,8]], [2,0])
-initial_state.heuristic = total_manhattan(initial_state)
-#initial_state = State([[1,2,3],[4,5,6],[0,7,8]], [2,0], 0)
+def find_empty_space(layout):
+    for (row_index,row) in enumerate(layout):
+        for (col_index,square_val) in enumerate(row):
+            if(square_val == 0):
+                return (row_index,col_index)
+
+def get_objective(dim):
+    
+    objective = []
+    square_val=1
+    for i in range(dim):
+        row = []
+        for j in range(dim):
+            row.append(square_val)
+            square_val+=1
+        objective.append(row)
+    objective[dim-1][dim-1] = 0
+    return objective
+
+file = open('config.json')
+config_values = json.load(file)
+
+#get puzzle layout and generate initial state and root node
+layout = config_values["puzzle_layout"]
+board = Board(layout,len(layout), find_empty_space(layout))
+initial_state = State(board)
 root = Node(initial_state,None,0)
-objective_state = State([[1,2,3],[4,5,6],[7,8,0]], [2,2])
 
-#BPP
-#metrics = execute_algorithm("BPP", root, objective_state, None)
+#generate solution state
+objective_state = State(Board(get_objective(board.dim),len(layout), [board.dim - 1,board.dim - 1]))
 
-#HEUR_GLOBAL
-#metrics = execute_algorithm("HEUR_GLOBAL", root, objective_state, total_manhattan)
+algorithm = config_values["algorithm"]
+heuristic = config_values["heuristics"]
 
-#HEUR_LOCAL   with backtracking
-#metrics = execute_algorithm("HEUR_LOCAL", root, objective_state, total_manhattan)
+#resolve the puzzle
+metrics = execute_algorithm(algorithm,root,objective_state,heuristic)
 
-#A*
-metrics = execute_algorithm("A*", root, objective_state, total_manhattan)
+print("Status: {0}".format("success" if metrics.solved else "failure"))
 
 if metrics.solution != None:
     print("Solution:\n")
@@ -26,8 +48,10 @@ if metrics.solution != None:
         for row in board:
             print(row)
         print()
-print("Status: {0}".format("success" if metrics.solved else "failure"))
-print("Depth: {0}".format(metrics.depth))
+
+if(metrics.depth != None):
+    print("Depth: {0}".format(metrics.depth))
+
 print("Nodes expanded: {0}".format(metrics.expanded))
 print("Nodes in frontier: {0}".format(metrics.frontier))
 print("Time: {0} s".format(metrics.time, '{0:.2f}'))

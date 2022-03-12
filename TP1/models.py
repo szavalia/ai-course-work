@@ -1,23 +1,30 @@
-from constants import *
 
+class Board:
+    def __init__(self,layout,dim,empty_coords):
+        self.layout=layout
+        self.dim=dim
+        self.empty_coords = empty_coords #coordinates x and y of empty space in list
+    
+    def __eq__(self,other) -> bool:
+        return self.layout == other.layout
+    
+    def __str__(self):
+        board_str = ""
+        for (row_index,row) in enumerate(self.layout):
+            board_str = board_str + ' '.join(str(val) for val in row) + (' ' if row_index != self.dim else '')
+        return board_str
+    
 #State represents the layout of the board
 class State:
-    def __init__(self,board,empty_coords,heuristic=0):
+    def __init__(self,board:Board,heuristic=0):
         self.board = board
-        self.empty_coords = empty_coords #coordinates x and y of empty space in list
         self.heuristic = heuristic
     
     def __eq__(self, other)->bool:
         return self.board == other.board
-
-    def board_str(self):
-        state_str = ""
-        for (row_index,row) in enumerate(self.board):
-            state_str = state_str + ' '.join(str(val) for val in row) + (' ' if row_index != HEIGHT else '')
-        return state_str
     
     def __str__(self):
-       return "Board:" + str(self.board) + "Positions:" + str(self.empty_coords)
+       return "Board:" + str(self.board) + " Heuristic: " + str(self.heuristic)
 
 #Node represents the state in a given step
 class Node:

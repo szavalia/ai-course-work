@@ -10,13 +10,13 @@ def search(type, root:Node, objective, heuristic_function):
 
     while (len(frontier) != 0):
         node = frontier.pop()
-        while (explored.get(str(node.state)) != None):
+        while (explored.get(str(node.state.board)) != None):
             if (len(frontier) == 0):
                 end = time.perf_counter()
                 return Metrics(False,expanded,len(frontier),end-start) 
             node = frontier.pop()
-            
-        explored[node.state.board_str()] = node
+        
+        explored[str(node.state.board)] = node
 
         if (node.state == objective):
             solution = get_solution(node)
@@ -27,7 +27,7 @@ def search(type, root:Node, objective, heuristic_function):
         expanded+=1 
         added = False
         for aux_node in node.next:
-            if explored.get(aux_node.state.board_str()) == None:
+            if explored.get(str(aux_node.state.board)) == None:
                 frontier.append(aux_node)
                 added = True
         if added:
