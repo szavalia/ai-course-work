@@ -1,8 +1,10 @@
 
+
 class Board:
-    def __init__(self,layout,dim,empty_coords):
+    dim = 3  #Is just a default. It is altered in main matching the grid size
+
+    def __init__(self,layout,empty_coords):
         self.layout=layout
-        self.dim=dim
         self.empty_coords = empty_coords #coordinates x and y of empty space in list
     
     def __eq__(self,other) -> bool:
@@ -11,7 +13,7 @@ class Board:
     def __str__(self):
         board_str = ""
         for (row_index,row) in enumerate(self.layout):
-            board_str = board_str + ' '.join(str(val) for val in row) + (' ' if row_index != self.dim else '')
+            board_str = board_str + ' '.join(str(val) for val in row) + (' ' if row_index != len(self.layout) else '')
         return board_str
     
 #State represents the layout of the board

@@ -2,16 +2,16 @@ from models import State,Board
 
 number_goal_positions = {}      # defined in base of the board
 
-def fill_positions(board:Board):
+def fill_positions():
     n = 1
-    for i in range(0, board.dim):
-        for j in range(0, board.dim):
+    for i in range(0, Board.dim):
+        for j in range(0, Board.dim):
             number_goal_positions[n] = (i, j)
             n += 1
-    del(number_goal_positions[pow(board.dim,2)])
+    del(number_goal_positions[Board.dim*Board.dim])
 
 def total_squares(state:State):
-    squares = (pow(state.board.dim,2)) - 1  # -1 because the blank space is not counted
+    squares = Board.dim*Board.dim - 1  # -1 because the blank space is not counted
 
     for (row_index, row) in enumerate(state.board.layout):
         for (col_index,square_val) in enumerate(row):

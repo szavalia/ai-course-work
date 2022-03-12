@@ -1,5 +1,4 @@
 from models import *
-from heuristics import *
 from algorithm_chooser import execute_algorithm
 import json
 
@@ -27,12 +26,13 @@ config_values = json.load(file)
 
 #get puzzle layout and generate initial state and root node
 layout = config_values["puzzle_layout"]
-board = Board(layout,len(layout), find_empty_space(layout))
+Board.dim = len(layout)
+board = Board(layout, find_empty_space(layout))
 initial_state = State(board)
 root = Node(initial_state,None,0)
 
 #generate solution state
-objective_state = State(Board(get_objective(board.dim),len(layout), [board.dim - 1,board.dim - 1]))
+objective_state = State(Board(get_objective(Board.dim), [Board.dim - 1, Board.dim - 1]))
 
 algorithm = config_values["algorithm"]
 heuristic = config_values["heuristics"]
