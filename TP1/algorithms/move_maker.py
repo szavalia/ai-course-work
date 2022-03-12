@@ -47,7 +47,7 @@ def expand(node : Node, heuristic_function):
         new_position[0] = node.state.empty_coords[0]+1
         new_position[1] = node.state.empty_coords[1]
 
-        node.next.append(shift(node, new_position[:], heuristic_function))
+    node.next.append(shift(node, new_position[:], heuristic_function))
 
 def get_solution(node:Node):
     solution = []
