@@ -64,6 +64,7 @@ def is_valid(layout):
 
 file = open('config.json')
 config_values = json.load(file)
+file.close()
 
 #get puzzle layout
 layout = config_values["puzzle_layout"]
@@ -89,20 +90,38 @@ starting_depth = config_values["starting_depth"]
 #resolve the puzzle
 metrics = execute_algorithm(algorithm,root,objective_state,heuristic, starting_depth)
 
-print("Status: {0}".format("success" if metrics.solved else "failure"))
+if(metrics != None):
 
-if metrics.solution != None:
-    print("Solution:\n")
-    for board in metrics.solution:
-        for row in board:
-            print(row)
-        print()
+    #Initial parameters
+    print("Algorithm: {0}".format(algorithm))
+    if(algorithm != "DFS" and algorithm != "BFS" and algorithm != "VDFS"):
+        print("Heuristic: {0}".format(heuristic))
+    if(algorithm == "VDFS"):
+        print("Starting depth: {0}".format(starting_depth))
+    
+    print("Status: {0}".format("success" if metrics.solved else "failure"))
 
-if(metrics.depth != None):
-    print("Depth: {0}".format(metrics.depth))
+    if(metrics.depth != None):
+        print("Depth: {0}".format(metrics.depth))
 
-print("Nodes expanded: {0}".format(metrics.expanded))
-print("Nodes in frontier: {0}".format(metrics.frontier))
-print("Time: {0} s".format(metrics.time, '{0:.2f}'))
+    print("Nodes expanded: {0}".format(metrics.expanded))
+    print("Nodes in frontier: {0}".format(metrics.frontier))
+    print("Time: {0} s".format(metrics.time, '{0:.2f}'))
 
+    if metrics.solution != None:
+        print("Solution: see solution.txt")
+        
+        file = open("solution.txt",'w')
+
+        rows = [[],[],[]]
+
+        for (board_index,board) in enumerate(metrics.solution):
+            for row in board:
+                file.write("{0}\n".format(str(row)))
+            if(board_index != len(metrics.solution) -1):
+                file.write("\t|\n\t|\n\t↓\n")
+
+        file.close()
+else:
+    exit(-1)
 

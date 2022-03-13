@@ -55,3 +55,5 @@ def heuristic_chooser(heuristic):
         return total_manhattan
     elif(heuristic == "total_removing_obstacles"):
         return total_removing_obstacles
+    else:
+        return None

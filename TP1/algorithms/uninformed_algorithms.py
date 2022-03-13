@@ -3,7 +3,6 @@ import time
 from algorithms.move_maker import expand,get_solution
 from collections import deque
 
-
 def search(type, root:Node, objective):
     start = time.perf_counter()
     frontier = deque([root]) #I'm using a Doubly Ended Queue
@@ -102,8 +101,6 @@ def VDFS_search(root:Node, objective, starting_depth):
             else:
                 current_limit = (upper_bound + lower_bound) // 2
                 
-
-        
 
 def single_VDFS(frontier, objective, current_limit, expanded):
     start = time.perf_counter()
