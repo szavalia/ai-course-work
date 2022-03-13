@@ -1,5 +1,5 @@
 {
     "puzzle_layout": [[2,1,5],[3,6,4],[0,7,8]],
-    "algorithm": "HEUR_GLOBAL",
+    "algorithm": "VDFS",
     "heuristics": "total_manhattan"
 }
