@@ -103,10 +103,9 @@ if(metrics != None):
 
     if(metrics.depth != None):
         print("Depth: {0}".format(metrics.depth))
-
     print("Nodes expanded: {0}".format(metrics.expanded))
     print("Nodes in frontier: {0}".format(metrics.frontier))
-    print("Time: {0} s".format(metrics.time, '{0:.2f}'))
+    print("Time: {0} s".format(str(format(metrics.time,".4f"))))
 
     if metrics.solution != None:
         print("Solution: see solution.txt")

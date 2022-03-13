@@ -2,6 +2,7 @@ from models import *
 import time
 from algorithms.move_maker import expand,get_solution
 from collections import deque
+from math import factorial
 
 def search(type, root:Node, objective):
     start = time.perf_counter()
@@ -52,7 +53,7 @@ def DFS_search(root:Node, objective):
 
 def VDFS_search(root:Node, objective, starting_depth):
     global_start = time.perf_counter()
-    MAX_DEPTH = 362880  # 9! state posibilities - problem specific
+    MAX_DEPTH = factorial(Board.dim*Board.dim)  # n*n! state posibilities - problem specific
     current_limit = starting_depth
     if current_limit > MAX_DEPTH:
         current_limit = MAX_DEPTH
@@ -78,7 +79,7 @@ def VDFS_search(root:Node, objective, starting_depth):
             possible_solution["node"] = node
             possible_solution["frontier_len"] = len(frontier)
 
-        print("For depth: " + str(current_limit) + ", Solved: " + str(solved) + " with depth " + str(solved_depth) + ", Time spent: ", str(time_spent))
+        print("For depth: " + str(current_limit) + ", Solved: " + str(solved) + (" with depth " + str(solved_depth) if solved else "")  + ", Time spent: ", str(format(time_spent,".4f")))
 
         #New search with new depth
         if (solved):
