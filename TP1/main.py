@@ -67,9 +67,13 @@ config_values = json.load(file)
 file.close()
 
 #get puzzle layout
-layout = config_values["puzzle_layout"]
-Board.dim = len(layout)
+layout = config_values.get("puzzle_layout")
 
+if(layout == None):
+    print("Initial board missing")
+    exit(-1)
+
+Board.dim = len(layout)
 #validate puzzle layout
 if(not is_valid(layout) or not is_solvable(layout)):
     print("Illegal initial board")
@@ -83,9 +87,9 @@ root = Node(initial_state,None,0)
 #generate solution state
 objective_state = State(Board(get_objective(Board.dim), [Board.dim - 1, Board.dim - 1]))
 
-algorithm = config_values["algorithm"]
-heuristic = config_values["heuristics"]
-starting_depth = config_values["starting_depth"]
+algorithm = config_values.get("algorithm")
+heuristic = config_values.get("heuristics")
+starting_depth = config_values.get("starting_depth")
 
 #resolve the puzzle
 metrics = execute_algorithm(algorithm,root,objective_state,heuristic, starting_depth)

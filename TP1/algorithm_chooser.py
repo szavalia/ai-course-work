@@ -50,5 +50,8 @@ def execute_algorithm(alg, root:Node, objective:State, heuristic, starting_depth
         root.state.heuristic = heuristic_function(root.state)
         return a_star_search(root, objective, heuristic_function)
     else:
+        if(alg == None):
+            print("Algorithm missing")
+            return None
         print("Invalid algorithm. Try instead: \n\t- DFS\n\t- BFS\n\t- VDFS\n\t- HEUR_GLOBAL\n\t- HEUR_LOCAL\n\t- A*")
         return None
