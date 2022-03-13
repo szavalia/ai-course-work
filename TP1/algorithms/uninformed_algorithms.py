@@ -1,4 +1,3 @@
-from numpy import longlong
 from models import *
 import time
 from algorithms.move_maker import expand,get_solution
@@ -6,10 +5,10 @@ from collections import deque
 
 
 def search(type, root:Node, objective):
+    start = time.perf_counter()
     frontier = deque([root]) #I'm using a Doubly Ended Queue
     explored = {}
     expanded = 0
-    start = time.perf_counter()
 
     while (len(frontier) != 0):
         if type == "BFS":
@@ -52,86 +51,94 @@ def BFS_search(root:Node, objective):
 def DFS_search(root:Node, objective):
     return search("DFS", root, objective)
 
-def VDFS_search(root:Node, objective):
-    previous_limit = 0
-    current_limit = 1
-    explored = {}
+def VDFS_search(root:Node, objective, starting_depth):
+    global_start = time.perf_counter()
+    MAX_DEPTH = 362880  # 9! state posibilities - problem specific
+    current_limit = starting_depth
+    if current_limit > MAX_DEPTH:
+        current_limit = MAX_DEPTH
+    lower_bound = 0
+    upper_bound = -1
+    frontier = [root]
+    edge_nodes = []     # For making some cases of future runs more performant
+    expanded = [0]      # As array so function with less scope can increment
+    possible_solution = {"node": None, "frontier_len": 0}  # What we are asked for in Metrics  
 
-    while (True):
-        result = search_with_limit("DFS", root, objective, current_limit, explored)
-        print("Solved: "+str(result.solved))
-        print("Depth: "+str(result.depth))
-        # I have passed the solution. Therefore the optimal depth lies between the previous and current limits
-        if result.solved:
-            return find_depth_bound(root, objective, previous_limit, current_limit, explored)
+    while True:
+        #Check for algorithm end
+        if (upper_bound == lower_bound or (upper_bound == lower_bound + 1 and possible_solution["node"] != None)):
+            global_end = time.perf_counter()
+            return Metrics(True,expanded[0],possible_solution["frontier_len"],global_end-global_start,get_solution(possible_solution["node"]),possible_solution["node"].depth) 
+        if (lower_bound >= MAX_DEPTH and upper_bound == -1):
+            global_end = time.perf_counter()
+            return Metrics(False,expanded[0],len(frontier),global_end-global_start)
 
-        # I have not found the solution yet
+        #Execute single search
+        (solved, solved_depth, node, time_spent, new_edge_nodes) = single_VDFS(frontier, objective, current_limit, expanded)
+        if (solved):
+            possible_solution["node"] = node
+            possible_solution["frontier_len"] = len(frontier)
+
+        print("For depth: " + str(current_limit) + ", Solved: " + str(solved) + " with depth " + str(solved_depth) + ", Time spent: ", str(time_spent))
+
+        #New search with new depth
+        if (solved):
+            upper_bound = solved_depth
+            current_limit = (lower_bound + solved_depth) // 2
+            frontier.clear()
+            frontier.extend(edge_nodes)     #Start from the nodes that didnt expand on run with previous limit
+            if (len(frontier) == 0):        #If none, then from root
+                frontier.append(root)
         else:
-            if result.depth < current_limit:
-                print("System not solvable!")
-                return result # The system is not solvable! Increasing the max depth will not help
+            lower_bound = current_limit
+            edge_nodes = new_edge_nodes     #Now we know there are no solutions below this depth, so start from here
+            frontier.clear()
+            frontier.extend(new_edge_nodes)     #Start from the nodes that didnt expand on run with previous limit
+            
+            if (upper_bound == -1):
+                current_limit = lower_bound * 2
+                if (current_limit > MAX_DEPTH):
+                    current_limit = MAX_DEPTH
+            else:
+                current_limit = (upper_bound + lower_bound) // 2
                 
-            previous_limit = current_limit
-            current_limit *= 2     
 
+        
 
-def find_depth_bound(root:Node, objective, lower_bound, upper_bound, explored):
-    midpoint = (longlong)((lower_bound + upper_bound)/2)
-    result = search_with_limit("DFS", root, objective, midpoint, explored)
-
-    print("Solved: "+str(result.solved) +" Depth: "+str(result.depth)+ " Bounds: "+str(lower_bound) + " - "+str(upper_bound))
-
-    if lower_bound == upper_bound:
-        return result
-
-    if not result.solved: # Está a la derecha
-        return find_depth_bound(root, objective, midpoint+1, upper_bound, explored) 
-
-    else: # Está a la izquierda
-        return find_depth_bound(root, objective, lower_bound, midpoint, explored)
-
-
-
-def search_with_limit(type, root:Node, objective, depth_limit, explored):
-    frontier = deque([root]) #I'm using a Doubly Ended Queue
-    explored = {}
-    expanded = 0
+def single_VDFS(frontier, objective, current_limit, expanded):
     start = time.perf_counter()
+    explored = {}
+    new_edge_nodes = []
 
     while (len(frontier) != 0):
+        node = frontier.pop()
         
-        node = frontier.pop() # This is the LIFO way        
-
-        while (explored.get(str(node.state)) != None):  #If it was explored already, get the next one
+        explored_entry = explored.get(str(node.state.board))
+        while (explored_entry != None and explored_entry.depth <= node.depth):  #If it was explored already, get the next one
             if (len(frontier) == 0):
                 end = time.perf_counter()
-                print("No nodes in frontier")
-                return Metrics(False,expanded,len(frontier),end-start,None,node.depth)  # System is not solvable
+                return (False, None, None, end-start, new_edge_nodes)  # System is not solvable for current depth
 
-            node = frontier.pop() # This is the LIFO way
+            node = frontier.pop()
+            explored_entry = explored.get(str(node.state.board))
         
 
         explored[str(node.state.board)] = node # Mark as explored
 
         if (node.state == objective): # Success!
-            solution = get_solution(node)
             end = time.perf_counter()
-            print("Search successful")
-            return Metrics(True,expanded,len(frontier),end-start,solution,node.depth) 
+            return (True, node.depth, node, end-start, None) 
 
-        # If I have reached this, it's because I haven't reached the solution but haven't failed yet
-        if( node.depth == depth_limit):
-            end = time.perf_counter()
-            print("Reached depth limit")
-            return Metrics(False,expanded,len(frontier),end-start,None,node.depth)
-
-        expand(node, None)  # expand(node, heuristic_function)
-        expanded += 1
+        if (node.depth < current_limit):
+            expand(node, None)  # expand(node, heuristic_function)
+            expanded[0] += 1
+        else:
+            new_edge_nodes.append(node) # For performance in future runs
 
         for aux_node in node.next:
-            if explored.get(str(aux_node.state.board)) == None:
+            explored_entry = explored.get(str(aux_node.state.board))
+            if (explored_entry == None or explored_entry.depth > aux_node.depth):
                 frontier.append(aux_node)
 
     end = time.perf_counter()
-    print("Frontier empty")
-    return Metrics(False,expanded,len(frontier),end-start,None,node.depth)
+    return (False, None, None, end-start, new_edge_nodes)

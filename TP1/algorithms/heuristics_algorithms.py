@@ -3,10 +3,10 @@ import time
 from algorithms.move_maker import expand,get_solution
 
 def search(type, root:Node, objective, heuristic_function):
+    start = time.perf_counter()
     frontier = [root] 
     explored = {}
     expanded = 0
-    start = time.perf_counter()
 
     while (len(frontier) != 0):
         node = frontier.pop()

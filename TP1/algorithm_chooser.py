@@ -7,13 +7,13 @@ from algorithms.heuristics_algorithms import global_search
 from algorithms.heuristics_algorithms import a_star_search
 from models import *
 
-def execute_algorithm(alg, root:Node, objective:State, heuristic):
+def execute_algorithm(alg, root:Node, objective:State, heuristic, starting_depth):
     if alg == "DFS":
         return DFS_search(root, objective)
     elif alg == "BFS":
         return BFS_search(root, objective)
     elif alg == "VDFS":
-        return VDFS_search(root, objective)
+        return VDFS_search(root, objective, starting_depth)
     elif alg == "HEUR_GLOBAL":
         heuristic_function = heuristic_chooser(heuristic)
         fill_positions()

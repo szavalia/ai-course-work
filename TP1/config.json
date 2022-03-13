@@ -1,5 +1,6 @@
 {
-    "puzzle_layout": [[2,1,5],[3,6,4],[0,7,8]],
+    "puzzle_layout": [[0,5,1],[7,6,8],[4,2,3]],
     "algorithm": "VDFS",
-    "heuristics": "total_manhattan"
+    "heuristics": "total_manhattan",
+    "starting_depth": 20
 }

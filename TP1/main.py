@@ -84,9 +84,10 @@ objective_state = State(Board(get_objective(Board.dim), [Board.dim - 1, Board.di
 
 algorithm = config_values["algorithm"]
 heuristic = config_values["heuristics"]
+starting_depth = config_values["starting_depth"]
 
 #resolve the puzzle
-metrics = execute_algorithm(algorithm,root,objective_state,heuristic)
+metrics = execute_algorithm(algorithm,root,objective_state,heuristic, starting_depth)
 
 print("Status: {0}".format("success" if metrics.solved else "failure"))
 
