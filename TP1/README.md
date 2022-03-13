@@ -7,7 +7,7 @@
 ## Autores
 
 - [Sicardi, Julián Nicolas](https://github.com/Jsicardi) - Legajo 60347
-- [Quintarios, Juan Ignacio](https://github.com/juaniq99) - Legajo 59715
+- [Quintairos, Juan Ignacio](https://github.com/juaniq99) - Legajo 59715
 - [Zavalia Pángaro, Salustiano Jose](https://github.com/szavalia) - Legajo 60312
 
 ## Indice
