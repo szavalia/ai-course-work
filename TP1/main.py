@@ -32,7 +32,7 @@ def get_inversions(layout):
         for j in range(i + 1,pow(Board.dim,2)):
             if (aux_layout[j] and aux_layout[i] and aux_layout[i] > aux_layout[j]):
                 total_inv+=1
-                
+
     return total_inv
 
 def is_solvable(layout):
@@ -48,7 +48,6 @@ def is_solvable(layout):
             return (total_inv % 2) == 0
 
 def is_valid(layout):
-    total_elements = 0
     repeated_elements = {}
     for row in layout:
         if(len(row) != Board.dim):
@@ -57,10 +56,9 @@ def is_valid(layout):
             if(val < 0 or val >= pow(Board.dim,2) or repeated_elements.get(str(val)) != None):
                 return False
             else:
-                total_elements +=1
                 repeated_elements[str(val)] = val
     
-    return total_elements == pow(Board.dim,2)
+    return True
 
 file = open('config.json')
 config_values = json.load(file)
