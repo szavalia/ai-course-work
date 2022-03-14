@@ -32,7 +32,7 @@ def get_inversions(layout):
         for j in range(i + 1,pow(Board.dim,2)):
             if (aux_layout[j] and aux_layout[i] and aux_layout[i] > aux_layout[j]):
                 total_inv+=1
-    
+                
     return total_inv
 
 def is_solvable(layout):
@@ -122,7 +122,7 @@ if(metrics != None):
             for row in board:
                 file.write("{0}\n".format(str(row)))
             if(board_index != len(metrics.solution) -1):
-                file.write("\t|\n\t|\n\t↓\n")
+                file.write("    |\n    |\n    v\n")
 
         file.close()
 else:
