@@ -1,3 +1,4 @@
+import sys
 from models import *
 import time
 from algorithms.move_maker import expand,get_solution
@@ -53,10 +54,12 @@ def DFS_search(root:Node, objective):
 
 def VDFS_search(root:Node, objective, starting_depth):
     global_start = time.perf_counter()
-    MAX_DEPTH = factorial(Board.dim*Board.dim)  # n*n! state posibilities - problem specific
+    max_depth = sys.maxsize * 2
+    if (Board.dim < 5):
+        max_depth = factorial(Board.dim*Board.dim)  # n*n! state posibilities - problem specific
     current_limit = starting_depth
-    if current_limit > MAX_DEPTH:
-        current_limit = MAX_DEPTH
+    if current_limit > max_depth:
+        current_limit = max_depth
     lower_bound = 0
     upper_bound = -1
     frontier = [root]
@@ -69,7 +72,7 @@ def VDFS_search(root:Node, objective, starting_depth):
         if (upper_bound == lower_bound or (upper_bound == lower_bound + 1 and possible_solution["node"] != None)):
             global_end = time.perf_counter()
             return Metrics(True,expanded[0],possible_solution["frontier_len"],global_end-global_start,get_solution(possible_solution["node"]),possible_solution["node"].depth) 
-        if (lower_bound >= MAX_DEPTH and upper_bound == -1):
+        if (lower_bound >= max_depth and upper_bound == -1):
             global_end = time.perf_counter()
             return Metrics(False,expanded[0],len(frontier),global_end-global_start)
 
@@ -97,8 +100,8 @@ def VDFS_search(root:Node, objective, starting_depth):
             
             if (upper_bound == -1):
                 current_limit = lower_bound * 2
-                if (current_limit > MAX_DEPTH):
-                    current_limit = MAX_DEPTH
+                if (current_limit > max_depth):
+                    current_limit = max_depth
             else:
                 current_limit = (upper_bound + lower_bound) // 2
                 
