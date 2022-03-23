@@ -1,0 +1,24 @@
+{
+    "population_size": 10,
+    "generations": 10,
+    "crossbreeding" : {
+        "method": "simple",
+        "multiple_point_n": 3
+    },
+    "mutation" : {
+        "method": "normal",
+        "probability": 1,
+        "sigma" :  5,
+        "a" : 1
+    },
+    "selection": {
+        "method": "elite",
+        "competitive_threshold": 0.75,
+        "truncated_k": 10,
+        "boltzmann_t0": 70,
+        "boltzmann_tc": 10,
+        "boltzmann_k": 2
+    } 
+
+
+}
