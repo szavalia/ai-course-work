@@ -7,17 +7,11 @@ def normal_mutation(population, mutation:Mutation):
         exit(-1)
 
     for individual in population:
-
-        for x in individual.chromosome:
+        for i in range(0, len(individual.chromosome)):
             #random() returns a value between 0.0 and 1.0
             r = random.random()
             if r < mutation.probability:
-                x += random.gauss(0, mutation.sigma)
-                print("Mutando con " + str(r) + " -> "+ str(x))
-
-    print("ADENTRO")
-    for x in population[0].chromosome:
-        print(x)
+                individual.chromosome[i] = individual.chromosome[i] + random.gauss(0, mutation.sigma)
     
     return population
         

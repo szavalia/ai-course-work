@@ -56,15 +56,8 @@ def solve(properties:Properties):
         population = properties.crossbreeding.func(population)
 
         #Mutation
-        print("ANTES")
-        for x in population[0].chromosome:
-            print(x)
-
         population = properties.mutation.func(population, properties.mutation)
-        print("--------------------------")
-        print("DESPUES")
-        for x in population[0].chromosome:
-            print(x)
+
         #Calculate fitness
         for individual in population:
             calculate_aptitude(individual)
