@@ -63,7 +63,7 @@ def solve(properties:Properties):
             calculate_aptitude(individual)
 
         #Selection
-        properties.selection.func(population)
+        population = properties.selection.func(population)
 
         #Replace old population(already done)
         generations+=1

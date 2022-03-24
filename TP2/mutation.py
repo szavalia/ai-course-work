@@ -22,11 +22,10 @@ def uniform_mutation(population, mutation:Mutation):
         exit(-1)
     
     for individual in population:
-
-        for x in individual.chromosome:
+        for i in range(0, len(individual.chromosome)):
             #random() returns a value between 0.0 and 1.0
             if random.random() < mutation.probability:
-                x += random.uniform(-mutation.a, mutation.a)
+                individual.chromosome[i] = individual.chromosome[i] + random.uniform(-mutation.a, mutation.a)
                 
     return population
 

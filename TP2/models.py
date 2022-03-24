@@ -1,10 +1,12 @@
 class Selection:
-    def __init__(self,method,func):
+    tournament_threshold = 0
+
+    def __init__(self, method, func):
         self.method = method
         self.func = func
 
 class Mutation: 
-    def __init__(self,method,func,probability,sigma,a):
+    def __init__(self, method, func, probability, sigma, a):
         self.method = method
         self.func = func
         self.probability = probability
@@ -14,10 +16,9 @@ class Mutation:
 class Crossbreeding:
     points_number = 0
 
-    def __init__(self,method,func, points_number=0):
+    def __init__(self, method, func):
         self.method = method
         self.func = func
-        points_number = points_number
 
 #The parameters for the running of the genetic algorithm
 class Properties:

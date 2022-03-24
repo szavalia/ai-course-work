@@ -83,7 +83,8 @@ def crossbreeding_chooser(crossbreeding_param):
     if(method == "simple"):
         return Crossbreeding(method, simple_crossbreeding)
     if(method == "multiple"):
-        return Crossbreeding(method, multiple_crossbreeding, points_number)
+        Crossbreeding.points_number = points_number
+        return Crossbreeding(method, multiple_crossbreeding)
     if(method == "uniform"):
         return Crossbreeding(method, uniform_crossbreeding)
     else:

@@ -1,19 +1,19 @@
 {
-    "population_size": 10,
-    "generations": 10,
+    "population_size": 100,
+    "generations": 500,
     "crossbreeding" : {
-        "method": "simple",
+        "method": "multiple",
         "multiple_point_n": 3
     },
     "mutation" : {
         "method": "normal",
-        "probability": 1,
-        "sigma" :  5,
-        "a" : 1
+        "probability": 0.05,
+        "sigma" :  2,
+        "a" : 2
     },
     "selection": {
-        "method": "elite",
-        "competitive_threshold": 0.75,
+        "method": "tournament",
+        "tournament_threshold": 0.8,
         "truncated_k": 10,
         "boltzmann_t0": 70,
         "boltzmann_tc": 10,
