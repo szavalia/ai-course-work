@@ -1,5 +1,6 @@
 class Selection:
     tournament_threshold = 0
+    truncation_k = 0
 
     def __init__(self, method, func):
         self.method = method

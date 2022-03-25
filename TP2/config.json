@@ -12,9 +12,9 @@
         "a" : 2
     },
     "selection": {
-        "method": "tournament",
+        "method": "truncation",
         "tournament_threshold": 0.8,
-        "truncated_k": 10,
+        "truncation_k": 10,
         "boltzmann_t0": 70,
         "boltzmann_tc": 10,
         "boltzmann_k": 2

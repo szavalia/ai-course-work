@@ -7,6 +7,20 @@ def elite_selection(population):
     del population[(len(population)//2):]
     return population
 
+
+def truncation_selection(population):
+    #Choose at random having first removed the lowest fitness k individuals
+    k = Selection.truncation_k
+    desired_size = len(population)//2
+
+    population.sort(key=lambda individual: individual.fitness, reverse=True)
+    del population[(len(population)-k):]
+
+    random.shuffle(population)
+    del population[desired_size:]
+    return population
+
+
 def roulette_selection(population):
     #Probability of being selected is proportional to fitness
     new_pop = []
@@ -34,9 +48,11 @@ def roulette_selection(population):
 
     return new_pop
 
+
 def rank_selection(population):
     #Probability of being selected is proportional to relative fitness
     return population
+
 
 def tournament_selection(population):
     #Take a pair at random and make them fight for a spot, with the fittest having more chance of success
@@ -63,6 +79,7 @@ def tournament_selection(population):
 def selection_chooser(selection):
     method = selection["method"]
     tournament_threshold = selection["tournament_threshold"]
+    truncation_k = selection["truncation_k"]
     if(method == "elite"):
         return Selection(method, elite_selection)
     if(method == "roulette"):
@@ -72,6 +89,9 @@ def selection_chooser(selection):
     if(method == "tournament"):
         Selection.tournament_threshold = tournament_threshold
         return Selection(method, tournament_selection)
+    if(method == "truncation"):
+        Selection.truncation_k = truncation_k
+        return Selection(method, truncation_selection)
     else:
         print("Incorrect algorithm")
         return None
