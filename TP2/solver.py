@@ -1,9 +1,6 @@
 from models import *
 import random,math
 
-initial_values = [[4.4793,-4.0765,-4.0765],[-4.1793,-4.9218,1.7664],[-3.9429,-0.7689,4.8830]] #epsilons
-initial_results = [0,1,1]
-
 def generate_population(population_size):
     #Generate initial population
     limit = 8
@@ -30,7 +27,7 @@ def F(W,w,w0,epsilon):
         external_sum+= W[i] * logistic_fun(internal_sum - w0[i])
     return logistic_fun(external_sum - W[0])
 
-def calculate_aptitude(individual:Individual):
+def calculate_aptitude(individual:Individual,initial_values,initial_results):
 
     W = individual.chromosome[0:3]
     w = [individual.chromosome[3:6],individual.chromosome[6:9]]
@@ -61,7 +58,7 @@ def solve(properties:Properties):
 
         #Calculate fitness
         for individual in population:
-            calculate_aptitude(individual)
+            calculate_aptitude(individual,properties.initial_values,properties.initial_results)
 
         #Selection
         population = properties.selection.func(population)
@@ -77,5 +74,5 @@ def solve(properties:Properties):
     w0 = population[0].chromosome[9:11]
 
 
-    return Metrics(population[0],[F(W,w,w0,initial_values[0]),F(W,w,w0,initial_values[1]),F(W,w,w0,initial_values[2])])
+    return Metrics(population[0],[F(W,w,w0,properties.initial_values[0]),F(W,w,w0,properties.initial_values[1]),F(W,w,w0,properties.initial_values[2])])
 

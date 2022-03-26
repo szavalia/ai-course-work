@@ -12,7 +12,7 @@ def generate_output(metrics:Metrics,properties:Properties):
     print("Mutation: {0} p :{1}".format(properties.mutation.method, properties.mutation.probability))
     print("Selection: {0}".format(properties.selection.method))
 
-    print("W: {0} w: {1} w0: {2}".format(metrics.individual.chromosome[0:3],[metrics.individual.chromosome[3:6], metrics.individual.chromosome[6:9]],metrics.individual.chromosome[9:11] ))
+    print("W: {0}\nw: {1}\nw0: {2}".format(metrics.individual.chromosome[0:3],[metrics.individual.chromosome[3:6], metrics.individual.chromosome[6:9]],metrics.individual.chromosome[9:11] ))
     print("Func val: [E1 : {0}, E2: {1}, E3: {2}]".format(metrics.ideal_func[0], metrics.ideal_func[1], metrics.ideal_func[2]))
     print("Error val: {0}".format(metrics.individual.fitness))
     
@@ -23,6 +23,8 @@ def parse_properties():
     json_values = json.load(file)
     file.close()    
     
+    initial_values = json_values.get("initial_values")
+    initial_results = json_values.get("initial_results")
     population_size = json_values.get("population_size")
     if population_size == None or population_size <= 0:
         print("Specify a positive population size")
@@ -40,5 +42,5 @@ def parse_properties():
     if(selection == None or mutation == None or crossbreeding == None):
         return None
 
-    return Properties(population_size, generations, crossbreeding, mutation, selection)
+    return Properties(initial_values,initial_results,population_size, generations, crossbreeding, mutation, selection)
 

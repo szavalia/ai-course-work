@@ -1,4 +1,6 @@
 {
+    "initial_values": [[4.4793,-4.0765,-4.0765],[-4.1793,-4.9218,1.7664],[-3.9429,-0.7689,4.8830]],
+    "initial_results": [0,1,1],
     "population_size": 100,
     "generations": 500,
     "crossbreeding" : {
