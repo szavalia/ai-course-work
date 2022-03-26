@@ -23,9 +23,10 @@ class Crossbreeding:
 
 #The parameters for the running of the genetic algorithm
 class Properties:
-    def __init__(self, initial_values, initial_results,population_size, generations, crossbreeding:Crossbreeding, mutation:Mutation, selection:Selection):
+    def __init__(self, initial_values, initial_results, limit_first_generation, population_size, generations, crossbreeding:Crossbreeding, mutation:Mutation, selection:Selection):
         self.initial_values = initial_values
         self.initial_results = initial_results
+        self.limit_first_generation = limit_first_generation
         self.population_size = population_size
         self.generations = generations
         self.crossbreeding = crossbreeding

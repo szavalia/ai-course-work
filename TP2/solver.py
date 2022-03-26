@@ -1,9 +1,9 @@
 from models import *
 import random,math
 
-def generate_population(population_size):
+def generate_population(population_size, limit_first_generation):
     #Generate initial population
-    limit = 8
+    limit = limit_first_generation
     population = []
 
     for i in range(0, population_size):
@@ -44,7 +44,7 @@ def calculate_aptitude(individual:Individual,initial_values,initial_results):
 def solve(properties:Properties):  
     
     #Generate initial individuals
-    population = generate_population(properties.population_size)
+    population = generate_population(properties.population_size, properties.limit_first_generation)
 
 
     generations = 1
