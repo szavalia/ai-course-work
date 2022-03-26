@@ -1,5 +1,5 @@
 from models import Selection
-import random
+import random,math
 
 def elite_selection(population):
     #Keep the most fit half of individuals
@@ -94,11 +94,50 @@ def tournament_selection(population):
                 new_pop.append(fighter1)
     return new_pop
 
+def T(t,Tc,T0,k):
+    return Tc + (T0-Tc) * math.exp(-k*t)
+
+def boltzmann_aptitude(individual,t,Tc,T0,k):
+    return (math.exp(individual.fitness) / T(t,Tc,T0,k))
+
+def boltzmann_selection(population):
+    Tc = Selection.boltzmann_tc
+    T0 = Selection.boltzmann_t0
+    k = Selection.boltzmann_k
+    t = Selection.boltzmann_t
+
+    #Probability of being selected is proportional to fitness
+    new_pop = []
+
+    #Get total fitness
+    total_fitness = 0
+    for individual in population:
+        total_fitness += boltzmann_aptitude(individual,t,Tc,T0,k)
+
+    #Fill probabilities
+    relative_fitness = []
+    probabilities_array = []
+
+    population.sort(key=lambda individual: individual.fitness, reverse=True) #One full sort so as to lower the overall passes over probabilities array (the first ones are the most likely to be chosen if this is done)
+    for index, individual in enumerate(population):
+        relative_fitness.append(boltzmann_aptitude(individual,t,Tc,T0,k) / total_fitness)
+        probabilities_array.append(sum(relative_fitness[:index+1]))
+
+    #Draw winners
+    for i in range(len(population)//2):
+        rand = random.random()
+        for index, probability in enumerate(probabilities_array):
+            if(rand < probability):
+                new_pop.append(population[index])
+                break
+
+    Selection.boltzmann_t = t+1
+
+    return new_pop
+
 
 def selection_chooser(selection):
-    method = selection["method"]
-    tournament_threshold = selection["tournament_threshold"]
-    truncation_k = selection["truncation_k"]
+    method = selection.get("method")
     if(method == "elite"):
         return Selection(method, elite_selection)
     if(method == "roulette"):
@@ -106,11 +145,16 @@ def selection_chooser(selection):
     if(method == "rank"):
         return Selection(method, rank_selection)
     if(method == "tournament"):
-        Selection.tournament_threshold = tournament_threshold
+        Selection.tournament_threshold = selection.get("tournament_threshold")
         return Selection(method, tournament_selection)
     if(method == "truncation"):
-        Selection.truncation_k = truncation_k
+        Selection.truncation_k = selection.get("truncation_k")
         return Selection(method, truncation_selection)
+    if(method == "boltzmann"):
+        Selection.boltzmann_k = selection.get("boltzmann_k")
+        Selection.boltzmann_tc = selection.get("boltzmann_tc")
+        Selection.boltzmann_t0 = selection.get("boltzmann_t0")
+        return Selection(method,boltzmann_selection)
     else:
         print("Incorrect algorithm")
         return None
