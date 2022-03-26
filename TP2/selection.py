@@ -27,15 +27,21 @@ def roulette_selection(population):
 
     #Get total fitness
     total_fitness = 0
+    lowest_fitness = population[0].fitness
+
     for individual in population:
-        total_fitness += individual.fitness
+        if(individual.fitness < lowest_fitness):
+            lowest_fitness = individual.fitness
+    for individual in population:
+        total_fitness += individual.fitness - lowest_fitness
 
     #Fill probabilities
     relative_fitness = []
     probabilities_array = []
     population.sort(key=lambda individual: individual.fitness, reverse=True) #One full sort so as to lower the overall passes over probabilities array (the first ones are the most likely to be chosen if this is done)
     for index, individual in enumerate(population):
-        relative_fitness.append(individual.fitness/total_fitness)
+        fitness = individual.fitness - lowest_fitness
+        relative_fitness.append(fitness/total_fitness)
         probabilities_array.append(sum(relative_fitness[:index+1]))
 
     #Draw winners
