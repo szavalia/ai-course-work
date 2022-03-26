@@ -3,8 +3,8 @@
     "initial_results": [0,1,1],
     "limit_first_generation": 10,
     "population_size": 100,
-    "generations": 500,
-    "error_threshold":1e-3,
+    "generations": 1000,
+    "error_threshold":1e-14,
     "crossbreeding" : {
         "method": "multiple",
         "multiple_point_n": 3

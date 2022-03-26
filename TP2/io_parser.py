@@ -1,3 +1,4 @@
+from constants import MIN_GENERATIONS
 from crossbreeding import crossbreeding_chooser
 from selection import selection_chooser
 from models import Metrics, Properties, Selection, Crossbreeding, Mutation
@@ -55,8 +56,8 @@ def parse_properties():
     if generations == None or generations <= 0:
         print("Specify a positive generation cap")
         exit(-1)
-    if(generations < 500):
-        generations = 500
+    if(generations < MIN_GENERATIONS):
+        generations = MIN_GENERATIONS
 
     error_threshold = json_values.get("error_threshold")
     if(error_threshold == None):

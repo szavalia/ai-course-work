@@ -1,3 +1,4 @@
+from constants import MIN_GENERATIONS
 from models import *
 import random,math
 
@@ -46,12 +47,11 @@ def solve(properties:Properties):
     #Generate initial individuals
     population = generate_population(properties.population_size, properties.limit_first_generation)
 
-
-    generations = 0
+    generations = 1
 
     max_aptitude = 1
 
-    while generations != properties.generations and abs(max_aptitude) > properties.error_threshold:
+    while (generations != properties.generations and abs(max_aptitude) > properties.error_threshold) or (abs(max_aptitude) <= properties.error_threshold and generations < MIN_GENERATIONS):
         #Crossbreeding
         population = properties.crossbreeding.func(population)
 
