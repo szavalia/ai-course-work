@@ -8,7 +8,7 @@ import json
 def generate_output(metrics:Metrics,properties:Properties):
     print("First population's allele values: [-{0}, {0}]".format(properties.limit_first_generation))
     print("Population's size: {0}".format(properties.population_size))
-    print("Generations: {0}".format(properties.generations))
+    print("Generations limit: {0}".format(properties.generations))
 
     if (properties.crossbreeding.method == "multiple"):
         print("Crossbreeding: {0} with {1} points".format(properties.crossbreeding.method, properties.crossbreeding.points_number))
@@ -33,7 +33,8 @@ def generate_output(metrics:Metrics,properties:Properties):
 
     print("W: {0}\nw: {1}\nw0: {2}".format(metrics.individual.chromosome[0:3],[metrics.individual.chromosome[3:6], metrics.individual.chromosome[6:9]],metrics.individual.chromosome[9:11] ))
     print("Func val: [E1 : {0}, E2: {1}, E3: {2}]".format(metrics.ideal_func[0], metrics.ideal_func[1], metrics.ideal_func[2]))
-    print("Error val: {0}".format(metrics.individual.fitness))
+    print("Error val: {0}".format(abs(metrics.individual.fitness)))
+    print("Generations: {0}".format(metrics.generations))
     
 # Receive parameters from config.json and encapsulate them into properties object
 def parse_properties():
@@ -50,10 +51,16 @@ def parse_properties():
         print("Specify a positive population size")
         exit(-1)
 
-    generations = json_values.get("generations")
+    generations = json_values.get("generations") 
     if generations == None or generations <= 0:
         print("Specify a positive generation cap")
         exit(-1)
+    if(generations < 500):
+        generations = 500
+
+    error_threshold = json_values.get("error_threshold")
+    if(error_threshold == None):
+        error_threshold = -1
 
     selection = selection_chooser(json_values.get("selection"))
     mutation = mutation_chooser(json_values.get("mutation"))
@@ -62,5 +69,5 @@ def parse_properties():
     if(selection == None or mutation == None or crossbreeding == None):
         return None
 
-    return Properties(initial_values,initial_results,limit_first_generation,population_size, generations, crossbreeding, mutation, selection)
+    return Properties(initial_values,initial_results,limit_first_generation,population_size, generations,error_threshold, crossbreeding, mutation, selection)
 

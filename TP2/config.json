@@ -4,6 +4,7 @@
     "limit_first_generation": 10,
     "population_size": 100,
     "generations": 500,
+    "error_threshold":1e-3,
     "crossbreeding" : {
         "method": "multiple",
         "multiple_point_n": 3
@@ -15,7 +16,7 @@
         "a" : 2
     },
     "selection": {
-        "method": "roulette",
+        "method": "boltzmann",
         "tournament_threshold": 0.8,
         "truncation_k": 10,
         "boltzmann_t0": 70,

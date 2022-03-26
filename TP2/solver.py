@@ -47,9 +47,11 @@ def solve(properties:Properties):
     population = generate_population(properties.population_size, properties.limit_first_generation)
 
 
-    generations = 1
+    generations = 0
 
-    while generations != properties.generations:
+    max_aptitude = 1
+
+    while generations != properties.generations and abs(max_aptitude) > properties.error_threshold:
         #Crossbreeding
         population = properties.crossbreeding.func(population)
 
@@ -63,16 +65,21 @@ def solve(properties:Properties):
         #Selection
         population = properties.selection.func(population)
 
-        #Replace old population(already done)
+        max_aptitude = population[0].fitness
+
+        for individual in population[1:]:
+            if(individual.fitness > max_aptitude):
+                max_aptitude = individual.fitness
+  
         generations+=1
     
     population.sort(key=lambda individual: individual.fitness, reverse=True)
     
 
     W = population[0].chromosome[0:3]
-    w = [population[0].chromosome[3:6],individual.chromosome[6:9]]
+    w = [population[0].chromosome[3:6],population[0].chromosome[6:9]]
     w0 = population[0].chromosome[9:11]
 
 
-    return Metrics(population[0],[F(W,w,w0,properties.initial_values[0]),F(W,w,w0,properties.initial_values[1]),F(W,w,w0,properties.initial_values[2])])
+    return Metrics(population[0],[F(W,w,w0,properties.initial_values[0]),F(W,w,w0,properties.initial_values[1]),F(W,w,w0,properties.initial_values[2])],generations)
 
