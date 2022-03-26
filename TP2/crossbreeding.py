@@ -3,7 +3,7 @@ from models import Crossbreeding, Individual
 
 def simple_crossbreeding(population):
     chrom_length = len(population[0].chromosome)
-    random.shuffle(population) #Shuffle in case it is ordered from another step and imrpove diversity of children 
+    random.shuffle(population) #Shuffle in case it is ordered from another step and improve diversity of children 
     children = []
     for i in range(0, len(population)-1, 2):
         parent1 = population[i]

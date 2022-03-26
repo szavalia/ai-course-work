@@ -13,7 +13,8 @@ def generate_output(metrics:Metrics,properties:Properties):
     print("Selection: {0}".format(properties.selection.method))
 
     print("W: {0} w: {1} w0: {2}".format(metrics.individual.chromosome[0:3],[metrics.individual.chromosome[3:6], metrics.individual.chromosome[6:9]],metrics.individual.chromosome[9:11] ))
-    print("Func val: {0} Error val: {1}".format(metrics.ideal_func, metrics.individual.fitness))
+    print("Func val: [E1 : {0}, E2: {1}, E3: {2}]".format(metrics.ideal_func[0], metrics.ideal_func[1], metrics.ideal_func[2]))
+    print("Error val: {0}".format(metrics.individual.fitness))
     
 # Receive parameters from config.json and encapsulate them into properties object
 def parse_properties():
