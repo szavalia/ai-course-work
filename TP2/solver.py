@@ -16,7 +16,10 @@ def generate_population(population_size, limit_first_generation):
     return population
 
 def logistic_fun(val):
-    return math.exp(val) / (1 + math.exp(val))
+    try:
+        return math.exp(val) / (1 + math.exp(val))
+    except:
+        return 1
 
 def F(W,w,w0,epsilon):
 
@@ -25,7 +28,7 @@ def F(W,w,w0,epsilon):
         internal_sum = 0
         for j in range(0,2):
             internal_sum += w[i][j] * epsilon[j]
-            internal_sum -= w0[i]
+        internal_sum -= w0[i]
         external_sum+= W[i+1] * logistic_fun(internal_sum)
     return logistic_fun(external_sum - W[0])
 
