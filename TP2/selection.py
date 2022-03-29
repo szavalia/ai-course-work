@@ -62,10 +62,10 @@ def rank_selection(population):
     #Fill probabilities
     population.sort(key=lambda individual: individual.fitness, reverse=True) #Sort to order individuals for rank selection
     probabilities_array = []
-    indexes_sum = (len(population) * (len(population)-1))//2
-    probabilities_array.append((len(population) - 1)/indexes_sum)
+    indexes_sum = (len(population) * (len(population)+1))//2
+    probabilities_array.append(len(population)/indexes_sum)
     for i in range(1, len(population)):
-        new_value = ((len(population) - i - 1)/indexes_sum) + probabilities_array[i-1]
+        new_value = ((len(population) - i)/indexes_sum) + probabilities_array[i-1]
         probabilities_array.append(new_value)
 
     #Draw winners
