@@ -21,11 +21,12 @@ def logistic_fun(val):
 def F(W,w,w0,epsilon):
 
     external_sum = 0
-    for i in range(1,2):
+    for i in range(0,1):
         internal_sum = 0
         for j in range(0,2):
             internal_sum += w[i][j] * epsilon[j]
-        external_sum+= W[i] * logistic_fun(internal_sum - w0[i])
+            internal_sum -= w0[i]
+        external_sum+= W[i+1] * logistic_fun(internal_sum)
     return logistic_fun(external_sum - W[0])
 
 def calculate_aptitude(individual:Individual,initial_values,initial_results):
@@ -51,7 +52,7 @@ def solve(properties:Properties):
 
     max_aptitude = 1
 
-    while (generations != properties.generations and abs(max_aptitude) > properties.error_threshold) or (abs(max_aptitude) <= properties.error_threshold and generations < MIN_GENERATIONS):
+    while (generations != properties.generations and abs(max_aptitude) > properties.error_threshold):
         #Crossbreeding
         population = properties.crossbreeding.func(population)
 
