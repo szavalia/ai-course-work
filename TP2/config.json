@@ -4,6 +4,7 @@
     "limit_first_generation": 10,
     "population_size": 50,
     "generations": 1000,
+    "output_path": "resources/output1",
     "crossbreeding" : {
         "method": "simple",
         "multiple_point_n": 3

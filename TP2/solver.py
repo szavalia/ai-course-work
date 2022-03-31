@@ -111,7 +111,6 @@ def solve(properties:Properties):
 
     F_values = []
     for epsilon in properties.initial_values:
-        print(epsilon)
         F_values.append(F(W,w,w0,epsilon))
     end = time.perf_counter()
 

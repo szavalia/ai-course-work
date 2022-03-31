@@ -6,12 +6,10 @@ from selection import selection_chooser
 from mutation import mutation_chooser
 import json
 
-def write_maxs_mins(metrics:Metrics, run_number):
-    file = open('resources/output'+str(run_number)+'.csv','w')
+def write_maxs_mins(path,metrics:Metrics):
+    file = open(path+".csv",'w')
     for i in range(metrics.generations):
         file.write(str(metrics.min_fitnesses[i]) + "," + str(metrics.max_fitnesses[i]) + "\n")
-    
-
 
 def generate_output(metrics:Metrics,properties:Properties):
     print("First population's allele values: [-{0}, {0}]".format(properties.limit_first_generation))
@@ -47,6 +45,7 @@ def generate_output(metrics:Metrics,properties:Properties):
     print("Error val: {0}".format(abs(metrics.individual.fitness)))
     print("Generations: {0}".format(metrics.generations))
     print("Time: {0} s".format(metrics.time,".4f"))
+    write_maxs_mins(properties.output_path,metrics)
     
 # Receive parameters from config.json and encapsulate them into properties object
 def parse_properties():
@@ -74,6 +73,7 @@ def parse_properties():
     if(error_threshold == None):
         error_threshold = -1
 
+    output_path = json_values.get("output_path")
     selection = selection_chooser(json_values.get("selection"))
     mutation = mutation_chooser(json_values.get("mutation"))
     crossbreeding = crossbreeding_chooser(json_values.get("crossbreeding"))
@@ -81,5 +81,5 @@ def parse_properties():
     if(selection == None or mutation == None or crossbreeding == None):
         return None
 
-    return Properties(initial_values,initial_results,limit_first_generation,population_size, generations,error_threshold, crossbreeding, mutation, selection)
+    return Properties(initial_values,initial_results,limit_first_generation,population_size, generations,error_threshold,output_path, crossbreeding, mutation, selection)
 
