@@ -6,11 +6,11 @@ from selection import selection_chooser
 from mutation import mutation_chooser
 import json
 
-def write_maxs_mins(metrics:Metrics):
-    file = open('output.csv','w')
+def write_maxs_mins(metrics:Metrics, run_number):
+    file = open('resources/output'+str(run_number)+'.csv','w')
     for i in range(metrics.generations):
-        file.write(str(i) + "," + str(metrics.min_fitnesses[i]) + "," + str(metrics.max_fitnesses[i]) + "\n")
-
+        file.write(str(metrics.min_fitnesses[i]) + "," + str(metrics.max_fitnesses[i]) + "\n")
+    
 
 
 def generate_output(metrics:Metrics,properties:Properties):
@@ -47,7 +47,6 @@ def generate_output(metrics:Metrics,properties:Properties):
     print("Error val: {0}".format(abs(metrics.individual.fitness)))
     print("Generations: {0}".format(metrics.generations))
     print("Time: {0} s".format(metrics.time,".4f"))
-    write_maxs_mins(metrics)
     
 # Receive parameters from config.json and encapsulate them into properties object
 def parse_properties():

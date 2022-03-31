@@ -2,24 +2,23 @@
     "initial_values": [[4.4793,-4.0765,-4.0765],[-4.1793,-4.9218,1.7664],[-3.9429,-0.7689,4.8830]],
     "initial_results": [0,1,1],
     "limit_first_generation": 10,
-    "population_size": 100,
+    "population_size": 50,
     "generations": 1000,
-    "error_threshold":1e-14,
     "crossbreeding" : {
-        "method": "multiple",
+        "method": "simple",
         "multiple_point_n": 3
     },
     "mutation" : {
-        "method": "normal",
+        "method": "uniform",
         "probability": 0.05,
         "sigma" :  2,
-        "a" : 2
+        "a" : 0.1
     },
     "selection": {
         "method": "boltzmann",
         "tournament_threshold": 0.8,
         "truncation_k": 10,
-        "boltzmann_t0": 70,
+        "boltzmann_t0": 20,
         "boltzmann_tc": 10,
         "boltzmann_k": 0.1
     } 
