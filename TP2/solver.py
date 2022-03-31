@@ -40,7 +40,7 @@ def calculate_aptitude(individual:Individual,initial_values,initial_results):
 
     sum = 0
 
-    for i in range(0,2):
+    for i in range(0,len(initial_results) - 1):
         sum += math.pow(initial_results[i] - F(W,w,w0,initial_values[i]),2)
     
     individual.fitness = -sum
@@ -109,6 +109,10 @@ def solve(properties:Properties):
     w = [population[0].chromosome[3:6],population[0].chromosome[6:9]]
     w0 = population[0].chromosome[9:11]
 
+    F_values = []
+    for epsilon in properties.initial_values:
+        print(epsilon)
+        F_values.append(F(W,w,w0,epsilon))
     end = time.perf_counter()
-    return Metrics(population[0],[F(W,w,w0,properties.initial_values[0]),F(W,w,w0,properties.initial_values[1]),F(W,w,w0,properties.initial_values[2])],generations, end-start, max_fitnesses, min_fitnesses)
 
+    return Metrics(population[0],F_values,generations, end-start,max_fitnesses,min_fitnesses)

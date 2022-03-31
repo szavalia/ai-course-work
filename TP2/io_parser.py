@@ -7,9 +7,9 @@ from mutation import mutation_chooser
 import json
 
 def write_maxs_mins(metrics:Metrics):
-    file = open('output.tsv','w')
+    file = open('output.csv','w')
     for i in range(metrics.generations):
-        file.write(str(i) + "\t" + str(metrics.min_fitnesses[i]) + "\t" + str(metrics.max_fitnesses[i]) + "\n")
+        file.write(str(i) + "," + str(metrics.min_fitnesses[i]) + "," + str(metrics.max_fitnesses[i]) + "\n")
 
 
 
@@ -40,7 +40,10 @@ def generate_output(metrics:Metrics,properties:Properties):
                 print("Selection: {0}".format(properties.selection.method))
 
     print("W: {0}\nw: {1}\nw0: {2}".format(metrics.individual.chromosome[0:3],[metrics.individual.chromosome[3:6], metrics.individual.chromosome[6:9]],metrics.individual.chromosome[9:11] ))
-    print("Func val: [E1 : {0}, E2: {1}, E3: {2}]".format(metrics.ideal_func[0], metrics.ideal_func[1], metrics.ideal_func[2]))
+    print("Func val:[")
+    for (index,value) in enumerate(metrics.ideal_func):
+        print("     E{0}: {1} ".format(index+1,value))
+    print("]")
     print("Error val: {0}".format(abs(metrics.individual.fitness)))
     print("Generations: {0}".format(metrics.generations))
     print("Time: {0} s".format(metrics.time,".4f"))

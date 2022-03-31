@@ -21,7 +21,7 @@
         "truncation_k": 10,
         "boltzmann_t0": 70,
         "boltzmann_tc": 10,
-        "boltzmann_k": 2
+        "boltzmann_k": 0.1
     } 
 
 
