@@ -52,8 +52,11 @@ class Individual:
 
 #The parameters for output processing
 class Metrics:
-    def __init__(self,individual:Individual,ideal_func,generations):
+    def __init__(self,individual:Individual,ideal_func,generations, time, max_fitnesses, min_fitnesses):
         self.individual = individual
         self.ideal_func = ideal_func
         self.generations = generations
+        self.time = time
+        self.max_fitnesses = max_fitnesses
+        self.min_fitnesses = min_fitnesses
     

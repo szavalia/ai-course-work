@@ -6,6 +6,13 @@ from selection import selection_chooser
 from mutation import mutation_chooser
 import json
 
+def write_maxs_mins(metrics:Metrics):
+    file = open('output.tsv','w')
+    for i in range(metrics.generations):
+        file.write(str(i) + "\t" + str(metrics.min_fitnesses[i]) + "\t" + str(metrics.max_fitnesses[i]) + "\n")
+
+
+
 def generate_output(metrics:Metrics,properties:Properties):
     print("First population's allele values: [-{0}, {0}]".format(properties.limit_first_generation))
     print("Population's size: {0}".format(properties.population_size))
@@ -36,6 +43,8 @@ def generate_output(metrics:Metrics,properties:Properties):
     print("Func val: [E1 : {0}, E2: {1}, E3: {2}]".format(metrics.ideal_func[0], metrics.ideal_func[1], metrics.ideal_func[2]))
     print("Error val: {0}".format(abs(metrics.individual.fitness)))
     print("Generations: {0}".format(metrics.generations))
+    print("Time: {0} s".format(metrics.time,".4f"))
+    write_maxs_mins(metrics)
     
 # Receive parameters from config.json and encapsulate them into properties object
 def parse_properties():

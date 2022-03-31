@@ -1,6 +1,6 @@
 from constants import MIN_GENERATIONS
 from models import *
-import random,math
+import random, math, time
 
 def generate_population(population_size, limit_first_generation):
     #Generate initial population
@@ -47,15 +47,32 @@ def calculate_aptitude(individual:Individual,initial_values,initial_results):
 
 
 def solve(properties:Properties):  
-    
+    start = time.perf_counter()
+    max_fitnesses = []
+    min_fitnesses = []
+    max_fitness_curr = float('-inf')        #Starting values
+    min_fitness_curr = 0
+
     #Generate initial individuals
     population = generate_population(properties.population_size, properties.limit_first_generation)
+
+    #Calculate fitness
+    for individual in population:
+        calculate_aptitude(individual,properties.initial_values,properties.initial_results)
+        if (individual.fitness > max_fitness_curr):
+            max_fitness_curr = individual.fitness
+        if (individual.fitness < min_fitness_curr):
+            min_fitness_curr = individual.fitness
+    max_fitnesses.append(max_fitness_curr)
+    min_fitnesses.append(min_fitness_curr)
+    max_fitness_curr = float('-inf')
+    min_fitness_curr = 0
 
     generations = 1
 
     max_aptitude = 1
 
-    while (generations != properties.generations and abs(max_aptitude) > properties.error_threshold):
+    while (generations < properties.generations and abs(max_aptitude) > properties.error_threshold):
         #Crossbreeding
         population = properties.crossbreeding.func(population)
 
@@ -65,6 +82,14 @@ def solve(properties:Properties):
         #Calculate fitness
         for individual in population:
             calculate_aptitude(individual,properties.initial_values,properties.initial_results)
+            if (individual.fitness > max_fitness_curr):
+                max_fitness_curr = individual.fitness
+            if (individual.fitness < min_fitness_curr):
+                min_fitness_curr = individual.fitness
+        max_fitnesses.append(max_fitness_curr)
+        min_fitnesses.append(min_fitness_curr)
+        max_fitness_curr = float('-inf')
+        min_fitness_curr = 0
 
         #Selection
         population = properties.selection.func(population)
@@ -84,6 +109,6 @@ def solve(properties:Properties):
     w = [population[0].chromosome[3:6],population[0].chromosome[6:9]]
     w0 = population[0].chromosome[9:11]
 
-
-    return Metrics(population[0],[F(W,w,w0,properties.initial_values[0]),F(W,w,w0,properties.initial_values[1]),F(W,w,w0,properties.initial_values[2])],generations)
+    end = time.perf_counter()
+    return Metrics(population[0],[F(W,w,w0,properties.initial_values[0]),F(W,w,w0,properties.initial_values[1]),F(W,w,w0,properties.initial_values[2])],generations, end-start, max_fitnesses, min_fitnesses)
 

@@ -79,26 +79,46 @@ def rank_selection(population):
     return new_pop
 
 
-def tournament_selection(population):
+def clash(fighter1, fighter2):
+    fitter_chance = Selection.tournament_threshold
+    outcome = random.random()
+    if(fighter1.fitness > fighter2.fitness):
+        if(outcome < fitter_chance):    #Fittest wins
+            return fighter1
+        else:
+            return fighter2
+    else:
+        if(outcome < fitter_chance):    #Fittest wins
+            return fighter2
+        else:
+            return fighter1
+
+def tournament_selection_nr(population):    #No replacement
     #Take a pair at random and make them fight for a spot, with the fittest having more chance of success
     random.shuffle(population)
-    fitter_chance = Selection.tournament_threshold
     new_pop = []
     for i in range(0, len(population)-1, 2):
         fighter1 = population[i]
         fighter2 = population[i+1]
-        outcome = random.random()
-        if(fighter1.fitness > fighter2.fitness):
-            if(outcome < fitter_chance):    #Fittest wins
-                new_pop.append(fighter1)
-            else:
-                new_pop.append(fighter2)
-        else:
-            if(outcome < fitter_chance):    #Fittest wins
-                new_pop.append(fighter2)
-            else:
-                new_pop.append(fighter1)
+        new_pop.append(clash(fighter1, fighter2))
+
     return new_pop
+
+
+def tournament_selection_wr(population):        #With replacement
+    #Winner of 4, with replacement
+    new_pop = []
+    while (len(new_pop) < len(population)/2):
+        fighter1 = random.choice(population)
+        fighter2 = random.choice(population)
+        fighter3 = random.choice(population)
+        fighter4 = random.choice(population)
+        winner1 = clash(fighter1, fighter2)
+        winner2 = clash(fighter3, fighter4)
+        new_pop.append(clash(winner1, winner2))
+    
+    return new_pop
+
 
 def T(t,Tc,T0,k):
     return Tc + (T0-Tc) * math.exp(-k*t)
@@ -150,9 +170,12 @@ def selection_chooser(selection):
         return Selection(method, roulette_selection)
     if(method == "rank"):
         return Selection(method, rank_selection)
-    if(method == "tournament"):
+    if(method == "tournament_nr" or method == "tournament_wr"):
         Selection.tournament_threshold = selection.get("tournament_threshold")
-        return Selection(method, tournament_selection)
+        if(method == "tournament_nr"):
+            return Selection(method, tournament_selection_nr)
+        else:
+            return Selection(method, tournament_selection_wr)
     if(method == "truncation"):
         Selection.truncation_k = selection.get("truncation_k")
         return Selection(method, truncation_selection)
