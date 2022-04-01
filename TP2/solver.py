@@ -70,9 +70,7 @@ def solve(properties:Properties):
 
     generations = 1
 
-    max_aptitude = 1
-
-    while (generations < properties.generations and abs(max_aptitude) > properties.error_threshold):
+    while (generations < properties.generations and abs(max_fitnesses[generations-1]) > properties.error_threshold):
         #Crossbreeding
         population = properties.crossbreeding.func(population)
 
@@ -82,6 +80,11 @@ def solve(properties:Properties):
         #Calculate fitness
         for individual in population:
             calculate_aptitude(individual,properties.initial_values,properties.initial_results)
+
+        #Selection
+        population = properties.selection.func(population)
+
+        for individual in population:
             if (individual.fitness > max_fitness_curr):
                 max_fitness_curr = individual.fitness
             if (individual.fitness < min_fitness_curr):
@@ -90,18 +93,9 @@ def solve(properties:Properties):
         min_fitnesses.append(min_fitness_curr)
         max_fitness_curr = float('-inf')
         min_fitness_curr = 0
-
-        #Selection
-        population = properties.selection.func(population)
-
-        max_aptitude = population[0].fitness
-
-        for individual in population[1:]:
-            if(individual.fitness > max_aptitude):
-                max_aptitude = individual.fitness
   
         generations+=1
-    
+        
     population.sort(key=lambda individual: individual.fitness, reverse=True)
     
 
