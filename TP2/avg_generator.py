@@ -7,7 +7,6 @@ path = sys.argv[2]
 output_path = sys.argv[3]
 
 for i in range(1, total_runs+1):
-    print(i)
     with open("config.json", "r") as file:
         json_values = json.load(file)
     json_values.update({"output_path":(path + str(i))})
