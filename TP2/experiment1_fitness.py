@@ -8,7 +8,7 @@ complex_algorithm_names=["tournament_wr", "tournament_nr","truncation"]
 complex_algorithm_param_names=["tournament_threshold","tournament_threshold","truncation_k"]
 complex_algorithm_params_values = [[0.5,0.65,0.80],[0.5,0.65,0.80],[10,25,50]]
 boltzmann_param_names=["boltzmann_tc","boltzmann_t0","boltzmann_k"]
-boltzmann_param_values = [[20,10,0.1],[30,10,0.1]]
+boltzmann_param_values = [[10,70,0.1],[10,140,0.1],[10,70,0.5],[10,140,0.5]]
 variability = ["Low", "Medium", "High"]
 
 def simple_algs(total_runs,output_path,avg_output_path):
