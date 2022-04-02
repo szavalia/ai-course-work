@@ -6,7 +6,7 @@ mutation = [[0.05,0.1], [0.1,1], [0.2,2]]
 simple_algorithms = ["elite", "roulette", "rank"]
 complex_algorithm_names=["tournament_wr", "tournament_nr","truncation"]
 complex_algorithm_param_names=["tournament_threshold","tournament_threshold","truncation_k"]
-complex_algorithm_params_values = [[0.25,0.5,0.75],[0.25,0.5,0.75],[10,25,50]]
+complex_algorithm_params_values = [[0.5,0.65,0.80],[0.5,0.65,0.80],[10,25,50]]
 boltzmann_param_names=["boltzmann_tc","boltzmann_t0","boltzmann_k"]
 boltzmann_param_values = [[20,10,0.1],[30,10,0.1]]
 variability = ["Low", "Medium", "High"]
@@ -14,6 +14,16 @@ variability = ["Low", "Medium", "High"]
 def simple_algs(total_runs,output_path,avg_output_path):
     simple_header="Selection,Variability,Step,Min,Max\n"
     lines = []
+
+    with open("config.json", "r") as file:
+        json_values = json.load(file)
+        json_values.update({"crossbreeding" : {"method": "simple"}})
+        json_values.pop("error_threshold",-1)
+        json_values["generations"] = 1000
+        json_values["limit_first_generation"] = 10
+        json_values["population_size"] = 50
+    with open("config.json", "w") as file:
+        json.dump(json_values,file,indent=4)
 
     for (index_alg,algorithm) in enumerate(simple_algorithms):
         lines.append([])
@@ -54,6 +64,16 @@ def simple_algs(total_runs,output_path,avg_output_path):
 def complex_algs(total_runs,output_path,avg_output_path):
     complex_header="Selection,Param_Name,Param_Value,Variability,Step,Min,Max\n"
     lines = []
+
+    with open("config.json", "r") as file:
+        json_values = json.load(file)
+        json_values.update({"crossbreeding" : {"method": "simple"}})
+        json_values.pop("error_threshold",-1)
+        json_values["generations"] = 1000
+        json_values["limit_first_generation"] = 10
+        json_values["population_size"] = 50
+    with open("config.json", "w") as file:
+        json.dump(json_values,file,indent=4)
 
     for (index_alg,algorithm) in enumerate(complex_algorithm_names):
         lines.append([])
@@ -97,6 +117,16 @@ def complex_algs(total_runs,output_path,avg_output_path):
 def boltzmann_alg(total_runs,output_path,avg_output_path):
     boltzmann_header="Selection,Tc,T0,k,Variability,Step,Min,Max\n"
     lines = []
+
+    with open("config.json", "r") as file:
+        json_values = json.load(file)
+        json_values.update({"crossbreeding" : {"method": "simple"}})
+        json_values.pop("error_threshold",-1)
+        json_values["generations"] = 1000
+        json_values["limit_first_generation"] = 10
+        json_values["population_size"] = 50
+    with open("config.json", "w") as file:
+        json.dump(json_values,file,indent=4)
 
     for (index_param_comb, params) in enumerate(boltzmann_param_values):
         lines.append([])

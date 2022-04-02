@@ -26,7 +26,7 @@ def generate_output(metrics:Metrics,properties:Properties):
     else:
         print("Mutation: {0}, p: {1}, a: {2}".format(properties.mutation.method, properties.mutation.probability, properties.mutation.a))
     
-    if (properties.selection.method == "tournament"):
+    if (properties.selection.method == "tournament_wr" or properties.selection.method == "tournament_nr" ):
         print("Selection: {0}, threshold: {1}".format(properties.selection.method, properties.selection.tournament_threshold))
     else:
         if (properties.selection.method == "truncation"):
