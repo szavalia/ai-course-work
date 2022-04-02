@@ -84,7 +84,6 @@ def complex_algs(total_runs,output_path,avg_output_path):
                 for i in range(1, total_runs+1):
                     with open("config.json", "r") as file:
                         json_values = json.load(file)
-                    json_values.get("selection").update({"method":selection_method})
                     json_values.update({"output_path":(output_path + str(i))})
                     json_values.update({"mutation": {"method": "uniform","probability": args[0],"a": args[1]}})
                     json_values.get("crossbreeding").update({"method" : algorithm, complex_algorithm_param_names[index_alg] : algorithm_param})
