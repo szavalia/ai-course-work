@@ -2,15 +2,22 @@ from main import __main__ as genetic_algorithm
 import sys
 import json
 
+mutation = [[0.05,0.1], [0.1,1], [0.2,2]]
+simple_algorithms = ["elite", "roulette", "rank"]
+complex_algorithm_names=["tournament_wr", "tournament_nr","truncation"]
+complex_algorithm_param_names=["tournament_threshold","tournament_threshold","truncation_k"]
+complex_algorithm_params_values = [[0.25,0.5,0.75],[0.25,0.5,0.75],[10,25,50]]
+boltzmann_param_names=["boltzmann_tc","boltzmann_t0","boltzmann_k"]
+boltzmann_param_values = [[20,10,0.1],[30,10,0.1]]
+variability = ["Low", "Medium", "High"]
+
 def simple_algs(total_runs,output_path,avg_output_path):
-    simple_algorithms = ["elite", "roulette", "rank"]
-    variability = ["Low", "Medium", "High"]
     simple_header="Selection,Variability,Step,Min,Max\n"
     lines = []
 
     for (index_alg,algorithm) in enumerate(simple_algorithms):
         lines.append([])
-        for (index_var,args) in enumerate([[0.05,0.1], [0.1,1], [0.2,2]]):
+        for (index_var,args) in enumerate(mutation):
             lines[index_alg].append([])
             for i in range(1, total_runs+1):
                 with open("config.json", "r") as file:
@@ -45,10 +52,6 @@ def simple_algs(total_runs,output_path,avg_output_path):
                     f.write("{0},{1},{2},{3},{4}\n".format(simple_algorithms[index_alg],variability[index_var],i+1,current_min_sum / total_runs, current_max_sum / total_runs))
 
 def complex_algs(total_runs,output_path,avg_output_path):
-    complex_algorithm_names=["tournament_wr", "tournament_nr","truncation"]
-    complex_algorithm_param_names=["tournament_threshold","tournament_threshold","truncation_k"]
-    complex_algorithm_params_values = [[0.25,0.5,0.75],[0.25,0.5,0.75],[10,25,50]]
-    variability = ["Low", "Medium", "High"]
     complex_header="Selection,Param_Name,Param_Value,Variability,Step,Min,Max\n"
     lines = []
 
@@ -56,7 +59,7 @@ def complex_algs(total_runs,output_path,avg_output_path):
         lines.append([])
         for (index_param,algorithm_param) in enumerate(complex_algorithm_params_values[index_alg]):
             lines[index_alg].append([])
-            for (index_var,args) in enumerate([[0.05,0.1], [0.1,1], [0.2,2]]):
+            for (index_var,args) in enumerate(mutation):
                 lines[index_alg][index_param].append([])
                 for i in range(1, total_runs+1):
                     with open("config.json", "r") as file:
@@ -91,16 +94,13 @@ def complex_algs(total_runs,output_path,avg_output_path):
                             current_max_sum += float(line_values[1])
                         f.write("{0},{1},{2},{3},{4},{5},{6}\n".format(complex_algorithm_names[index_alg], complex_algorithm_param_names[index_alg], complex_algorithm_params_values[index_alg][index_param],variability[index_var],i+1,current_min_sum / total_runs, current_max_sum / total_runs))
 
-def bolztmann_alg(total_runs,output_path,avg_output_path):
-    boltzmann_param_names=["boltzmann_tc","boltzmann_t0","boltzmann_k"]
-    boltzmann_param_values = [[20,10,0.1],[30,10,0.1]]
-    variability = ["Low", "Medium", "High"]
+def boltzmann_alg(total_runs,output_path,avg_output_path):
     boltzmann_header="Selection,Tc,T0,k,Variability,Step,Min,Max\n"
     lines = []
 
     for (index_param_comb, params) in enumerate(boltzmann_param_values):
         lines.append([])
-        for (index_var,args) in enumerate([[0.05,0.1], [0.1,1], [0.2,2]]):
+        for (index_var,args) in enumerate(mutation):
             lines[index_param_comb].append([])
             for i in range(1, total_runs+1):
                 with open("config.json", "r") as file:
@@ -140,8 +140,8 @@ def __main__(total_runs,type,output_path,avg_output_path):
         simple_algs(int(total_runs),output_path,avg_output_path)
     elif(type=="complex"):
         complex_algs(int(total_runs),output_path,avg_output_path)
-    elif(type=="bolztmann"):
-        bolztmann_alg(int(total_runs),output_path,avg_output_path)
+    elif(type=="boltzmann"):
+        boltzmann_alg(int(total_runs),output_path,avg_output_path)
     else:
         print("Wrong type")
         exit(-1)
