@@ -6,16 +6,16 @@ import json
 errors = [1e-1,1e-10,1e-50]
 algorithms = ["uniform","normal"]
 algorithms_param_names = ["a","sigma"]
-algorithms_param_values = [[0.1,0.05],[1,0.5],[2,1],[4,2]]
-probability = 0.1
+algorithms_param_values = [4,2]
 selection_method = "tournament_wr"
 selection_param_names = ["tournament_threshold"]
 selection_param_values = [0.8]
 crossbreeding_method = "multiple"
 crossbreeding_param_names = ["multiple_point_n"]
 crossbreeding_param_values = [2]
+probabilities = [0.05,0.1,0.2,0.5,0.8]
 
-header="Mutation,Param_Name,Param_Value,Error,Generations\n"
+header="Mutation,Param_Name,Param_Value,Probability,Error,Generations\n"
 
 def run_experiment(total_runs,output_path,gen_output_path):
     lines = []
@@ -33,15 +33,15 @@ def run_experiment(total_runs,output_path,gen_output_path):
 
     for (index_alg,algorithm) in enumerate(algorithms):
         lines.append([])
-        for (index_param,params) in enumerate(algorithms_param_values):
+        for (index_prob,prob) in enumerate(probabilities):
             lines[index_alg].append([])
             for(index_err, err_value) in enumerate(errors):
-                lines[index_alg][index_param].append([])
+                lines[index_alg][index_prob].append([])
                 for i in range(1, total_runs+1):
                     with open("config.json", "r") as file:
                         json_values = json.load(file)
                         json_values.update({"output_path":(output_path + str(i))})
-                        json_values.update({"mutation": {"method":algorithm,"probability": probability,algorithms_param_names[index_alg]:params[index_alg]}})
+                        json_values.update({"mutation": {"method":algorithm,"probability": prob,algorithms_param_names[index_alg]:algorithms_param_values[index_alg]}})
                         json_values.update({"error_threshold" : err_value})
                     with open("config.json", "w") as file:
                         json.dump(json_values,file,indent=4)
@@ -50,19 +50,19 @@ def run_experiment(total_runs,output_path,gen_output_path):
                     genetic_algorithm()
                 for i in range(1,total_runs+1):
                     file = open("{0}{1}.csv".format(output_path,i))
-                    lines[index_alg][index_param][index_err].append(len(file.readlines()))
+                    lines[index_alg][index_prob][index_err].append(len(file.readlines()))
                     file.close()
 
     with open(gen_output_path, 'w') as f:
         f.write(header)
 
         for (index_alg, line_alg) in enumerate(lines):
-            for(index_param,line_param) in enumerate(line_alg):
-                for(index_err,gen_values) in enumerate(line_param):
+            for(index_prob,line_prob) in enumerate(line_alg):
+                for(index_err,gen_values) in enumerate(line_prob):
                     current_gen_sum = 0
                     for gens in gen_values:
                         current_gen_sum+=gens
-                    f.write("{0},{1},{2},{3},{4}\n".format(algorithms[index_alg], algorithms_param_names[index_alg], algorithms_param_values[index_param][index_alg],errors[index_err], current_gen_sum // total_runs))
+                    f.write("{0},{1},{2},{3},{4},{5}\n".format(algorithms[index_alg], algorithms_param_names[index_alg], algorithms_param_values[index_alg],probabilities[index_prob],errors[index_err], current_gen_sum // total_runs))
 
 def __main__(total_runs,output_path,avg_output_path):
     run_experiment((int)(total_runs),output_path,avg_output_path)
