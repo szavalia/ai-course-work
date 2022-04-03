@@ -7,8 +7,10 @@ mutation = [[0.05,0.1], [0.1,1], [0.2,2]]
 simple_algorithms = ["simple","uniform"]
 complex_algorithms = ["multiple"]
 complex_algorithm_param_names = ["multiple_point_n"]
-complex_algorithm_param_values = [[1,2,3]]
-selection_method = "elite"
+complex_algorithm_param_values = [[2,4,6]]
+selection_method = "tournament_wr"
+selection_param_names = ["tournament_threshold"]
+selection_param_values = [0.8]
 variability = ["Low", "Medium", "High"]
 
 def simple_algs(total_runs,output_path,avg_output_path):
@@ -17,7 +19,7 @@ def simple_algs(total_runs,output_path,avg_output_path):
 
     with open("config.json", "r") as file:
         json_values = json.load(file)
-        json_values.update({"selection" : {"method": selection_method}})
+        json_values.update({"selection" : {"method": selection_method, selection_param_names[0]:selection_param_values[0]}})
         json_values.pop("error_threshold",-1)
         json_values["generations"] = 1000
         json_values["limit_first_generation"] = 10
@@ -67,7 +69,7 @@ def complex_algs(total_runs,output_path,avg_output_path):
 
     with open("config.json", "r") as file:
         json_values = json.load(file)
-        json_values.update({"selection" : {"method": selection_method}})
+        json_values.update({"selection" : {"method": selection_method, selection_param_names[0]:selection_param_values[0]}})
         json_values.pop("error_threshold",-1)
         json_values["generations"] = 1000
         json_values["limit_first_generation"] = 10
