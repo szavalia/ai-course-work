@@ -24,9 +24,9 @@ def logistic_fun(val):
 def F(W,w,w0,epsilon):
 
     external_sum = 0
-    for i in range(0,1):
+    for i in range(0,2):
         internal_sum = 0
-        for j in range(0,2):
+        for j in range(0,3):
             internal_sum += w[i][j] * epsilon[j]
         internal_sum -= w0[i]
         external_sum+= W[i+1] * logistic_fun(internal_sum)
@@ -40,7 +40,7 @@ def calculate_aptitude(individual:Individual,initial_values,initial_results):
 
     sum = 0
 
-    for i in range(0,len(initial_results) - 1):
+    for i in range(0,len(initial_results)):
         sum += math.pow(initial_results[i] - F(W,w,w0,initial_values[i]),2)
     
     individual.fitness = -sum
