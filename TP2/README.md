@@ -199,8 +199,8 @@ El experimento 1 consiste en un analisis de los metodos de seleccion para intent
 A continuacion se detallan algunos valores utilizados en este experimento:
 - mutacion: se toman como probabilidad y a respectivamente los valores (0.05, 0.1), (0.1, 1), (0.2, 2)
 - umbral de torneos con y sin reemplazo: se utilizan los valores 0.5, 0.65, 0.80
-- k de truncacion: se utilizan los valores 10,25,50(
-- parametros de boltzmann: se utilizan como Tc, T0 y k respectivamente los valores (10,70,0.1),(10,140,0.1),(10,70,0.5),(10,140,0.5)
+- k de truncacion: se utilizan los valores 10,25,50
+- parametros de boltzmann: se utilizan como Tc, T0 y k respectivamente los valores (10,70,0.01),(10,140,0.01),(10,70,0.05),(10,140,0.05)
 - errores: en experiment1_gens.py se utilizan los errores 1e-1,1e-10,1e-50 como criterio de corte
 
 Para obtener los csv resultantes del experimento, se debe utilizar el siguiente comando:
@@ -271,7 +271,7 @@ El experimento 4 consiste en un analisis de los metodos de mutacion para intenta
 A continuacion se detallan algunos valores utilizados en este experimento:
 - seleccion: torneo sin reemplazo con umbral 0.8
 - cruza: cruza uniforme
-- valores de probabilidad: se tomaron como valores de probabilidad de mutacion (para ambos metodos) los valores 0.05,0.1,0.2,0.5,0.8
+- valores de probabilidad: se tomaron como valores de probabilidad de mutacion (para ambos metodos) los valores 0.05,0.1,0.2,0.5
 - valores de difusion: se tomaron como valores de a y sigma los valores 4 y 2 respectivamente.Estos valores fueron definidos como optimos en el experimento anterior
 - errores: mismos valores utilizados para el experimento 1
 
