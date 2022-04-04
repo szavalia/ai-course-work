@@ -78,14 +78,23 @@ def uniform_crossbreeding(population):
     return population
 
 def crossbreeding_chooser(crossbreeding_param):
+    if crossbreeding_param == None or crossbreeding_param.get("method") == None:
+        print("Crossbreeding method required")
+        exit(-1)
+
     method = crossbreeding_param.get("method")
+
     if(method == "simple"):
         return Crossbreeding(method, simple_crossbreeding)
     if(method == "multiple"):
+        points = crossbreeding_param.get("multiple_point_n")
+        if points == None or points <=0:
+            print("Specify a positive quantity of points for mutiple crossbreeding")
+            exit(-1)
         Crossbreeding.points_number = crossbreeding_param.get("multiple_point_n")
         return Crossbreeding(method, multiple_crossbreeding)
     if(method == "uniform"):
         return Crossbreeding(method, uniform_crossbreeding)
     else:
         print("Incorrect crossbreeding algorithm")
-        return None
+        exit(-1)

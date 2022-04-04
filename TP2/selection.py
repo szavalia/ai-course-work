@@ -162,7 +162,12 @@ def boltzmann_selection(population):
     return new_pop
 
 
-def selection_chooser(selection):
+def selection_chooser(selection, population):
+
+    if selection == None or selection.get("method") == None:
+        print("Selection method required")
+        exit(-1)
+    
     method = selection.get("method")
     if(method == "elite"):
         return Selection(method, elite_selection)
@@ -171,19 +176,39 @@ def selection_chooser(selection):
     if(method == "rank"):
         return Selection(method, rank_selection)
     if(method == "tournament_nr" or method == "tournament_wr"):
+        threshold = selection.get("tournament_threshold")
+        if threshold == None or threshold <= 0:
+            print("Specify a positive threshold for tournament method")
+            exit(-1)
         Selection.tournament_threshold = selection.get("tournament_threshold")
         if(method == "tournament_nr"):
             return Selection(method, tournament_selection_nr)
         else:
             return Selection(method, tournament_selection_wr)
     if(method == "truncation"):
+        truncation_k = selection.get("truncation_k")
+        if truncation_k == None or truncation_k <= 0 or truncation_k > population//2:
+            print("Specify a valid k for truncation method")
+            exit(-1)
         Selection.truncation_k = selection.get("truncation_k")
         return Selection(method, truncation_selection)
     if(method == "boltzmann"):
+        boltzmann_k = selection.get("boltzmann_k")
+        boltzmann_tc = selection.get("boltzmann_tc")
+        boltzmann_t0 = selection.get("boltzmann_t0")
+        if boltzmann_k == None or boltzmann_k <= 0:
+            print("Specify a valid k for bolztmann method")
+            exit(-1)
+        if boltzmann_tc == None or boltzmann_tc <= 0:
+            print("Specify a valid tc for bolztmann method")
+            exit(-1)
+        if boltzmann_t0 == None or boltzmann_t0 <= 0:
+            print("Specify a valid t0 for bolztmann method")
+            exit(-1)
         Selection.boltzmann_k = selection.get("boltzmann_k")
         Selection.boltzmann_tc = selection.get("boltzmann_tc")
         Selection.boltzmann_t0 = selection.get("boltzmann_t0")
         return Selection(method,boltzmann_selection)
     else:
-        print("Incorrect algorithm")
-        return None
+        print("Incorrect selection algorithm")
+        exit(-1)

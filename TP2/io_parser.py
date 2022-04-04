@@ -15,14 +15,15 @@ def generate_output(metrics:Metrics,properties:Properties):
     print("First population's allele values: [-{0}, {0}]".format(properties.limit_first_generation))
     print("Population's size: {0}".format(properties.population_size))
     print("Generations limit: {0}".format(properties.generations))
-
+    if(properties.error_threshold != -1):
+        print("Error Threshold: {0}".format(properties.error_threshold))
     if (properties.crossbreeding.method == "multiple"):
         print("Crossbreeding: {0} with {1} points".format(properties.crossbreeding.method, properties.crossbreeding.points_number))
     else:
         print("Crossbreeding: {0}".format(properties.crossbreeding.method))
 
     if (properties.mutation.method == "normal"):
-        print("Mutation: {0}, p: {1}, sigma: {2}".format(properties.mutation.method, properties.mutation.probability, properties.mutation.sigma))
+        print("Mutation: {0}, probability: {1}, sigma: {2}".format(properties.mutation.method, properties.mutation.probability, properties.mutation.sigma))
     else:
         print("Mutation: {0}, p: {1}, a: {2}".format(properties.mutation.method, properties.mutation.probability, properties.mutation.a))
     
@@ -55,10 +56,33 @@ def parse_properties():
     file.close()    
     
     initial_values = json_values.get("initial_values")
+    
+    if initial_values == None:
+        print("Initial values required")
+        exit(-1)
     initial_results = json_values.get("initial_results")
+    
+    if initial_results == None:
+        print("Initial results required")
+        exit(-1)
+    for result in initial_results:
+        if(result !=0 and result != 1):
+            print("Invalid initial result. Only 1 or 0 is accepted")
+            exit(-1)
+
     limit_first_generation = json_values.get("limit_first_generation")
+    if limit_first_generation == None:
+        print("Limit for first generation required")
+        exit(-1)
+    elif limit_first_generation <= 0:
+        print("Specify a positive limit for first generation")
+        exit(-1)
+
     population_size = json_values.get("population_size")
-    if population_size == None or population_size <= 0:
+    if population_size == None:
+        print("Population size required")
+        exit(-1) 
+    elif population_size <= 0:
         print("Specify a positive population size")
         exit(-1)
 
@@ -71,12 +95,15 @@ def parse_properties():
         error_threshold = -1
 
     output_path = json_values.get("output_path")
-    selection = selection_chooser(json_values.get("selection"))
-    mutation = mutation_chooser(json_values.get("mutation"))
-    crossbreeding = crossbreeding_chooser(json_values.get("crossbreeding"))
+    if output_path == None:
+        print("Output path required")
+        exit(-1)
 
-    if(selection == None or mutation == None or crossbreeding == None):
-        return None
+    selection = selection_chooser(json_values.get("selection"),population_size)
+
+    mutation = mutation_chooser(json_values.get("mutation"))
+
+    crossbreeding = crossbreeding_chooser(json_values.get("crossbreeding"))
 
     return Properties(initial_values,initial_results,limit_first_generation,population_size, generations,error_threshold,output_path, crossbreeding, mutation, selection)
 
