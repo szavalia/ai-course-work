@@ -29,15 +29,15 @@
 
 El proyecto fue desarrollado con Python, y consiste en encontrar una implementacion de la resolucion de un problema mediante un algoritmo genetico. El problema consiste en simular la reaccion de un reactivo binario frente a distintos valores de entrada, buscando obtener una funcion que aproxime correctamente los valores de este reactivo. Los valores de entrada son vectores de 3 componentes reales.La funcion en cuestion es de la forma:
 
-![formula](https://render.githubusercontent.com/render/math?math=F%28W%2Cw%2Cw_%7B0%7D%2C%5Cvarepsilon_%7B%20k%7D%29%20%3D%20g%28%5Csum_%7Bj%3D1%7D%5E%7B2%7D%20W_%7Bj%7D%20g%28%5Csum_%7Bk%3D0%7D%5E%7B2%7D%20w_%7Bjk%7D%5Cvarepsilon_%7B%20k%7D%20-%20w_%7B0j%7D%29-W_%7B0%7D%29)
+![formula](https://render.githubusercontent.com/render/math?math=F%28W%2Cw%2Cw_%7B0%7D%2C%5Cvarepsilon_%7B%20k%7D%29%20%3D%20g%28%5Csum_%7Bj%3D1%7D%5E%7B2%7D%20W_%7Bj%7D%20g%28%5Csum_%7Bk%3D0%7D%5E%7B2%7D%20w_%7Bjk%7D%5Cvarepsilon_%7B%20k%7D%20-%20w_%7B0j%7D%29-W_%7B0%7D%29&bc=White&fc=Black)
 
 siendo g una funcion de la forma:
 
-![formula](https://render.githubusercontent.com/render/math?math=g%28x%29%20%3D%20%20%20%5Cfrac%7Be%5E%7Bx%7D%7D%7B1%20%2B%20e%5E%7Bx%7D%7D%20%20%20)
+![formula](https://render.githubusercontent.com/render/math?math=g%28x%29%20%3D%20%20%20%5Cfrac%7Be%5E%7Bx%7D%7D%7B1%20%2B%20e%5E%7Bx%7D%7D%20%20%20&bc=White&fc=Black)
 
 Se puede definir por lo tanto una funcion de error de la forma (tomando el caso de 3 valores de entrada):
 
-![formula](https://render.githubusercontent.com/render/math?math=E%28W%2Cw%2Cw_%7B0%7D%29%20%3D%20%20%5Csum_k%3D1%5E3%20%28%20%5Czeta%20%5E%7Bk%7D%20-%20F%28W%2Cw%2Cw_%7B0%7D%2C%20%5Cvarepsilon%20%5E%7Bk%7D%29%29%20)
+![formula](https://render.githubusercontent.com/render/math?math=E%28W%2Cw%2Cw_%7B0%7D%29%20%3D%20%20%5Csum_k%3D1%5E3%20%28%20%5Czeta%20%5E%7Bk%7D%20-%20F%28W%2Cw%2Cw_%7B0%7D%2C%20%5Cvarepsilon%20%5E%7Bk%7D%29%29%20&bc=White&fc=Black)
 
 El objetivo es obtener los valores de W w y w0 que minimizen el error para los datos de entrada, utilizando algoritmos geneticos con distintos metodos de mutacion,seleccion y cruza
 
