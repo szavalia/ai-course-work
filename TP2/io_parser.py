@@ -63,12 +63,9 @@ def parse_properties():
         exit(-1)
 
     generations = json_values.get("generations") 
-    if generations == None or generations <= 0:
-        print("Specify a positive generation cap")
-        exit(-1)
-    if(generations < MIN_GENERATIONS):
+    if generations == None or generations <= 0 or generations < MIN_GENERATIONS:
         generations = MIN_GENERATIONS
-
+        
     error_threshold = json_values.get("error_threshold")
     if(error_threshold == None):
         error_threshold = -1
