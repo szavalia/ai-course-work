@@ -9,11 +9,9 @@ algorithms_param_values = [4,2]
 selection_method = "tournament_wr"
 selection_param_names = ["tournament_threshold"]
 selection_param_values = [0.8]
-crossbreeding_method = "multiple"
-crossbreeding_param_names = ["multiple_point_n"]
-crossbreeding_param_values = [2]
+crossbreeding_method = "uniform"
 
-probabilities = [0.05,0.1,0.2,0.5,0.8]
+probabilities = [0.05,0.1,0.2,0.5]
 
 header="Mutation,Param_Name,Param_Value,Probability,Step,Min,Max\n"
 
@@ -23,7 +21,7 @@ def run_experiment(total_runs,output_path,avg_output_path):
     with open("config.json", "r") as file:
         json_values = json.load(file)
         json_values.update({"selection" : {"method": selection_method, selection_param_names[0]:selection_param_values[0]}})
-        json_values.update({"crossbreeding" : {"method": crossbreeding_method, crossbreeding_param_names[0]: crossbreeding_param_values[0]}})
+        json_values.update({"crossbreeding" : {"method": crossbreeding_method}})
         json_values.pop("error_threshold",-1)
         json_values["generations"] = 1000
         json_values["limit_first_generation"] = 10

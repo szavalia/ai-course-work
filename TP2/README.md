@@ -22,22 +22,25 @@
         - [Parametros de seleccion](#parametros-de-seleccion)
     - [Ejecucion del proyecto](#ejecucion-del-proyecto)
     - [Configuraciones ejemplo](#configuraciones-ejemplo)
-
-
+- [Experimentos](#experimentos)
+    - [Experimento 1](#experimento-1)
+    - [Experimento 2](#experimento-2)
+    - [Experimento 3](#experimento-3)
+    - [Experimento 4](#experimento-4)
 
 ## Descripcion
 
-El proyecto fue desarrollado con Python, y consiste en encontrar una implementacion de la resolucion de un problema mediante un algoritmo genetico. El problema consiste en simular la reaccion de un reactivo binario frente a distintos valores de entrada, buscando obtener una funcion que aproxime correctamente los valores de este reactivo. Los valores de entrada son vectores de 3 componentes reales.La funcion en cuestion es de la forma:
+El proyecto fue desarrollado con Python, y consiste en encontrar una implementacion de la resolucion de un problema mediante un algoritmo genetico. El problema consiste en simular la reaccion de un reactivo binario frente a distintos valores de entrada, buscando obtener una funcion que aproxime correctamente los valores de este reactivo. Los valores de entrada son vectores de 3 componentes reales.La funcion en cuestion es de la siguiente forma (donde W es un vector de 1x3, w es una matrix de 2x3, w0 es un vector de 1x2 y ξ es un valor inicial):
 
-![formula](https://render.githubusercontent.com/render/math?math={\color{gray}\F%28W%2Cw%2Cw_%7B0%7D%2C%5Cvarepsilon_%7B%20k%7D%29%20%3D%20g%28%5Csum_%7Bj%3D1%7D%5E%7B2%7D%20W_%7Bj%7D%20g%28%5Csum_%7Bk%3D0%7D%5E%7B2%7D%20w_%7Bjk%7D%5Cvarepsilon_%7B%20k%7D%20-%20w_%7B0j%7D%29-W_%7B0%7D%29})
+![formula](https://render.githubusercontent.com/render/math?math={\color{gray}\%20F%28W%2Cw%2Cw_%7B0%7D%2C%20%5Cxi%20%29%20%3D%20g%28%20%5Csum_%7Bj%3D1%7D%5E2%20W_%7Bj%7Dg%28%20%5Csum_%7Bk%3D0%7D%5E2%20w_%7Bjk%7D%20%5Cxi%20_%7Bk%7D%20-w_%7B0j%7D%20%29-W_%7B0%7D%29})
 
 siendo g una funcion de la forma:
 
-![formula](https://render.githubusercontent.com/render/math?math={\color{gray}\g%28x%29%20%3D%20%20%20%5Cfrac%7Be%5E%7Bx%7D%7D%7B1%20%2B%20e%5E%7Bx%7D%7D%20%20%20})
+![formula](https://render.githubusercontent.com/render/math?math={\color{gray}\g%28x%29%20%3D%20%5Cfrac%7Be%5E%7Bx%7D%7D%7B1%2Be%5E%7Bx%7D%7D})
 
-Se puede definir por lo tanto una funcion de error de la forma (tomando el caso de 3 valores de entrada):
+Se puede definir por lo tanto una funcion de error de la forma (tomando el caso de 3 valores de entrada, donde ζ es un resultado asociado a un valor inicial ξ):
 
-![formula](https://render.githubusercontent.com/render/math?math={\color{gray}\E%28W%2Cw%2Cw_%7B0%7D%29%20%3D%20%20%5Csum_k%3D1%5E3%20%28%20%5Czeta%20%5E%7Bk%7D%20-%20F%28W%2Cw%2Cw_%7B0%7D%2C%20%5Cvarepsilon%20%5E%7Bk%7D%29%29%20})
+![formula](https://render.githubusercontent.com/render/math?math={\color{gray}\E%28W%2Cw%2Cw_%7B0%7D%29%20%3D%20%20%5Csum_%7Bk%3D1%7D%5E3%20%28%20%5Czeta%5E%7Bk%7D%20-%20F%28W%2Cw%2Cw_%7B0%7D%2C%20%5Cxi%20%5E%7Bk%7D%29%29%5E2%20})
 
 El objetivo es obtener los valores de W w y w0 que minimizen el error para los datos de entrada, utilizando algoritmos geneticos con distintos metodos de mutacion,seleccion y cruza
 
@@ -184,4 +187,104 @@ Por ultimo se puede querer utilizar el metodo de cruza multiple con 2 puntos en 
 }
 ```
 
+## Experimentos
 
+Como adicional, para analizar diferentes configuraciones decidimos realizar una serie de experimentos que nos permitiesen obtener los datos necesarios. Todos estos experimentos utilizan nuestro algoritmo con parametros distintos para generar diferentes corridas. Los experimentos siempre se dividen en dos partes: recopilar maximo y minimo fitness en cada generacion y recopilar cantidad de generaciones hasta llegar a cierto error. Los ejecutables de tipo experimentn_fitness.py permiten recopilar lo primero, mientras que los ejecutables de tipo experimentn_gens.py lo segundo. En ambos casos se devuelve un archivo csv con la informacion requerida pero con formato variable de acuerdo al experimento. En ambos casos los valores retornados se obtienen mediante promediar varias corridas del algoritmo, cantidad indicada por el usuario. Para el caso de los fitness, se promedia el fitness por paso entre las corridas realizadas y para el caso de las generaciones, se promedian las generaciones resultantes.
+En todos los experimentos se toma como criterio de corte 1000 generaciones y 50 individuos por generacion, con individuos iniciales de la poblacion cuyos cromosomas son generados con distribucion uniforme entre [-10,10].
+A continuacion se detalla como usar cada uno de estos para generar el dataset que utilizamos para analisis. 
+
+### Experimento 1
+
+El experimento 1 consiste en un analisis de los metodos de seleccion para intentar encontrar las variantes optimas de estos y luego compararlos entre si para definir cual es el mas apto. Para esto se evalua a todos los metodos de seleccion utilizando cruza simple y mutacion uniforme pero con distintos valores de probabilidad y a, para evaluar casos de variabilidad baja media y alta.
+A continuacion se detallan algunos valores utilizados en este experimento:
+- mutacion: se toman como probabilidad y a respectivamente los valores (0.05, 0.1), (0.1, 1), (0.2, 2)
+- umbral de torneos con y sin reemplazo: se utilizan los valores 0.5, 0.65, 0.80
+- k de truncacion: se utilizan los valores 10,25,50(
+- parametros de boltzmann: se utilizan como Tc, T0 y k respectivamente los valores (10,70,0.1),(10,140,0.1),(10,70,0.5),(10,140,0.5)
+- errores: en experiment1_gens.py se utilizan los errores 1e-1,1e-10,1e-50 como criterio de corte
+
+Para obtener los csv resultantes del experimento, se debe utilizar el siguiente comando:
+
+```bash
+$ python3 experiment1_fitness.py [total_runs] [dataset_type] [output_path] [csv_path]
+```
+```bash
+$ python3 experiment1_gens.py [total_runs] [dataset_type] [output_path] [csv_path]
+```
+
+donde: 
+- total_runs es la cantidad de ejecuciones a realizar del algoritmo por cada combinacion de parametros
+- dataset_type puede tomar los valores "simple" (datos de los metodos elite, ruleta y ranking), "complex" (datos de los metodos torneo y truncamiento) y "boltzmann" (datos del metodo de boltzmann). Esto varia el formato del csv resultante
+- output_path es el path utilizado para la generacion de archivos del programa (mencionado previamente en el `config.json`)
+- csv_path es nombre del archivo para recoleccion de datos final
+
+### Experimento 2
+
+El experimento 2 consiste en un analisis de los metodos de cruza para intentar encontrar las variantes optimas de estos y luego compararlos entre si para definir cual es el mas apto. Para esto se evalua a todos los metodos utilizando los mismos criterios de mutacion del experimento anterior, y como metodo de seleccion el optimo elegido en base al experimento anterior.
+A continuacion se detallan algunos valores utilizados en este experimento:
+- mutacion: mismos valores que experimento 1
+- seleccion: torneo sin reemplazo con umbral 0.8
+- cruza multiple: se utiliza como puntos para la cruza multiple los valores 2 4 y 6
+- errores: mismos valores utilizados para el experimento 1
+
+Para obtener los csv resultantes del experimento, se debe utilizar el siguiente comando:
+
+```bash
+$ python3 experiment2_fitness.py [total_runs] [dataset_type] [output_path] [csv_path]
+```
+```bash
+$ python3 experiment2_gens.py [total_runs] [dataset_type] [output_path] [csv_path]
+```
+
+donde: 
+- total_runs es la cantidad de ejecuciones a realizar del algoritmo por cada combinacion de parametros
+- dataset_type puede tomar los valores "simple" (datos de los metodos de cruza simple y uniforme), "complex" (datos del metodo de cruza multiple).  Esto varia el formato del csv resultante
+- output_path es el path utilizado para la generacion de archivos del programa (mencionado previamente en el `config.json`)
+- csv_path es nombre del archivo para recoleccion de datos final
+### Experimento 3
+
+El experimento 3 consiste en un analisis de los metodos de mutacion para intentar encontrar las variantes optimas de estos y luego compararlos entre si para definir cual es el mas apto. En este experimento se varian los valores de a y sigma. Para esto se evalua a todos los metodos utilizando como metodo de seleccion el optimo elegido en base al experimento 1 y como metodo de cruza, aquel optimo elegido en base al experimento 2.
+A continuacion se detallan algunos valores utilizados en este experimento:
+- seleccion: torneo sin reemplazo con umbral 0.8
+- cruza: cruza uniforme
+- probabilidad: el valor utilizado es 0.1
+- valores de difusion: se tomaron como valores de a y sigma los valores (0.1, 0.05), (1,0.5) ,(2,1), (4,2). Se mantiene la relacion sigma = a/2 para mantener la misma amplitud entre metodos
+- errores: mismos valores utilizados para el experimento 1
+
+Para obtener los csv resultantes del experimento, se debe utilizar el siguiente comando:
+
+```bash
+$ python3 experiment3_fitness.py [total_runs] [output_path] [csv_path]
+```
+```bash
+$ python3 experiment3_gens.py [total_runs] [output_path] [csv_path]
+```
+
+donde: 
+- total_runs es la cantidad de ejecuciones a realizar del algoritmo por cada combinacion de parametros
+- output_path es el path utilizado para la generacion de archivos del programa (mencionado previamente en el `config.json`)
+- csv_path es nombre del archivo para recoleccion de datos final
+
+### Experimento 4
+
+El experimento 4 consiste en un analisis de los metodos de mutacion para intentar encontrar las variantes optimas de estos y luego compararlos entre si para definir cual es el mas apto. En este experimento se varia la probabilidad de mutacion. Para esto se evalua a todos los metodos utilizando como metodo de seleccion el optimo elegido en base al experimento 1 y como metodo de cruza, aquel optimo elegido en base al experimento 2.
+A continuacion se detallan algunos valores utilizados en este experimento:
+- seleccion: torneo sin reemplazo con umbral 0.8
+- cruza: cruza uniforme
+- valores de probabilidad: se tomaron como valores de probabilidad de mutacion (para ambos metodos) los valores 0.05,0.1,0.2,0.5,0.8
+- valores de difusion: se tomaron como valores de a y sigma los valores 4 y 2 respectivamente.Estos valores fueron definidos como optimos en el experimento anterior
+- errores: mismos valores utilizados para el experimento 1
+
+Para obtener los csv resultantes del experimento, se debe utilizar el siguiente comando:
+
+```bash
+$ python3 experiment4_fitness.py [total_runs] [output_path] [csv_path]
+```
+```bash
+$ python3 experiment4_gens.py [total_runs] [output_path] [csv_path]
+```
+
+donde: 
+- total_runs es la cantidad de ejecuciones a realizar del algoritmo por cada combinacion de parametros
+- output_path es el path utilizado para la generacion de archivos del programa (mencionado previamente en el `config.json`)
+- csv_path es nombre del archivo para recoleccion de datos final
