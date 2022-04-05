@@ -71,11 +71,14 @@ def solve(properties:Properties):
     generations = 1
 
     while (generations < properties.generations and abs(max_fitnesses[generations-1]) > properties.error_threshold):
+        
         #Crossbreeding
-        population = properties.crossbreeding.func(population)
+        children = properties.crossbreeding.func(population)
 
         #Mutation
-        population = properties.mutation.func(population, properties.mutation)
+        children = properties.mutation.func(children, properties.mutation)     
+
+        population = population + children
 
         #Calculate fitness
         for individual in population:

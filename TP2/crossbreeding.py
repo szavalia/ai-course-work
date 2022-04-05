@@ -19,8 +19,7 @@ def simple_crossbreeding(population):
             chromosome2.append(parent1.chromosome[j])
         children.append(Individual(chromosome1))
         children.append(Individual(chromosome2))
-    population = population + children
-    return population
+    return children
 
 
 def multiple_crossbreeding(population):
@@ -52,8 +51,7 @@ def multiple_crossbreeding(population):
                 chromosome2.append(parent1.chromosome[j])
         children.append(Individual(chromosome1))
         children.append(Individual(chromosome2))
-    population = population + children
-    return population
+    return children
     
 
 def uniform_crossbreeding(population):
@@ -74,8 +72,7 @@ def uniform_crossbreeding(population):
                 chromosome2.append(parent1.chromosome[j])
         children.append(Individual(chromosome1))
         children.append(Individual(chromosome2))
-    population = population + children
-    return population
+    return children
 
 def crossbreeding_chooser(crossbreeding_param):
     if crossbreeding_param == None or crossbreeding_param.get("method") == None:

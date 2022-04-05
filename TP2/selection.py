@@ -187,7 +187,7 @@ def selection_chooser(selection, population):
             return Selection(method, tournament_selection_wr)
     if(method == "truncation"):
         truncation_k = selection.get("truncation_k")
-        if truncation_k == None or truncation_k <= 0 or truncation_k > population//2:
+        if truncation_k == None or truncation_k <= 0 or truncation_k > population:
             print("Specify a valid k for truncation method")
             exit(-1)
         Selection.truncation_k = selection.get("truncation_k")
