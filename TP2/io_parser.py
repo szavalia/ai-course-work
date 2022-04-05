@@ -45,7 +45,7 @@ def generate_output(metrics:Metrics,properties:Properties):
     print("]")
     print("Error val: {0}".format(abs(metrics.individual.fitness)))
     print("Generations: {0}".format(metrics.generations))
-    print("Time: {0} s".format(metrics.time,".4f"))
+    print("Time: {0} s".format(str(format(metrics.time,".4f"))))
     write_maxs_mins(properties.output_path,metrics)
     
 # Receive parameters from config.json and encapsulate them into properties object
@@ -65,7 +65,7 @@ def parse_properties():
         if len(initial_value) != 3:
             print("Initial value must be an array of 3 coordinates")
             exit(-1)
-            
+
     initial_results = json_values.get("initial_results")
     if initial_results == None:
         print("Initial results required")
