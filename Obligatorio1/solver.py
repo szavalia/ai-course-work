@@ -16,9 +16,12 @@ def solve(properties:Properties):
 
     start = time.perf_counter()
     # Gradiente descendiente
-    dg_x = sgd(nd.Gradient(function.error), x)
+    
+    dg_result = minimize(function.error, x,args=(0), method='BFGS')
+    #dg_x = sgd(nd.Gradient(function.error), x)
     end = time.perf_counter()
-    metrics.append(Metrics("DG", function.error(dg_x,0),dg_x,end-start))
+    #metrics.append(Metrics("DG", function.error(dg_x,0),dg_x,end-start))
+    metrics.append(Metrics("DG",dg_result.fun,dg_result.x,end-start))
     start = end
 
     # Gradiente conjugado
