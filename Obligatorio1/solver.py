@@ -1,8 +1,7 @@
 import time
 from scipy.optimize import minimize
-from autograd import grad
 import numdifftools as nd
-from autograd.misc.optimizers import adam,sgd
+from autograd.misc.optimizers import adam
 import numpy as np
 from models import Function, Properties, Metrics
 
@@ -11,21 +10,17 @@ def solve(properties:Properties):
 
     metrics = []
 
-    #Definir arreglo de pesos iniciales
     x = np.zeros(11) 
 
     start = time.perf_counter()
-    # Gradiente descendiente
     
+    #Descent gradient
     dg_result = minimize(function.error, x,args=(0), method='BFGS')
-    #dg_x = sgd(nd.Gradient(function.error), x)
     end = time.perf_counter()
-    #metrics.append(Metrics("DG", function.error(dg_x,0),dg_x,end-start))
     metrics.append(Metrics("DG",dg_result.fun,dg_result.x,end-start))
     start = end
 
-    # Gradiente conjugado
-
+    #Conjugate gradient 
     cg_result = minimize(function.error, x,args=(0), method='CG')
 
     end = time.perf_counter()

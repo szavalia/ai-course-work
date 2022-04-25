@@ -1,7 +1,4 @@
-#The parameters for output processing
-from mimetypes import init
 import math
-
 
 class Metrics:
     def __init__(self,method,error,x,time):

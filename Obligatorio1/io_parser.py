@@ -3,7 +3,7 @@ import json
 
 def generate_output(metrics,properties:Properties):
     for metric in metrics:
-        print("Method: {0}\n\tMin: {1}\n\tX: {2}\n\tTime: {3}".format(metric.method, metric.error, metric.x, metric.time))
+        print("Method: {0}\n\tMin error: {1}\n\tW: {2}\n\tw: {3}\n\tw0: {4}\n\tTime: {5}ms".format(metric.method, metric.error, metric.x[0:3],metric.x[3:6],metric.x[6:9], metric.time))
     
 # Receive parameters from config.json and encapsulate them into properties object
 def parse_properties():
