@@ -28,7 +28,6 @@ def execute(properties:Properties):
         if error < min_error:
             min_error = error
             min_w = w.copy()
-        print("Iteration: " + str(i) + " w: " + str(w) + " error: " + str(error))
 
     return Observables(min_w,min_error)
 

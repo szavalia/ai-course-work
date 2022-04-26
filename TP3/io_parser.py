@@ -4,6 +4,13 @@ from algorithms.problems import get_problem_sets
 from models import Perceptron,Properties,Observables
 
 def generate_output(properties:Properties, observables:Observables):
+    print("Perceptron type: {0}".format(properties.perceptron.type))
+    if(properties.perceptron.problem != None):
+        print("Problem: {0}".format(properties.perceptron.problem))
+    if(properties.perceptron.sigmoid_type != None):
+        print("Sigmoid type: {0} Beta:{1}".format(properties.perceptron.sigmoid_type, properties.beta))
+    print("Learning rate: {0}".format(properties.perceptron.learning_rate))
+    print("Max iterations: {0}".format(properties.perceptron.max_iterations))
     print("w: {0}".format(observables.w))
     print("Error: {0}".format(observables.error))
 
@@ -19,7 +26,19 @@ def parse_properties():
         print("Perceptron type required")
         exit(-1)
 
-    perceptron_function = function_chooser(perceptron_type)
+    sigmoid_type = json_values.get("sigmoid_type")
+    beta = json_values.get("beta")
+    if perceptron_type == "non_linear" and sigmoid_type == None:
+        print("Sigmoid type required")
+        exit(-1)
+    elif perceptron_type == "non_linear" and beta == None:
+        print("Beta required")
+        exit(-1)
+
+    if beta != None:
+        Properties.beta = beta
+
+    perceptron_function = function_chooser(perceptron_type,sigmoid_type)
 
     if perceptron_function == None:
         print("Invalid type {0}".format(perceptron_type))
@@ -36,17 +55,24 @@ def parse_properties():
         print("Max iterations required")
         exit(-1)
 
-    problem = json_values.get("problem")
+    if(perceptron_type == "step"):
+        problem = json_values.get("problem")
+    else:
+        problem = None
 
-    if(problem == None):
-        print("Problem required")
+    entry_path = json_values.get("entry_file")
+    output_path = json_values.get("output_file")
+
+    if((type == "linear" or type == "non_linear") and (entry_path == None or output_path == None)):
+        print("Entry/Output file required")
         exit(-1)
 
-    (training_set, output_set) = get_problem_sets(perceptron_type,problem)
+    (training_set, output_set) = get_problem_sets(perceptron_type,problem,entry_path,output_path)
 
     if(training_set == None or output_set == None):
         print("Invalid problem for perceptron {0}", perceptron_type)
+        exit(-1)
 
-    return Properties(Perceptron(perceptron_type,float(learning_rate),int(max_iterations),problem,perceptron_function),training_set,output_set)
+    return Properties(Perceptron(perceptron_type,learning_rate,max_iterations,problem,perceptron_function,sigmoid_type),training_set,output_set)
     
 
