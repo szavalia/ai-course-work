@@ -1,10 +1,13 @@
 import numpy as np
 import random
+from models import Metrics, Properties,Perceptron
 
-def execute(training_set, output_set, learning_rate, max_steps):
+def execute(properties:Properties):
+
+    perceptron:Perceptron = properties.perceptron
 
     # Add threshold to training set
-    training_set = np.insert(training_set, 0, 1, axis=1)
+    training_set = np.insert(properties.training_set, 0, 1, axis=1)
 
     w = np.zeros(len(training_set[0]))
     error = 1
@@ -12,29 +15,28 @@ def execute(training_set, output_set, learning_rate, max_steps):
     min_w = np.zeros(len(training_set[0]))
     i = 0
 
-    while error > 0 and i < max_steps:
+    while error > 0 and i < perceptron.max_iterations:
         # Always pick at random or random until covered whole training set and then random again?
         pos = random.randint(0, len(training_set) - 1)
         entry = training_set[pos]
         h = np.dot(entry, w)
-        O = np.sign(h)
-        delta_w = learning_rate * (output_set[pos] - O) * entry
+        O = perceptron.function(h)
+        delta_w = perceptron.learning_rate * (properties.output_set[pos] - O) * entry
         w += delta_w
-        error = calculate_error(training_set, output_set, w)
+        error = calculate_error(perceptron.function,training_set, properties.output_set, w)
         i += 1
         if error < min_error:
             min_error = error
             min_w = w.copy()
         print("Iteration: " + str(i) + " w: " + str(w) + " error: " + str(error))
 
-    return (min_w, min_error)
+    return Metrics(min_w,min_error)
 
-
-def calculate_error(training_set, output_set, w):
+def calculate_error(perceptron_function,training_set, output_set, w):
     error = 0
     for i in range(len(training_set)):
         entry = training_set[i]
         h = np.dot(entry, w)
-        O = np.sign(h)
+        O = perceptron_function(h)
         error += abs(output_set[i] - O)
     return error

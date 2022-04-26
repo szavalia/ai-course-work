@@ -1,22 +1,16 @@
-from algorithm_chooser import execute_algorithm
-
+from io_parser import parse_properties,generate_output
+from models import Properties,Metrics
+from algorithms.perceptron import execute
 def __main__():
-    """"
+
     #Parse parameters
     properties:Properties = parse_properties()
-    if properties == None:
-        return
 
     #Execute the algorithm based on the properties
-    metrics:Metrics = solve(properties)
+    metrics:Metrics = execute(properties)
 
     #Process metrics for data visualization
-    generate_output(metrics, properties)
-    """
-    (w, error) = execute_algorithm("ej1", "xor")
-    if (error != None):
-        print("w: " + str(w))
-        print("Error: " + str(error))
+    generate_output(properties,metrics)
 
 if __name__ == "__main__":
     __main__()
