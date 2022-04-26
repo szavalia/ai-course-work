@@ -1,11 +1,11 @@
 import json
 from algorithms.perceptron_functions import function_chooser 
 from algorithms.problems import get_problem_sets
-from models import Perceptron,Properties,Metrics
+from models import Perceptron,Properties,Observables
 
-def generate_output(properties:Properties, metrics:Metrics):
-    print("w: {0}".format(metrics.w))
-    print("Error: {0}".format(metrics.error))
+def generate_output(properties:Properties, observables:Observables):
+    print("w: {0}".format(observables.w))
+    print("Error: {0}".format(observables.error))
 
 
 def parse_properties():

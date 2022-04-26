@@ -13,7 +13,7 @@ class Properties:
         self.training_set = training_set
         self.output_set = output_set
 
-class Metrics:
+class Observables:
     def __init__(self,w,error):
         self.w = w
         self.error = error

@@ -1,6 +1,6 @@
 import numpy as np
 import random
-from models import Metrics, Properties,Perceptron
+from models import Observables, Properties,Perceptron
 
 def execute(properties:Properties):
 
@@ -30,7 +30,7 @@ def execute(properties:Properties):
             min_w = w.copy()
         print("Iteration: " + str(i) + " w: " + str(w) + " error: " + str(error))
 
-    return Metrics(min_w,min_error)
+    return Observables(min_w,min_error)
 
 def calculate_error(perceptron_function,training_set, output_set, w):
     error = 0
