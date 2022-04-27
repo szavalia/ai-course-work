@@ -1,7 +1,8 @@
 {
     "perceptron_type" : "non_linear",
-    "entry_file": "training_ej2.txt",
-    "output_file": "zeta_ej2.txt",
+    "hidden_layers": [2, 3],
+    "entry_file": "resources/training_ej2.txt",
+    "output_file": "resources/zeta_ej2.txt",
     "problem": "AND",
     "learning_rate" : 0.1,
     "max_iterations" : 5000, 

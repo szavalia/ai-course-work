@@ -73,6 +73,8 @@ def parse_properties():
         print("Invalid problem for perceptron {0}", perceptron_type)
         exit(-1)
 
-    return Properties(Perceptron(perceptron_type,learning_rate,max_iterations,problem,perceptron_function,sigmoid_type,perceptron_d_function),training_set,output_set)
+    hidden_layers = json_values.get("hidden_layers")
+
+    return Properties(Perceptron(perceptron_type,learning_rate,max_iterations,problem,perceptron_function,sigmoid_type,perceptron_d_function,hidden_layers),training_set,output_set)
     
 
