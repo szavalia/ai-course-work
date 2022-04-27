@@ -21,7 +21,7 @@ def execute(properties:Properties):
         entry = training_set[pos]
         h = np.dot(entry, w)
         O = perceptron.function(h)
-        delta_w = perceptron.learning_rate * (properties.output_set[pos] - O) * entry
+        delta_w = perceptron.learning_rate * (properties.output_set[pos] - O) * entry * perceptron.d_function(h)
         w += delta_w
         error = calculate_error(perceptron.function,training_set, properties.output_set, w)
         i += 1
@@ -37,5 +37,5 @@ def calculate_error(perceptron_function,training_set, output_set, w):
         entry = training_set[i]
         h = np.dot(entry, w)
         O = perceptron_function(h)
-        error += abs(output_set[i] - O)
-    return error
+        error += (output_set[i] - O)**2
+    return error*(1/2)

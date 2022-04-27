@@ -1,12 +1,13 @@
 #The parameters for the running of perceptron
 class Perceptron:
-    def __init__(self,type,learning_rate,max_iterations,problem,function,sigmoid_type=None):
+    def __init__(self,type,learning_rate,max_iterations,problem,function,sigmoid_type=None,dfunction=None):
         self.type = type
         self.max_iterations = max_iterations
         self.problem = problem
         self.function = function
         self.learning_rate = learning_rate
         self.sigmoid_type = sigmoid_type
+        self.d_function = dfunction
 
 class Properties:
     beta = 0

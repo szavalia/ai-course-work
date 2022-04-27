@@ -38,7 +38,7 @@ def parse_properties():
     if beta != None:
         Properties.beta = beta
 
-    perceptron_function = function_chooser(perceptron_type,sigmoid_type)
+    (perceptron_function,perceptron_d_function) = function_chooser(perceptron_type,sigmoid_type)
 
     if perceptron_function == None:
         print("Invalid type {0}".format(perceptron_type))
@@ -73,6 +73,6 @@ def parse_properties():
         print("Invalid problem for perceptron {0}", perceptron_type)
         exit(-1)
 
-    return Properties(Perceptron(perceptron_type,learning_rate,max_iterations,problem,perceptron_function,sigmoid_type),training_set,output_set)
+    return Properties(Perceptron(perceptron_type,learning_rate,max_iterations,problem,perceptron_function,sigmoid_type,perceptron_d_function),training_set,output_set)
     
 
