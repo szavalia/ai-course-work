@@ -4,7 +4,7 @@
     "output_file": "zeta_ej2.txt",
     "problem": "AND",
     "learning_rate" : 0.1,
-    "max_iterations" : 1000, 
-    "sigmoid_type" : "tanh",
+    "max_iterations" : 5000, 
+    "sigmoid_type" : "logistic",
     "beta": 0.8
 }

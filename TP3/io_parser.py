@@ -67,7 +67,7 @@ def parse_properties():
         print("Entry/Output file required")
         exit(-1)
 
-    (training_set, output_set) = get_problem_sets(perceptron_type,problem,entry_path,output_path)
+    (training_set, output_set) = get_problem_sets(perceptron_type,problem,sigmoid_type,entry_path,output_path)
 
     if(training_set == None or output_set == None):
         print("Invalid problem for perceptron {0}", perceptron_type)
