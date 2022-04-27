@@ -55,7 +55,7 @@ def parse_properties():
         print("Max iterations required")
         exit(-1)
 
-    if(perceptron_type == "step"):
+    if(perceptron_type == "step" or perceptron_type == "multilayer"):
         problem = json_values.get("problem")
     else:
         problem = None

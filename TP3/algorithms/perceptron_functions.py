@@ -41,7 +41,7 @@ def function_chooser(type:String,sigmoid_type:String=None):
         return (step_function,d_identity)
     elif(type=="linear"):
         return (linear_function,d_identity)
-    elif(type=="non_linear"):
+    elif(type=="non_linear" or type == "multilayer"):
         return non_linear_function_chooser(sigmoid_type)
     else:
         return None
