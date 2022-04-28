@@ -1,5 +1,4 @@
 import numpy as np
-import math
 #The parameters for the running of perceptron
 class Perceptron:
     def __init__(self,type,learning_rate,max_iterations,min_error,problem,function,sigmoid_type=None,dfunction=None,neurons_per_layer=None):
@@ -79,10 +78,12 @@ class Layer:
 
 class Properties:
     beta = 0
-    def __init__(self,perceptron:Perceptron,training_set,output_set):
+    def __init__(self,perceptron:Perceptron,training_set,output_set,normalized_output_set,denormalized_function ):
         self.perceptron = perceptron
         self.training_set = training_set
         self.output_set = output_set
+        self.normalized_output_set = normalized_output_set
+        self.denormalized_function = denormalized_function
 
 
 class Observables:

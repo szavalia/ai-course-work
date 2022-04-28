@@ -76,7 +76,7 @@ def parse_properties():
         print("Entry/Output file required")
         exit(-1)
 
-    (training_set, output_set) = get_problem_sets(perceptron_type,problem,sigmoid_type,entry_path,output_path)
+    (training_set, output_set,normalized_output_set, denormalize_function) = get_problem_sets(perceptron_type,problem,sigmoid_type,entry_path,output_path)
 
     if(training_set == None or output_set == None):
         print("Invalid problem for perceptron {0}", perceptron_type)
@@ -84,6 +84,6 @@ def parse_properties():
 
     hidden_layers = json_values.get("hidden_layers")
 
-    return Properties(Perceptron(perceptron_type,learning_rate,max_iterations,min_error,problem,perceptron_function,sigmoid_type,perceptron_d_function,hidden_layers),training_set,output_set)
+    return Properties(Perceptron(perceptron_type,learning_rate,max_iterations,min_error,problem,perceptron_function,sigmoid_type,perceptron_d_function,hidden_layers),training_set,output_set,normalized_output_set,denormalize_function)
     
 
