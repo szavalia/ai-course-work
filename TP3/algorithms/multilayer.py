@@ -1,6 +1,6 @@
 import numpy as np
 import random
-from models import Observables, Properties,Perceptron,Neuron,Layer
+from models import Observables, Properties,Perceptron,Neuron,Layer, ThresholdNeuron
 
 def execute(properties:Properties):
     
@@ -16,7 +16,7 @@ def execute(properties:Properties):
 
     # Add hidden layer layers
     for idx, neurons_count in enumerate(perceptron.neurons_per_layer):  
-        neurons = []
+        neurons = [ThresholdNeuron()]
         for index in range(0, neurons_count):
             if (idx == 0):
                 # First layer uses length of entry value
@@ -41,6 +41,7 @@ def execute(properties:Properties):
     i = 0
     
     while error > 0 and i < perceptron.max_iterations:
+        print("Iteration {0}".format(i))
         # Always pick at random or random until covered whole training set and then random again?
         pos = random.randint(0, len(training_set) - 1)
         entry = training_set[pos]
@@ -54,11 +55,11 @@ def execute(properties:Properties):
                 
         deltas = []
         # Calculate error in output
-        deltas.append(layer.get_deltas(properties.output_set[pos], activations[-1]))
+        deltas.append(layer.get_deltas(properties.output_set[pos],None, activations[-1]))
 
         # Calculate deltas (and save them)
         for (idx, layer) in reversed(list(enumerate(layers[:-1]))):
-            deltas.insert(0, layer.get_deltas(deltas[idx]))
+            deltas.insert(0, layer.get_deltas(deltas[idx],layers[idx+1]))
         
         # Update all ws (incremental)
         for(idx,layer) in enumerate(layers):
@@ -66,14 +67,19 @@ def execute(properties:Properties):
         
         # Calculate error
         error = calculate_error(training_set, properties.output_set, layers)
+        i+=1
 
         if error < min_error:
             min_error = error
             min_w = []
-            for layer in layers:
+            for (idx,layer) in enumerate(layers):
                 min_w.append([])
-                for neuron in layer.neurons:
-                    min_w[-1].append(neuron.w.copy())
+                if(idx == len(layers)-1):
+                    for neuron in layer.neurons:
+                        min_w[-1].append(neuron.w.copy())
+                else:
+                    for neuron in layer.neurons[1:]:
+                        min_w[-1].append(neuron.w.copy())
 
     return Observables(min_w, min_error)
 
@@ -85,6 +91,8 @@ def calculate_error(training_set, output_set, layers):
         activations.append(entry)
         for (j, layer) in enumerate(layers):
             activations.append(layer.get_activations(activations[j]))
-        error += (output_set[i] - activations[-1])**2
+        for (idx,output_value) in enumerate(output_set[i]):
+            print("Calculate error ouput: {0}, activations: {1}".format(output_value, activations[-1][idx]))
+            error += (output_value - activations[-1][idx])**2
     return error*(1/2)
         

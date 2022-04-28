@@ -21,22 +21,25 @@ class Neuron:
         self.learning_rate = learning_rate
         self.excitement = 0
         
-
     def get_activation(self, entry):
         self.excitement = np.dot(self.w, entry)
         return Neuron.function(self.excitement)
         
     # Calculates the error for a neuron in the output layer using the expected_output and the neuron's activation value
     def calculate_output_delta(self,expected_output,activation):
-        print(self.w) 
-        return Neuron.d_function(self.excitement)*(expected_output[0]-activation[0]) #FIX
+        return Neuron.d_function(self.excitement)*(expected_output-activation) #FIX
         
     # Calculates the error for a neuron in a hidden layer using the error of a superior layer
-    def calculate_delta(self, superior_error):
-        return Neuron.d_function(self.excitement) * np.dot(self.w, superior_error)
+    def calculate_delta(self, superior_delta,w_aux):
+        return (Neuron.d_function(self.excitement) * np.dot(w_aux,superior_delta))
     
     def update_w(self,delta,activation):
         self.w += self.learning_rate*delta*activation
+
+class ThresholdNeuron:
+
+    def get_activation(self,entry):
+        return 1
 
 
 class Layer:
@@ -50,18 +53,26 @@ class Layer:
         return activations
     
     # Returns the deltas for the neurons
-    def get_deltas(self, superior_error, activation=None):
+    def get_deltas(self, superior_error,superior_layer=None,activations=None):
         deltas = []
-        for neuron in self.neurons:
-            if(activation != None):
+        superior_weights = []
+        if(superior_layer != None):
+            for neuron in superior_layer.neurons:
+                superior_weights.append(neuron.w)
+        for (idx,neuron) in enumerate(self.neurons):
+            if(activations != None):
                 # If the activation value is set, it means that it's an output layer
-                deltas.append(neuron.calculate_output_delta(superior_error,activation))
+                deltas.append(neuron.calculate_output_delta(superior_error[idx],activations[idx]))
             else:
-                deltas.append(neuron.calculate_delta(superior_error))
+                if(idx != 0):
+                    w_aux = []
+                    for w in superior_weights:
+                        w_aux.append(w[idx])
+                    deltas.append(neuron.calculate_delta(superior_error,w_aux))
         return deltas
 
     def update_neurons(self,deltas,activations):
-        for (idx,neuron) in enumerate(self.neurons):
+        for (idx,neuron) in enumerate(self.neurons[1:]):
             neuron.update_w(deltas[idx],activations[idx])
 
 
