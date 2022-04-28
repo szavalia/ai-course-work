@@ -1,4 +1,5 @@
 import numpy as np
+import math
 #The parameters for the running of perceptron
 class Perceptron:
     def __init__(self,type,learning_rate,max_iterations,problem,function,sigmoid_type=None,dfunction=None,neurons_per_layer=None):
@@ -23,15 +24,16 @@ class Neuron:
 
     def get_activation(self, entry):
         self.excitement = np.dot(self.w, entry)
-        return self.function(self.excitement)
+        return Neuron.function(self.excitement)
         
     # Calculates the error for a neuron in the output layer using the expected_output and the neuron's activation value
-    def calculate_output_delta(self,expected_output,activation): 
-        return self.d_function(self.excitement)*(expected_output-activation)
+    def calculate_output_delta(self,expected_output,activation):
+        print(self.w) 
+        return Neuron.d_function(self.excitement)*(expected_output[0]-activation[0]) #FIX
         
     # Calculates the error for a neuron in a hidden layer using the error of a superior layer
-    def calculate_delta(self, superior_error): 
-        return self.d_function(self.excitement) * np.dot(self.w, superior_error)
+    def calculate_delta(self, superior_error):
+        return Neuron.d_function(self.excitement) * np.dot(self.w, superior_error)
     
     def update_w(self,delta,activation):
         self.w += self.learning_rate*delta*activation

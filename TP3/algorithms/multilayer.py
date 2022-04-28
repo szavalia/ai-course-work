@@ -7,7 +7,7 @@ def execute(properties:Properties):
     perceptron:Perceptron = properties.perceptron
     BIAS = 1
     Neuron.function = perceptron.function
-    Neuron.dd_function = perceptron.d_function
+    Neuron.d_function = perceptron.d_function
 
     # Add threshold to training set
     training_set = np.insert(properties.training_set, 0, 1, axis=1)
@@ -33,7 +33,7 @@ def execute(properties:Properties):
     for i in range(len(properties.output_set[0])):
         w = np.random.rand(len(layers[-1].neurons))
         neurons.append(Neuron(w, perceptron.learning_rate))
-    layers.append(neurons)
+    layers.append(Layer(neurons))
 
     error = 1
     min_error = 2 * len(training_set)
@@ -58,8 +58,8 @@ def execute(properties:Properties):
 
         # Calculate deltas (and save them)
         for (idx, layer) in reversed(list(enumerate(layers[:-1]))):
-            deltas.insert(0, layer.get_deltas(deltas[idx + 1]))
-
+            deltas.insert(0, layer.get_deltas(deltas[idx]))
+        
         # Update all ws (incremental)
         for(idx,layer) in enumerate(layers):
             layer.update_neurons(deltas[idx],activations[idx])

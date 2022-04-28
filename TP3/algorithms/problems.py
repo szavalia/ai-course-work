@@ -47,7 +47,6 @@ def parse_output_file(output_file, type,sigmoid_type):
             new_output_set.append(norm_func(max,min,value))
         output_set = new_output_set
     
-    print(output_set)
     return output_set
 
 def get_problem_sets(type,problem,sigmoid_type,entry_file=None,output_file=None):
