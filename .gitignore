@@ -136,8 +136,4 @@ dmypy.json
 #Output
 *.csv
 
-TP3/resources/training_ej2.txt
-
-TP3/resources/training_ej3.txt
-
-TP3/resources/zeta_ej2.txt
+*.txt
