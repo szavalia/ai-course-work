@@ -20,9 +20,9 @@ def execute(properties:Properties):
         for index in range(0, neurons_count):
             if (idx == 0):
                 # First layer uses length of entry value
-                w = np.random(len(training_set[0]))
+                w = np.random.rand(len(training_set[0]))
             else:
-                w = np.random(len(neurons[idx-1]))
+                w = np.random.rand(len(neurons[idx-1]))
             w[0] = BIAS
             neurons.append(Neuron(w,perceptron.learning_rate))
         layers.append(Layer(neurons))
@@ -31,8 +31,8 @@ def execute(properties:Properties):
     # Number of neurons in output layer depends on number of camps in expected output values
     neurons = []
     for i in range(len(properties.output_set[0])):
-        w = np.random(len(layers[-1].neurons))
-        neurons.append(Neuron(w))
+        w = np.random.rand(len(layers[-1].neurons))
+        neurons.append(Neuron(w, perceptron.learning_rate))
     layers.append(neurons)
 
     error = 1

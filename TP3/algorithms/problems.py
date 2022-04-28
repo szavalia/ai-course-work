@@ -58,7 +58,7 @@ def get_problem_sets(type,problem,sigmoid_type,entry_file=None,output_file=None)
             return ([[-1,1], [1,-1], [-1,-1], [1,1]], [1,1,-1,-1])
     elif(type == "multilayer"):
         if (problem == "XOR"):
-            return ([[-1,1], [1,-1], [-1,-1], [1,1]], [1,1,-1,-1])
+            return ([[-1,1], [1,-1], [-1,-1], [1,1]], [[1],[1],[-1],[-1]])
     elif(type == "linear" or type == "non_linear"):
         return (parse_entry_file(entry_file,type),parse_output_file(output_file,type,sigmoid_type))
     else:
