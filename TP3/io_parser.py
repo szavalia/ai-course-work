@@ -2,6 +2,7 @@ import json
 from algorithms.perceptron_functions import function_chooser 
 from algorithms.problems import get_problem_sets
 from models import Perceptron,Properties,Observables
+from constants import DEFAULT_ERROR, MIN_ITERATIONS
 
 def generate_output(properties:Properties, observables:Observables):
     print("Perceptron type: {0}".format(properties.perceptron.type))
@@ -13,6 +14,7 @@ def generate_output(properties:Properties, observables:Observables):
     print("Max iterations: {0}".format(properties.perceptron.max_iterations))
     print("w: {0}".format(observables.w))
     print("Error: {0}".format(observables.error))
+    print("Iterations: {0}".format(observables.iterations))
 
 
 def parse_properties():
@@ -50,10 +52,17 @@ def parse_properties():
         exit(-1)
 
     max_iterations = json_values.get("max_iterations")
+    min_error = json_values.get("min_error")
 
-    if max_iterations == None:
-        print("Max iterations required")
+    if max_iterations == None and min_error == None:
+        print("Max iterations or min error required")
         exit(-1)
+
+    if max_iterations == None or max_iterations < 0:
+        max_iterations = MIN_ITERATIONS
+    
+    if min_error == None or min_error < 0:
+        min_error = DEFAULT_ERROR
 
     if(perceptron_type == "step" or perceptron_type == "multilayer"):
         problem = json_values.get("problem")
@@ -75,6 +84,6 @@ def parse_properties():
 
     hidden_layers = json_values.get("hidden_layers")
 
-    return Properties(Perceptron(perceptron_type,learning_rate,max_iterations,problem,perceptron_function,sigmoid_type,perceptron_d_function,hidden_layers),training_set,output_set)
+    return Properties(Perceptron(perceptron_type,learning_rate,max_iterations,min_error,problem,perceptron_function,sigmoid_type,perceptron_d_function,hidden_layers),training_set,output_set)
     
 

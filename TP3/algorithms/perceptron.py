@@ -15,7 +15,7 @@ def execute(properties:Properties):
     min_w = np.zeros(len(training_set[0]))
     i = 0
 
-    while error > 0 and i < perceptron.max_iterations:
+    while error > perceptron.min_error and i < perceptron.max_iterations:
         # Always pick at random or random until covered whole training set and then random again?
         pos = random.randint(0, len(training_set) - 1)
         entry = training_set[pos]
@@ -29,7 +29,7 @@ def execute(properties:Properties):
             min_error = error
             min_w = w.copy()
 
-    return Observables(min_w,min_error)
+    return Observables(min_w,min_error,i)
 
 def calculate_error(perceptron_function,training_set, output_set, w):
     error = 0

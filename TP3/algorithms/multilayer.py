@@ -40,7 +40,7 @@ def execute(properties:Properties):
     min_w = w
     i = 0
     
-    while error > 0 and i < perceptron.max_iterations:
+    while error > perceptron.min_error and i < perceptron.max_iterations:
         print("Iteration {0}".format(i))
         # Always pick at random or random until covered whole training set and then random again?
         pos = random.randint(0, len(training_set) - 1)
@@ -81,7 +81,7 @@ def execute(properties:Properties):
                     for neuron in layer.neurons[1:]:
                         min_w[-1].append(neuron.w.copy())
 
-    return Observables(min_w, min_error)
+    return Observables(min_w, min_error,i)
 
 
 def calculate_error(training_set, output_set, layers):
