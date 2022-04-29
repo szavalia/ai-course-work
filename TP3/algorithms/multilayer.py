@@ -1,6 +1,6 @@
 import numpy as np
 import random
-from models import Observables, Properties,Perceptron,Neuron,Layer, ThresholdNeuron
+from models import Observables, Properties,Perceptron,Neuron,Layer,ThresholdNeuron
 
 def execute(properties:Properties):
     
@@ -42,7 +42,7 @@ def execute(properties:Properties):
     i = 0
     
     while error > perceptron.min_error and i < perceptron.max_iterations:
-        print("Iteration {0}".format(i))
+
         # Always pick at random or random until covered whole training set and then random again?
         pos = random.randint(0, len(training_set) - 1)
         entry = training_set[pos]
@@ -53,6 +53,7 @@ def execute(properties:Properties):
         # Calculate activations (and save them)
         for (idx, layer) in enumerate(layers):
             activations.append(layer.get_activations(activations[idx]))
+        
                 
         deltas = []
         # Calculate error in output
@@ -64,7 +65,8 @@ def execute(properties:Properties):
         
         # Update all ws (incremental)
         for(idx,layer) in enumerate(layers):
-            layer.update_neurons(deltas[idx],activations[idx])
+            isOutput = (idx == len(layers) -1)
+            layer.update_neurons(deltas[idx],activations[idx],isOutput)
         
         # Calculate error
         error = calculate_error(training_set, properties.output_set, layers)
@@ -93,7 +95,6 @@ def calculate_error(training_set, output_set, layers):
         for (j, layer) in enumerate(layers):
             activations.append(layer.get_activations(activations[j]))
         for (idx,output_value) in enumerate(output_set[i]):
-            print("Calculate error ouput: {0}, activations: {1}".format(output_value, activations[-1][idx]))
             error += (output_value - activations[-1][idx])**2
     return error*(1/2)
         

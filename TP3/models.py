@@ -27,19 +27,22 @@ class Neuron:
         
     # Calculates the error for a neuron in the output layer using the expected_output and the neuron's activation value
     def calculate_output_delta(self,expected_output,activation):
-        return Neuron.d_function(self.excitement)*(expected_output-activation) #FIX
+        return Neuron.d_function(self.excitement)*(expected_output-activation)
         
     # Calculates the error for a neuron in a hidden layer using the error of a superior layer
     def calculate_delta(self, superior_delta,w_aux):
         return (Neuron.d_function(self.excitement) * np.dot(w_aux,superior_delta))
     
-    def update_w(self,delta,activation):
-        self.w += self.learning_rate*delta*activation
+    def update_w(self,delta,activations):
+        increments = []
+        for activation in activations:
+            increments.append(self.learning_rate*activation*delta)
+        self.w += increments
 
 class ThresholdNeuron:
 
     def get_activation(self,entry):
-        return 1
+        return -1
 
 
 class Layer:
@@ -71,9 +74,11 @@ class Layer:
                     deltas.append(neuron.calculate_delta(superior_error,w_aux))
         return deltas
 
-    def update_neurons(self,deltas,activations):
-        for (idx,neuron) in enumerate(self.neurons[1:]):
-            neuron.update_w(deltas[idx],activations[idx])
+    def update_neurons(self,deltas,activations,isOutput):
+        for (idx,neuron) in enumerate(self.neurons):
+            if(idx == 0 and not isOutput):
+                continue 
+            neuron.update_w(deltas[idx-1],activations)
 
 
 class Properties:
