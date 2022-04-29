@@ -88,6 +88,9 @@ def get_problem_sets(type,problem,sigmoid_type,entry_file=None,output_file=None)
             return ([[-1,1], [1,-1], [-1,-1], [1,1]], [-1,-1,-1,1], None, denormalize_identity)
         if (problem == "XOR"):
             return ([[-1,1], [1,-1], [-1,-1], [1,1]], [1,1,-1,-1], None, denormalize_identity)
+        else:
+            print("No problem found")
+            exit(-1)
     elif(type == "multilayer"):
         if (problem == "XOR"):
             return ([[-1,1], [1,-1], [-1,-1], [1,1]], [[1],[1],[-1],[-1]], None, denormalize_identity)
@@ -98,13 +101,16 @@ def get_problem_sets(type,problem,sigmoid_type,entry_file=None,output_file=None)
                     output_set.append([1])
                 else:
                     output_set.append([0])
-            return(parse_entry_file(entry_file,type), output_set,None,denormalize_identity)
+            return(parse_entry_file(entry_file,type),output_set,None,denormalize_identity)
         if(problem == "numbers"):
             output_set = []
             for i in range(0,10):
                 output_set.append(np.zeros(10,int))
                 output_set[i][i] = 1
             return(parse_entry_file(entry_file,type),output_set,None,denormalize_identity)
+        else:
+            print("No problem found")
+            exit(-1)
     elif(type == "linear" or type == "non_linear"):
         (output_set, normalized_set,denormalize_func) = parse_output_file(output_file,type,sigmoid_type)
         return (parse_entry_file(entry_file,type),output_set,normalized_set,denormalize_func)
