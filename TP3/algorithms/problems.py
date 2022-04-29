@@ -21,16 +21,38 @@ def parse_simple_entry_file(entry_file):
     lines = file.readlines()
 
     for i in range(0,len(lines)):
-        tokens = lines[i].split("   ")
+        tokens = lines[i].replace("\n", "").split("   ")
         training_set.append([])
         for token in tokens[1:len(tokens)]:
             training_set[i].append(float(token))
     
     return training_set
 
+def parse_multilayer_entry_file(entry_file):
+    training_set = []
+    file = open(entry_file)
+    lines = file.readlines()
+
+    i = 0
+    k = 0
+    while i < len(lines):
+        training_set.append([])
+        for j in range(0,7):
+            if(i != len(lines) -1):
+                tokens = lines[i].replace(" \n", "").split(" ")
+            else:
+                tokens = lines[i].split(" ")[:-1]
+            for token in tokens[0:len(tokens)]:
+                training_set[k].append(int(token))
+            i+=1
+        k+=1 
+    return training_set
+
 def parse_entry_file(entry_file,type):
     if(type == "linear" or type == "non_linear"):
         return parse_simple_entry_file(entry_file)
+    elif(type == "multilayer"):
+        return parse_multilayer_entry_file(entry_file)
 
 def parse_output_file(output_file, type,sigmoid_type):
     output_set = []
@@ -69,6 +91,20 @@ def get_problem_sets(type,problem,sigmoid_type,entry_file=None,output_file=None)
     elif(type == "multilayer"):
         if (problem == "XOR"):
             return ([[-1,1], [1,-1], [-1,-1], [1,1]], [[1],[1],[-1],[-1]], None, denormalize_identity)
+        if(problem == "odd_number"):
+            output_set = []
+            for i in range(0,10):
+                if( i%2 == 0):
+                    output_set.append([1])
+                else:
+                    output_set.append([0])
+            return(parse_entry_file(entry_file,type), output_set,None,denormalize_identity)
+        if(problem == "numbers"):
+            output_set = []
+            for i in range(0,10):
+                output_set.append(np.zeros(10,int))
+                output_set[i][i] = 1
+            return(parse_entry_file(entry_file,type),output_set,None,denormalize_identity)
     elif(type == "linear" or type == "non_linear"):
         (output_set, normalized_set,denormalize_func) = parse_output_file(output_file,type,sigmoid_type)
         return (parse_entry_file(entry_file,type),output_set,normalized_set,denormalize_func)

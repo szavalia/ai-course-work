@@ -84,6 +84,7 @@ def execute(properties:Properties):
                     for neuron in layer.neurons[1:]:
                         min_w[-1].append(neuron.w.copy())
 
+    
     return Observables(min_w, min_error,i)
 
 
