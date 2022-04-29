@@ -32,6 +32,7 @@ def execute(properties:Properties):
     neurons = []
     for i in range(len(properties.output_set[0])):
         w = np.random.rand(len(layers[-1].neurons))
+        w[0] = BIAS
         neurons.append(Neuron(w, perceptron.learning_rate))
     layers.append(Layer(neurons))
 
