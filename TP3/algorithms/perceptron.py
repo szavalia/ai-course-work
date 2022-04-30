@@ -6,6 +6,17 @@ def execute(properties:Properties):
 
     perceptron:Perceptron = properties.perceptron
 
+    if(perceptron.type == "non_linear" and perceptron.sigmoid_type == "tanh"):
+        properties.sigmoid_max = 1
+        properties.sigmoid_min = -1
+        properties.output_max = np.max(properties.output_set)
+        properties.output_min = np.min(properties.output_set)
+    elif(perceptron.type == "non_linear" and perceptron.sigmoid_type == "logistic"):
+        properties.sigmoid_max = 1
+        properties.sigmoid_min = 0
+        properties.output_max = np.max(properties.output_set)
+        properties.output_min = np.min(properties.output_set)
+
     # Add threshold to training set
     training_set = np.insert(properties.training_set, 0, 1, axis=1)
 
@@ -15,10 +26,7 @@ def execute(properties:Properties):
     min_w = np.zeros(len(training_set[0]))
     i = 0
 
-    if(perceptron.type == "non_linear"):
-        output_set = properties.normalized_output_set
-    else:
-        output_set = properties.output_set
+    output_set = properties.output_set
 
     while error > perceptron.min_error and i < perceptron.max_iterations:
         # Always pick at random or random until covered whole training set and then random again?
@@ -26,21 +34,23 @@ def execute(properties:Properties):
         entry = training_set[pos]
         h = np.dot(entry, w)
         O = perceptron.function(h)
-        delta_w = perceptron.learning_rate * (output_set[pos] - O) * entry * perceptron.d_function(h)
+        normalized_output = properties.normalized_function(properties.output_max,properties.output_min,properties.sigmoid_max,properties.sigmoid_min,output_set[pos])
+        delta_w = perceptron.learning_rate * (normalized_output - O) * entry * perceptron.d_function(h)
         w += delta_w
-        error = calculate_error(perceptron.function,training_set, output_set, w)
+        error = calculate_error(perceptron.function,training_set, output_set, w,properties)
         i += 1
         if error < min_error:
             min_error = error
             min_w = w.copy()
-
+    
     return Observables(min_w,min_error,i)
 
-def calculate_error(perceptron_function,training_set, output_set, w):
+def calculate_error(perceptron_function,training_set, output_set, w,properties:Properties):
     error = 0
     for i in range(len(training_set)):
         entry = training_set[i]
         h = np.dot(entry, w)
         O = perceptron_function(h)
-        error += (output_set[i] - O)**2
+        denormalized_O = properties.normalized_function(properties.sigmoid_max,properties.sigmoid_min,properties.output_max,properties.output_min,O)
+        error += (output_set[i] - denormalized_O)**2
     return error*(1/2)

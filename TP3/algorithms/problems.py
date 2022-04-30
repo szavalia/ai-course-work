@@ -1,19 +1,11 @@
 import numpy as np
 
-def denormalize_tanh(max,min,value):
-    return (((value+1) * (max-min))/2) + min
+def normalize_function(function_max,function_min,output_max,output_min,value):
+    return (((output_max-output_min)*(value-function_min)) / (function_max-function_min)) + output_min
 
-def normalize_tanh(max,min,value):
-    return (2*(value - min) / (max-min))-1
-
-def denormalize_logistic(max,min,value):
-    return (value * (max-min)) + min
-
-def normalize_logistic(max,min,value):
-    return (value - min) / (max-min)
-
-def denormalize_identity(max,min,value):
+def normalize_identity(function_max,function_min,output_max,output_min,value):
     return value
+
 
 def parse_simple_entry_file(entry_file):
     training_set = []
@@ -54,46 +46,34 @@ def parse_entry_file(entry_file,type):
     elif(type == "multilayer"):
         return parse_multilayer_entry_file(entry_file)
 
-def parse_output_file(output_file, type,sigmoid_type):
+def parse_output_file(output_file, type):
     output_set = []
     file = open(output_file)
     lines = file.readlines()
 
-    if(sigmoid_type == "tanh" and type == "non_linear"):
-        norm_func = normalize_tanh
-        denormalized_func = denormalize_tanh
-    elif(sigmoid_type == "logistic" and type == "non_linear"):
-        norm_func = normalize_logistic
-        denormalized_func = denormalize_logistic
+    if(type == "non_linear"):
+        normalized_func = normalize_function
     else:
-        denormalized_func = denormalize_identity
+        normalized_func = normalize_identity
 
     for i in range(0,len(lines)):
         replaced_line = lines[i].replace("   ","")
         output_set.append(float(replaced_line))
-
-    normalized_output_set = None
-    if(type == "non_linear"):
-        max = np.amax(output_set)
-        min = np.amin(output_set)
-        normalized_output_set = []
-        for value in output_set:
-            normalized_output_set.append(norm_func(max,min,value))
     
-    return (output_set,normalized_output_set,denormalized_func)
+    return (output_set,normalized_func)
 
-def get_problem_sets(type,problem,sigmoid_type,entry_file=None,output_file=None):
+def get_problem_sets(type,problem,entry_file=None,output_file=None):
     if (type == "step"):
         if (problem == "AND"):
-            return ([[-1,1], [1,-1], [-1,-1], [1,1]], [-1,-1,-1,1], None, denormalize_identity)
+            return ([[-1,1], [1,-1], [-1,-1], [1,1]], [-1,-1,-1,1], normalize_identity)
         if (problem == "XOR"):
-            return ([[-1,1], [1,-1], [-1,-1], [1,1]], [1,1,-1,-1], None, denormalize_identity)
+            return ([[-1,1], [1,-1], [-1,-1], [1,1]], [1,1,-1,-1], normalize_identity)
         else:
             print("No problem found")
             exit(-1)
     elif(type == "multilayer"):
         if (problem == "XOR"):
-            return ([[-1,1], [1,-1], [-1,-1], [1,1]], [[1],[1],[-1],[-1]], None, denormalize_identity)
+            return ([[-1,1], [1,-1], [-1,-1], [1,1]], [[1],[1],[-1],[-1]], normalize_identity)
         if(problem == "odd_number"):
             output_set = []
             for i in range(0,10):
@@ -101,18 +81,18 @@ def get_problem_sets(type,problem,sigmoid_type,entry_file=None,output_file=None)
                     output_set.append([1])
                 else:
                     output_set.append([0])
-            return(parse_entry_file(entry_file,type),output_set,None,denormalize_identity)
+            return(parse_entry_file(entry_file,type),output_set,normalize_identity)
         if(problem == "numbers"):
             output_set = []
             for i in range(0,10):
                 output_set.append(np.zeros(10,int))
                 output_set[i][i] = 1
-            return(parse_entry_file(entry_file,type),output_set,None,denormalize_identity)
+            return(parse_entry_file(entry_file,type),output_set,normalize_identity)
         else:
             print("No problem found")
             exit(-1)
     elif(type == "linear" or type == "non_linear"):
-        (output_set, normalized_set,denormalize_func) = parse_output_file(output_file,type,sigmoid_type)
-        return (parse_entry_file(entry_file,type),output_set,normalized_set,denormalize_func)
+        (output_set,normalize_func) = parse_output_file(output_file,type)
+        return (parse_entry_file(entry_file,type),output_set,normalize_func)
     else:
         return (None,None)
