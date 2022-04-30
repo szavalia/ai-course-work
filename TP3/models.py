@@ -56,12 +56,16 @@ class Layer:
         return activations
     
     # Returns the deltas for the neurons
-    def get_deltas(self, superior_error,superior_layer=None,activations=None):
+    def get_deltas(self, superior_error,superior_layer=None,activations=None,isBelowOutput=False):
         deltas = []
         superior_weights = []
         if(superior_layer != None):
-            for neuron in superior_layer.neurons:
-                superior_weights.append(neuron.w)
+            if (isBelowOutput):
+                for neuron in superior_layer.neurons[:]:
+                    superior_weights.append(neuron.w)
+            else:
+                for neuron in superior_layer.neurons[1:]:
+                    superior_weights.append(neuron.w)
         for (idx,neuron) in enumerate(self.neurons):
             if(activations != None):
                 # If the activation value is set, it means that it's an output layer

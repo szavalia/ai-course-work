@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 import random
 from models import Observables, Properties,Perceptron,Neuron,Layer,ThresholdNeuron
@@ -22,7 +23,7 @@ def execute(properties:Properties):
                 # First layer uses length of entry value
                 w = np.random.rand(len(training_set[0]))
             else:
-                w = np.random.rand(len(neurons[idx-1]))
+                w = np.random.rand(len(layers[idx-1].neurons))
             w[0] = BIAS
             neurons.append(Neuron(w,perceptron.learning_rate))
         layers.append(Layer(neurons))
@@ -36,8 +37,8 @@ def execute(properties:Properties):
         neurons.append(Neuron(w, perceptron.learning_rate))
     layers.append(Layer(neurons))
 
-    error = 1
-    min_error = 2 * len(training_set)
+    error = sys.maxsize
+    min_error = sys.maxsize
     min_w = w
     i = 0
     
@@ -56,12 +57,13 @@ def execute(properties:Properties):
         
                 
         deltas = []
-        # Calculate error in output
+        # Calculate error in output and one below output
         deltas.append(layer.get_deltas(properties.output_set[pos],None, activations[-1]))
+        deltas.insert(0, layers[-2].get_deltas(deltas[0],layers[-1], None, True))
 
         # Calculate deltas (and save them)
-        for (idx, layer) in reversed(list(enumerate(layers[:-1]))):
-            deltas.insert(0, layer.get_deltas(deltas[idx],layers[idx+1]))
+        for (idx, layer) in reversed(list(enumerate(layers[:-2]))):
+            deltas.insert(0, layer.get_deltas(deltas[0],layers[idx+1]))
         
         # Update all ws (incremental)
         for(idx,layer) in enumerate(layers):
@@ -71,7 +73,6 @@ def execute(properties:Properties):
         # Calculate error
         error = calculate_error(training_set, properties.output_set, layers)
         i+=1
-
         if error < min_error:
             min_error = error
             min_w = []
@@ -83,7 +84,6 @@ def execute(properties:Properties):
                 else:
                     for neuron in layer.neurons[1:]:
                         min_w[-1].append(neuron.w.copy())
-
     
     return Observables(min_w, min_error,i)
 
