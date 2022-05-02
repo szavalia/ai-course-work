@@ -1,8 +1,8 @@
 {
-    "perceptron_type" : "linear",
+    "perceptron_type" : "non_linear",
     "hidden_layers": [2],
-    "entry_file": "linear.txt",
-    "output_file": "zeta_linear.txt",
+    "entry_file": "resources/linear.txt",
+    "output_file": "resources/zeta_linear.txt",
     "problem": "XOR",
     "learning_rate" : 0.1,
     "max_iterations" : 1000,

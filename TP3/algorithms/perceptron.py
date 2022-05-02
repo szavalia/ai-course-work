@@ -1,22 +1,10 @@
 import numpy as np
 import random
+from metrics import get_continuous_metrics
 from models import Observables, Properties,Perceptron
 
 def execute(properties:Properties):
-
-    perceptron:Perceptron = properties.perceptron
-
-    if(perceptron.type == "non_linear" and perceptron.sigmoid_type == "tanh"):
-        properties.sigmoid_max = 1
-        properties.sigmoid_min = -1
-        properties.output_max = np.max(properties.output_set)
-        properties.output_min = np.min(properties.output_set)
-    elif(perceptron.type == "non_linear" and perceptron.sigmoid_type == "logistic"):
-        properties.sigmoid_max = 1
-        properties.sigmoid_min = 0
-        properties.output_max = np.max(properties.output_set)
-        properties.output_min = np.min(properties.output_set)
-
+    perceptron:Perceptron = build_perceptron(properties)    
     # Add threshold to training set
     training_set = np.insert(properties.training_set, 0, 1, axis=1)
 
@@ -54,3 +42,44 @@ def calculate_error(perceptron_function,training_set, output_set, w,properties:P
         denormalized_O = properties.normalized_function(properties.sigmoid_max,properties.sigmoid_min,properties.output_max,properties.output_min,O)
         error += (output_set[i] - denormalized_O)**2
     return error*(1/2)
+
+def build_perceptron(properties:Properties):
+    print(type(properties))
+    perceptron = properties.perceptron
+
+    if(perceptron.type == "non_linear" and perceptron.sigmoid_type == "tanh"):
+        properties.sigmoid_max = 1
+        properties.sigmoid_min = -1
+        properties.output_max = np.max(properties.output_set)
+        properties.output_min = np.min(properties.output_set)
+    elif(perceptron.type == "non_linear" and perceptron.sigmoid_type == "logistic"):
+        properties.sigmoid_max = 1
+        properties.sigmoid_min = 0
+        properties.output_max = np.max(properties.output_set)
+        properties.output_min = np.min(properties.output_set)
+    
+    return perceptron
+
+# Runs the perceptron with its training_set and returns the result set
+def get_results(properties:Properties, perceptron:Perceptron, w):
+    perceptron = build_perceptron(properties)
+    results = []
+
+    for entry in properties.training_set:
+        h = np.dot(entry, w)
+        O = perceptron.function(h)
+        denormalized_O = properties.normalized_function(properties.sigmoid_max,properties.sigmoid_min,properties.output_max,properties.output_min,O)
+        results.append(denormalized_O)
+    
+    return results
+
+# Tests perceptron using a given weight vector and gets the metrics for it
+def test(properties:Properties, w, metrics_function, classes=None):
+    perceptron:Perceptron = build_perceptron(properties)
+
+    results = get_results(properties, perceptron, w)
+
+    metrics = metrics_function(perceptron.output_set, results, classes)
+
+    return metrics
+
