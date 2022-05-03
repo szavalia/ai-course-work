@@ -81,8 +81,11 @@ class Layer:
     def update_neurons(self,deltas,activations,isOutput):
         for (idx,neuron) in enumerate(self.neurons):
             if(idx == 0 and not isOutput):
-                continue 
-            neuron.update_w(deltas[idx-1],activations)
+                continue
+            if isOutput:
+                neuron.update_w(deltas[idx],activations)
+            else:
+                neuron.update_w(deltas[idx-1],activations)
 
 
 class Properties:
