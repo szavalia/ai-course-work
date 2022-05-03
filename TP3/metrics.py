@@ -1,4 +1,4 @@
-from models import Observables, Properties
+from models import Metrics
 import numpy as np
 
 
@@ -32,7 +32,7 @@ def get_discrete_metrics(expected, calculated, classes):
     # TODO: adjust calculated values into classes according to an epsilon
     confusion_matrix = get_confusion_matrix(classes, classes_dictionary, expected, calculated)
 
-    metrics_by_class = {}
+    metrics_by_class = []
 
     for studied_class in classes:
         index_in_matrix = classes_dictionary[studied_class]
@@ -48,9 +48,8 @@ def get_discrete_metrics(expected, calculated, classes):
         true_positives_rate = tp / (tp + fn)
         false_positives_rate = fp / (fp + tn)
 
-        metrics_by_class[studied_class]= {"accuracy": accuracy, "precision": precision, "recall": recall, "f1_score": f1_score, 
-     "true_positives_rate": true_positives_rate, "false_positives_rate": false_positives_rate}
-     # TODO: turn into an object
+        metrics = Metrics(accuracy,precision,recall,f1_score,true_positives_rate,false_positives_rate,studied_class)
+        metrics_by_class.append(metrics)
 
     return metrics_by_class
 
@@ -64,15 +63,15 @@ def get_continuous_metrics(expected, calculated, classes=None):
         maxval = ((max(max(expected), max(calculated))+ERROR_THRESHOLD)//ERROR_THRESHOLD)*ERROR_THRESHOLD # Gets top limit divisible by error threshold
         classes = np.arange(minval, maxval, ERROR_THRESHOLD)   
         
-        # Adjust values to match those of the classes
+        # Adjust values to map onto those of the classes
         for i in range(0, len(expected)):
             expected[i] = (expected[i]//ERROR_THRESHOLD)*ERROR_THRESHOLD
             calculated[i] = (calculated[i]//ERROR_THRESHOLD)*ERROR_THRESHOLD
 
     classes_dictionary = build_classes_dictionary(classes)    
-
     confusion_matrix = get_confusion_matrix(classes, classes_dictionary, expected, calculated)
-    return np.sum(np.diag(confusion_matrix))/np.sum(confusion_matrix)
+
+    return Metrics(accuracy=np.sum(np.diag(confusion_matrix))/np.sum(confusion_matrix))
 
 """
 expected = ["M","M","M","M","M","M","M","M","N","N","N","N","N","N","D","D","D","D","D","D","D","D","D","D","D","D","D"]

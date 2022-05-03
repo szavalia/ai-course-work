@@ -6,7 +6,7 @@
     "problem": "XOR",
     "learning_rate" : 0.1,
     "max_iterations" : 1000,
-    "min_error": 1,
+    "min_error": 1e-2,
     "sigmoid_type" : "tanh",
     "beta": 0.8
 }

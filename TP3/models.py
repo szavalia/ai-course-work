@@ -99,7 +99,18 @@ class Properties:
 
 
 class Observables:
-    def __init__(self,w,error,iterations):
+    def __init__(self,w,error,iterations,metrics=None):
         self.w = w
         self.error = error
         self.iterations = iterations
+        self.metrics = metrics
+
+# Metrics for a given class
+class Metrics:
+    def __init__(self,accuracy,precision=None,recall=None,f1_score=None,true_positive_rate=None,false_positive_rate=None,studied_class=None):
+        self.accuracy=accuracy
+        self.precision=precision
+        self.recall=recall
+        self.f1_score=f1_score
+        self.true_positive_rate=true_positive_rate
+        self.false_positive_rate=false_positive_rate
