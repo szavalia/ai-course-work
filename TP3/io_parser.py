@@ -2,7 +2,7 @@ import json
 from algorithms.perceptron_functions import function_chooser 
 from algorithms.problems import get_problem_sets
 from models import Perceptron,Properties,Observables
-from constants import DEFAULT_ERROR, MIN_ITERATIONS
+from constants import DEFAULT_ERROR, MIN_EPOCHS
 
 def generate_output(properties:Properties, observables:Observables):
     print("Perceptron type: {0}".format(properties.perceptron.type))
@@ -11,10 +11,10 @@ def generate_output(properties:Properties, observables:Observables):
     if(properties.perceptron.sigmoid_type != None):
         print("Sigmoid type: {0} Beta:{1}".format(properties.perceptron.sigmoid_type, properties.beta))
     print("Learning rate: {0}".format(properties.perceptron.learning_rate))
-    print("Max iterations: {0}".format(properties.perceptron.max_iterations))
+    print("Max Epochs: {0}".format(properties.perceptron.max_epochs))
     print("w: {0}".format(observables.w))
     print("Error: {0}".format(observables.error))
-    print("Iterations: {0}".format(observables.iterations))
+    print("Epochs: {0}".format(observables.epochs))
 
 
 def parse_properties():
@@ -51,15 +51,15 @@ def parse_properties():
         print("Learning rate required")
         exit(-1)
 
-    max_iterations = json_values.get("max_iterations")
+    epochs = json_values.get("max_epochs")
     min_error = json_values.get("min_error")
 
-    if max_iterations == None and min_error == None:
+    if epochs == None and min_error == None:
         print("Max iterations or min error required")
         exit(-1)
 
-    if max_iterations == None or max_iterations < 0:
-        max_iterations = MIN_ITERATIONS
+    if epochs == None or epochs < 0:
+        epochs = MIN_EPOCHS
     
     if min_error == None or min_error < 0:
         min_error = DEFAULT_ERROR
@@ -84,6 +84,6 @@ def parse_properties():
 
     hidden_layers = json_values.get("hidden_layers")
 
-    return Properties(Perceptron(perceptron_type,learning_rate,max_iterations,min_error,problem,perceptron_function,sigmoid_type,perceptron_d_function,hidden_layers),training_set,output_set,normalize_function)
+    return Properties(Perceptron(perceptron_type,learning_rate,epochs,min_error,problem,perceptron_function,sigmoid_type,perceptron_d_function,hidden_layers),training_set,output_set,normalize_function)
     
 

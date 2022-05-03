@@ -6,12 +6,12 @@ from models import Observables, Properties,Perceptron,Neuron,Layer,ThresholdNeur
 def execute(properties:Properties):
     
     perceptron:Perceptron = properties.perceptron
-    BIAS = 1
+    BIAS = -1
     Neuron.function = perceptron.function
     Neuron.d_function = perceptron.d_function
 
     # Add threshold to training set
-    training_set = np.insert(properties.training_set, 0, 1, axis=1)
+    training_set = np.insert(properties.training_set, 0, -1, axis=1)
 
     layers = []
 
@@ -21,9 +21,9 @@ def execute(properties:Properties):
         for index in range(0, neurons_count):
             if (idx == 0):
                 # First layer uses length of entry value
-                w = np.random.rand(len(training_set[0]))
+                w = np.random.randn(len(training_set[0]))
             else:
-                w = np.random.rand(len(layers[idx-1].neurons))
+                w = np.random.randn(len(layers[idx-1].neurons))
             w[0] = BIAS
             neurons.append(Neuron(w,perceptron.learning_rate))
         layers.append(Layer(neurons))
@@ -32,7 +32,7 @@ def execute(properties:Properties):
     # Number of neurons in output layer depends on number of camps in expected output values
     neurons = []
     for i in range(len(properties.output_set[0])):
-        w = np.random.rand(len(layers[-1].neurons))
+        w = np.random.randn(len(layers[-1].neurons))
         w[0] = BIAS
         neurons.append(Neuron(w, perceptron.learning_rate))
     layers.append(Layer(neurons))
@@ -40,12 +40,19 @@ def execute(properties:Properties):
     error = sys.maxsize
     min_error = sys.maxsize
     min_w = w
-    i = 0
-    
-    while error > perceptron.min_error and i < perceptron.max_iterations:
+    i = len(training_set)
+    pos = 0
+    epochs = -1
+    indexes = []
+    while error > perceptron.min_error and epochs < perceptron.max_epochs:
 
         # Always pick at random or random until covered whole training set and then random again?
-        pos = random.randint(0, len(training_set) - 1)
+        if(i == len(training_set)):
+            epochs+=1
+            indexes = random.sample(list(range(len(training_set))),len(list(range(len(training_set)))))
+            i = 0
+        
+        pos = indexes[i]
         entry = training_set[pos]
         
         activations = []
@@ -55,10 +62,9 @@ def execute(properties:Properties):
         for (idx, layer) in enumerate(layers):
             activations.append(layer.get_activations(activations[idx]))
         
-                
         deltas = []
         # Calculate error in output and one below output
-        deltas.append(layer.get_deltas(properties.output_set[pos],None, activations[-1]))
+        deltas.append(layer.get_deltas(properties.output_set[pos%(len(training_set))],None, activations[-1]))
         deltas.insert(0, layers[-2].get_deltas(deltas[0],layers[-1], None, True))
 
         # Calculate deltas (and save them)
@@ -84,8 +90,8 @@ def execute(properties:Properties):
                 else:
                     for neuron in layer.neurons[1:]:
                         min_w[-1].append(neuron.w.copy())
-    
-    return Observables(min_w, min_error,i)
+
+    return Observables(min_w, min_error,epochs)
 
 
 def calculate_error(training_set, output_set, layers):

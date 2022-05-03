@@ -24,13 +24,21 @@ def execute(properties:Properties):
     error = 1
     min_error = 2 * len(training_set)
     min_w = np.zeros(len(training_set[0]))
-    i = 0
+    epochs = 0
 
     output_set = properties.output_set
 
-    while error > perceptron.min_error and i < perceptron.max_iterations:
+    i = len(training_set)
+    indexes = []
+    epochs = -1
+    while error > perceptron.min_error and epochs < perceptron.max_epochs:
         # Always pick at random or random until covered whole training set and then random again?
-        pos = random.randint(0, len(training_set) - 1)
+        #pos = random.randint(0, len(training_set) - 1)
+        if(i == len(training_set)):
+            epochs+=1
+            indexes = random.sample(list(range(len(training_set))),len(list(range(len(training_set)))))
+            i = 0
+        pos = indexes[i]
         entry = training_set[pos]
         h = np.dot(entry, w)
         O = perceptron.function(h)
@@ -38,12 +46,13 @@ def execute(properties:Properties):
         delta_w = perceptron.learning_rate * (normalized_output - O) * entry * perceptron.d_function(h)
         w += delta_w
         error = calculate_error(perceptron.function,training_set, output_set, w,properties)
-        i += 1
+
         if error < min_error:
             min_error = error
             min_w = w.copy()
+        i+=1
     
-    return Observables(min_w,min_error,i)
+    return Observables(min_w,min_error,epochs)
 
 def calculate_error(perceptron_function,training_set, output_set, w,properties:Properties):
     error = 0

@@ -1,9 +1,9 @@
 import numpy as np
 #The parameters for the running of perceptron
 class Perceptron:
-    def __init__(self,type,learning_rate,max_iterations,min_error,problem,function,sigmoid_type=None,dfunction=None,neurons_per_layer=None):
+    def __init__(self,type,learning_rate,max_epochs,min_error,problem,function,sigmoid_type=None,dfunction=None,neurons_per_layer=None):
         self.type = type
-        self.max_iterations = max_iterations
+        self.max_epochs = max_epochs
         self.min_error = min_error 
         self.problem = problem
         self.function = function
@@ -99,7 +99,8 @@ class Properties:
 
 
 class Observables:
-    def __init__(self,w,error,iterations):
+    def __init__(self,w,error,epochs,predictions=None):
         self.w = w
         self.error = error
-        self.iterations = iterations
+        self.epochs = epochs
+        self.predictions = predictions
