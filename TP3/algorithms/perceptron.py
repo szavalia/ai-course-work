@@ -44,7 +44,6 @@ def calculate_error(perceptron_function,training_set, output_set, w,properties:P
     return error*(1/2)
 
 def build_perceptron(properties:Properties):
-    print(type(properties))
     perceptron = properties.perceptron
 
     if(perceptron.type == "non_linear" and perceptron.sigmoid_type == "tanh"):
@@ -64,8 +63,9 @@ def build_perceptron(properties:Properties):
 def get_results(properties:Properties, perceptron:Perceptron, w):
     perceptron = build_perceptron(properties)
     results = []
+    input_set = np.insert(properties.training_set, 0, 1, axis=1)
 
-    for entry in properties.training_set:
+    for entry in input_set:
         h = np.dot(entry, w)
         O = perceptron.function(h)
         denormalized_O = properties.normalized_function(properties.sigmoid_max,properties.sigmoid_min,properties.output_max,properties.output_min,O)
@@ -79,7 +79,7 @@ def test(properties:Properties, w, metrics_function, classes=None):
 
     results = get_results(properties, perceptron, w)
 
-    metrics = metrics_function(perceptron.output_set, results, classes)
+    metrics = metrics_function(properties.output_set, results, classes)
 
     return metrics
 

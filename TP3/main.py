@@ -14,7 +14,12 @@ def __main__():
         observables:Observables = multi_execute(properties)
     else:
         observables:Observables = simple_execute(properties)
-        # metrics = simple_test(properties, observables.w, get_continuous_metrics)
+        metrics = simple_test(properties, observables.w, get_continuous_metrics)
+        print(metrics)
+
+    #Process metrics for data visualization
+    generate_output(properties,observables)
+        
 
 if __name__ == "__main__":
     __main__()
