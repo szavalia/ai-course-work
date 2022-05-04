@@ -1,22 +1,10 @@
 import numpy as np
 import random
 from models import Observables, Properties,Perceptron
+from io_parser import generate_output
 
 def execute(properties:Properties):
-
-    perceptron:Perceptron = properties.perceptron
-
-    if(perceptron.type == "non_linear" and perceptron.sigmoid_type == "tanh"):
-        properties.sigmoid_max = 1
-        properties.sigmoid_min = -1
-        properties.output_max = np.max(properties.output_set)
-        properties.output_min = np.min(properties.output_set)
-    elif(perceptron.type == "non_linear" and perceptron.sigmoid_type == "logistic"):
-        properties.sigmoid_max = 1
-        properties.sigmoid_min = 0
-        properties.output_max = np.max(properties.output_set)
-        properties.output_min = np.min(properties.output_set)
-
+    perceptron:Perceptron = build_perceptron(properties)    
     # Add threshold to training set
     training_set = np.insert(properties.training_set, 0, 1, axis=1)
 
@@ -63,3 +51,100 @@ def calculate_error(perceptron_function,training_set, output_set, w,properties:P
         denormalized_O = properties.normalized_function(properties.sigmoid_max,properties.sigmoid_min,properties.output_max,properties.output_min,O)
         error += (output_set[i] - denormalized_O)**2
     return error*(1/2)
+
+def build_perceptron(properties:Properties):
+    perceptron = properties.perceptron
+
+    if(perceptron.type == "non_linear" and perceptron.sigmoid_type == "tanh"):
+        properties.sigmoid_max = 1
+        properties.sigmoid_min = -1
+        properties.output_max = np.max(properties.output_set)
+        properties.output_min = np.min(properties.output_set)
+    elif(perceptron.type == "non_linear" and perceptron.sigmoid_type == "logistic"):
+        properties.sigmoid_max = 1
+        properties.sigmoid_min = 0
+        properties.output_max = np.max(properties.output_set)
+        properties.output_min = np.min(properties.output_set)
+    
+    return perceptron
+
+# Runs the perceptron with its training_set and returns the result set
+def get_results(properties:Properties, perceptron:Perceptron, w):
+    perceptron = build_perceptron(properties)
+    results = []
+    input_set = np.insert(properties.training_set, 0, 1, axis=1)
+
+    for entry in input_set:
+        h = np.dot(entry, w)
+        O = perceptron.function(h)
+        denormalized_O = properties.normalized_function(properties.sigmoid_max,properties.sigmoid_min,properties.output_max,properties.output_min,O)
+        results.append(denormalized_O)
+    
+    return results
+
+# Tests perceptron using a given weight vector and gets the metrics for it
+def test(properties:Properties, w, metrics_function, classes=None):
+    perceptron:Perceptron = build_perceptron(properties)
+
+    results = get_results(properties, perceptron, w)
+
+    metrics = metrics_function(properties.output_set, results, classes)
+
+    return metrics
+
+
+def cross_validate(properties:Properties, metrics_function):
+    TEST_PROPORTION = 0.2
+    # Split input into chunks
+    # ATTENTION! This product should be an integer in order not to lose entries
+    segment_members = int(len(properties.training_set)*TEST_PROPORTION)
+    segment_count = int(1/TEST_PROPORTION)
+    sets = np.array_split(properties.training_set, segment_count)
+
+    max_accuracy = 0
+    original_input = properties.training_set.copy()
+    original_output = properties.output_set.copy()
+
+    observables = execute(properties)
+    generate_output(properties, observables)
+
+    for k in range(0, segment_count-1):
+        test_set = sets[k]
+        training_set = []
+        
+        for i in range(0, segment_members*segment_count):
+            if not (i >= k*segment_members and i < (k+1)*segment_members):
+                # print("Adding i="+str(i)+", k="+str(k))
+                training_set.append(properties.training_set[i])
+        """
+        print("TRAINING SET:")
+        print(len(training_set))
+        print(len(test_set))
+        print(training_set)
+        print("-------------------------------")
+        print(original_input)
+        """
+        
+        
+        properties.training_set = training_set
+        observables = execute(properties)
+
+        # TODO: set metrics function accordingly
+        properties.training_set = test_set
+        properties.output_set = properties.output_set[k*segment_members:(k+1)*segment_members]
+        observables.metrics = test(properties, observables.w, metrics_function)
+
+        if observables.metrics.accuracy > max_accuracy:
+            max_accuracy = observables.metrics.accuracy
+            best_run = observables
+        
+        print("-----------------------------------------")
+        print("RUN NUMBER "+str(k))
+        generate_output(properties, observables)
+        
+        properties.training_set = original_input
+        properties.output_set = original_output
+
+    return best_run        
+
+    

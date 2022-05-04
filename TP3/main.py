@@ -1,20 +1,24 @@
 from io_parser import parse_properties,generate_output
+from metrics import get_continuous_metrics, get_discrete_metrics
 from models import Properties,Observables
-from algorithms.perceptron import execute as simple_execute
+from algorithms.perceptron import cross_validate, execute as simple_execute
+from algorithms.perceptron import test as simple_test
 from algorithms.multilayer import execute as multi_execute
 def __main__():
 
     #Parse parameters
     properties:Properties = parse_properties()
 
-    #Execute the algorithm based on the properties
+    #Execute the training algorithm based on the properties, then test the algorithm
     if(properties.perceptron.type == "multilayer"):
-        metrics:Observables = multi_execute(properties)
+        observables:Observables = multi_execute(properties)
     else:
-        metrics:Observables = simple_execute(properties)
+        observables = cross_validate(properties, get_continuous_metrics)
+        print(observables)
 
     #Process metrics for data visualization
-    generate_output(properties,metrics)
+    generate_output(properties,observables)
+        
 
 if __name__ == "__main__":
     __main__()
