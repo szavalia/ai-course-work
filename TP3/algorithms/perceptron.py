@@ -2,17 +2,16 @@ import numpy as np
 import random
 from models import Observables, Properties,Perceptron
 from io_parser import generate_output
+import sys 
 
 def execute(properties:Properties):
     perceptron:Perceptron = build_perceptron(properties)    
     # Add threshold to training set
     training_set = np.insert(properties.training_set, 0, 1, axis=1)
-
     w = np.zeros(len(training_set[0]))
-    error = 1
-    min_error = 2 * len(training_set)
+    error = sys.maxsize
+    min_error = sys.maxsize #2 * len(training_set)
     min_w = np.zeros(len(training_set[0]))
-    epochs = 0
 
     output_set = properties.output_set
 
@@ -102,6 +101,7 @@ def cross_validate(properties:Properties, metrics_function):
     sets = np.array_split(properties.training_set, segment_count)
 
     max_accuracy = 0
+    best_run = None
     original_input = properties.training_set.copy()
     original_output = properties.output_set.copy()
 
@@ -110,28 +110,22 @@ def cross_validate(properties:Properties, metrics_function):
 
     for k in range(0, segment_count-1):
         test_set = sets[k]
+        test_output_set = properties.output_set[k*segment_members:(k+1)*segment_members]
         training_set = []
-        
+        training_output_set = []
         for i in range(0, segment_members*segment_count):
             if not (i >= k*segment_members and i < (k+1)*segment_members):
                 # print("Adding i="+str(i)+", k="+str(k))
                 training_set.append(properties.training_set[i])
-        """
-        print("TRAINING SET:")
-        print(len(training_set))
-        print(len(test_set))
-        print(training_set)
-        print("-------------------------------")
-        print(original_input)
-        """
-        
+                training_output_set.append(properties.output_set[i])       
         
         properties.training_set = training_set
+        properties.output_set = training_output_set
         observables = execute(properties)
 
         # TODO: set metrics function accordingly
         properties.training_set = test_set
-        properties.output_set = properties.output_set[k*segment_members:(k+1)*segment_members]
+        properties.output_set = test_output_set
         observables.metrics = test(properties, observables.w, metrics_function)
 
         if observables.metrics.accuracy > max_accuracy:
@@ -141,6 +135,7 @@ def cross_validate(properties:Properties, metrics_function):
         print("-----------------------------------------")
         print("RUN NUMBER "+str(k))
         generate_output(properties, observables)
+        print("Accuracy: "+str(observables.metrics.accuracy))
         
         properties.training_set = original_input
         properties.output_set = original_output

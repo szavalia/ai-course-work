@@ -58,19 +58,28 @@ def get_discrete_metrics(expected, calculated, classes):
 def get_continuous_metrics(expected, calculated, classes=None):
     # The problem has a continuous answer space
     if classes is None:
-        ERROR_THRESHOLD = 0.5 # Every class is separated by ERROR THRESHHOLD
+        ERROR_THRESHOLD = 1 # Every class is separated by ERROR THRESHHOLD
         minval = (min(min(expected), min(calculated))//ERROR_THRESHOLD)*ERROR_THRESHOLD # Gets bottom limit divisible by error threshold
         maxval = ((max(max(expected), max(calculated))+ERROR_THRESHOLD)//ERROR_THRESHOLD)*ERROR_THRESHOLD # Gets top limit divisible by error threshold
         classes = np.arange(minval, maxval, ERROR_THRESHOLD)   
         
+        hitcount = 0
         # Adjust values to map onto those of the classes
         for i in range(0, len(expected)):
+            if abs(expected[i]-calculated[i]) < ERROR_THRESHOLD:
+                hitcount += 1
+
+            #print("PREVIOUS:"+str(expected[i])+" - "+str(calculated[i]))
             expected[i] = (expected[i]//ERROR_THRESHOLD)*ERROR_THRESHOLD
             calculated[i] = (calculated[i]//ERROR_THRESHOLD)*ERROR_THRESHOLD
+            #print("AFTER:"+str(expected[i])+" - "+str(calculated[i]))
+
 
     classes_dictionary = build_classes_dictionary(classes)    
     confusion_matrix = get_confusion_matrix(classes, classes_dictionary, expected, calculated)
-
+    print("EPSILON HITCOUNT:"+str(hitcount))
+    print("HITS:"+str(np.sum(np.diag(confusion_matrix))))
+    print("TOTAL:"+str(np.sum(confusion_matrix)))
     return Metrics(accuracy=np.sum(np.diag(confusion_matrix))/np.sum(confusion_matrix))
 
 """

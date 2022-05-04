@@ -14,7 +14,6 @@ def __main__():
         observables:Observables = multi_execute(properties)
     else:
         observables = cross_validate(properties, get_continuous_metrics)
-        print(observables)
 
     #Process metrics for data visualization
     generate_output(properties,observables)
