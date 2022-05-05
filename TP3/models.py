@@ -90,11 +90,12 @@ class Layer:
 
 class Properties:
     beta = 0
-    def __init__(self,perceptron:Perceptron,training_set,output_set,normalized_function):
+    def __init__(self,perceptron:Perceptron,training_set,output_set,normalized_function, metrics_function):
         self.perceptron = perceptron
         self.training_set = training_set
         self.output_set = output_set
         self.normalized_function = normalized_function
+        self.metrics_function = metrics_function
         self.output_max = 0
         self.output_min = 0
         self.sigmoid_max = 0

@@ -68,7 +68,7 @@ def build_perceptron(properties:Properties):
     return perceptron
 
 # Runs the perceptron with its training_set and returns the result set
-def get_results(properties:Properties, perceptron:Perceptron, w):
+def get_results(properties:Properties, w):
     perceptron = build_perceptron(properties)
     results = []
     input_set = np.insert(properties.training_set, 0, 1, axis=1)
@@ -82,61 +82,53 @@ def get_results(properties:Properties, perceptron:Perceptron, w):
     return results
 
 # Tests perceptron using a given weight vector and gets the metrics for it
-def test(properties:Properties, w, metrics_function, classes=None):
-    perceptron:Perceptron = build_perceptron(properties)
+def test(properties:Properties, w, metrics_function):
+    results = get_results(properties, w)
 
-    results = get_results(properties, perceptron, w)
-
-    metrics = metrics_function(properties.output_set, results, classes)
+    metrics = metrics_function(properties.output_set, results, properties.perceptron.problem)
 
     return metrics
 
 
-def cross_validate(properties:Properties, metrics_function):
-    TEST_PROPORTION = 0.2
+def cross_validate(properties:Properties, TEST_PROPORTION):
     # Split input into chunks
     # ATTENTION! This product should be an integer in order not to lose entries
     segment_members = int(len(properties.training_set)*TEST_PROPORTION)
     segment_count = int(1/TEST_PROPORTION)
     sets = np.array_split(properties.training_set, segment_count)
 
-    max_accuracy = 0
+    max_accuracy = -1
     best_run = None
     original_input = properties.training_set.copy()
     original_output = properties.output_set.copy()
 
-    observables = execute(properties)
-    generate_output(properties, observables)
-
     for k in range(0, segment_count-1):
+        # Build datasets by splitting into testing and training segments
         test_set = sets[k]
         test_output_set = properties.output_set[k*segment_members:(k+1)*segment_members]
         training_set = []
         training_output_set = []
         for i in range(0, segment_members*segment_count):
             if not (i >= k*segment_members and i < (k+1)*segment_members):
-                # print("Adding i="+str(i)+", k="+str(k))
                 training_set.append(properties.training_set[i])
                 training_output_set.append(properties.output_set[i])       
         
+        # Train the neural network
         properties.training_set = training_set
         properties.output_set = training_output_set
         observables = execute(properties)
 
-        # TODO: set metrics function accordingly
+        # Test the neural network
         properties.training_set = test_set
         properties.output_set = test_output_set
-        observables.metrics = test(properties, observables.w, metrics_function)
-
+        observables.metrics = test(properties, observables.w, properties.metrics_function)
+        
+        # Update best run
         if observables.metrics.accuracy > max_accuracy:
             max_accuracy = observables.metrics.accuracy
             best_run = observables
-        
-        print("-----------------------------------------")
-        print("RUN NUMBER "+str(k))
-        generate_output(properties, observables)
-        print("Accuracy: "+str(observables.metrics.accuracy))
-        
+
+        # Reset data
         properties.training_set = original_input
         properties.output_set = original_output
 

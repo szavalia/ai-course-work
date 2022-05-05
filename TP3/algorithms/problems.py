@@ -1,5 +1,6 @@
 import numpy as np
 import random
+from metrics import get_continuous_metrics, get_discrete_metrics
 
 def normalize_function(function_max,function_min,output_max,output_min,value):
     return (((output_max-output_min)*(value-function_min)) / (function_max-function_min)) + output_min
@@ -93,15 +94,15 @@ def parse_output_file(output_file, type):
 def get_problem_sets(type,problem,entry_file=None,output_file=None):
     if (type == "step"):
         if (problem == "AND"):
-            return ([[-1,1], [1,-1], [-1,-1], [1,1]], [-1,-1,-1,1], normalize_identity)
+            return ([[-1,1], [1,-1], [-1,-1], [1,1]], [-1,-1,-1,1], normalize_identity, get_discrete_metrics)
         if (problem == "XOR"):
-            return ([[-1,1], [1,-1], [-1,-1], [1,1]], [1,1,-1,-1], normalize_identity)
+            return ([[-1,1], [1,-1], [-1,-1], [1,1]], [1,1,-1,-1], normalize_identity, get_discrete_metrics)
         else:
             print("No problem found")
             exit(-1)
     elif(type == "multilayer"):
         if (problem == "XOR"):
-            return ([[-1,1], [1,-1], [-1,-1], [1,1]], [[1],[1],[-1],[-1]], normalize_identity)
+            return ([[-1,1], [1,-1], [-1,-1], [1,1]], [[1],[1],[-1],[-1]], normalize_identity, get_discrete_metrics)
         if(problem == "odd_number"):
             output_set = []
             for i in range(0,10):
@@ -109,18 +110,18 @@ def get_problem_sets(type,problem,entry_file=None,output_file=None):
                     output_set.append([1])
                 else:
                     output_set.append([0])
-            return(parse_entry_file(entry_file,type,problem),output_set,normalize_identity)
+            return(parse_entry_file(entry_file,type,problem),output_set,normalize_identity, get_discrete_metrics)
         if(problem == "numbers" or problem == "noise_numbers"):
             output_set = []
             for i in range(0,10):
                 output_set.append(np.zeros(10,int))
                 output_set[i][i] = 1
-            return(parse_entry_file(entry_file,type,problem),output_set,normalize_identity)
+            return(parse_entry_file(entry_file,type,problem),output_set,normalize_identity, get_discrete_metrics)
         else:
             print("No problem found")
             exit(-1)
     elif(type == "linear" or type == "non_linear"):
         (output_set,normalize_func) = parse_output_file(output_file,type)
-        return (parse_entry_file(entry_file,type,problem),output_set,normalize_func)
+        return (parse_entry_file(entry_file,type,problem),output_set,normalize_func, get_continuous_metrics)
     else:
         return (None,None)
