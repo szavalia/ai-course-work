@@ -131,29 +131,30 @@ def get_results(properties:Properties, w):
         
     activations = []
     results = []
-
+    error = 0
     # Calculate activations (and save them)
-    for entry in input_set:
+    for i,entry in enumerate(input_set):
         activations.append(entry)
         for (idx, layer) in enumerate(layers):
             activations.append(layer.get_activations(activations[idx]))
             
             if layer == layers[-1]: # I'm in the outer layer
                 results.append(activations[-1])
+                error += (1/2)*(properties.output_set[i]-activations[-1])**2
+
                 activations.clear()
     
-    return results
+    return (results, error)
 
 def test(properties:Properties, w, metrics_function):
 
-    results = get_results(properties, w)
+    (results, error) = get_results(properties, w)
 
     metrics = metrics_function(properties.output_set, results, properties.perceptron.problem)
 
-    return metrics
+    return (metrics, error)
 
 def cross_validate(properties:Properties):
-    print("Hola salus")
     execute(properties)
     # Split input into chunks
     # ATTENTION! This product should be an integer in order not to lose entries
@@ -186,7 +187,7 @@ def cross_validate(properties:Properties):
         # Test the neural network
         properties.training_set = test_set
         properties.output_set = test_output_set
-        observables.metrics = test(properties, observables.w, properties.metrics_function)
+        (observables.metrics, observables.error) = test(properties, observables.w, properties.metrics_function)
 
         # Update best run
         if observables.metrics[0].accuracy > max_accuracy:

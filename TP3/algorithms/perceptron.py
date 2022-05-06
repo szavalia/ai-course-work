@@ -74,22 +74,24 @@ def get_results(properties:Properties, w):
     perceptron = build_perceptron(properties)
     results = []
     input_set = np.insert(properties.training_set, 0, 1, axis=1)
-
-    for entry in input_set:
+    error = 0
+    
+    for i, entry in enumerate(input_set):
         h = np.dot(entry, w)
         O = perceptron.function(h)
         denormalized_O = properties.normalized_function(properties.sigmoid_max,properties.sigmoid_min,properties.output_max,properties.output_min,O)
+        error += (1/2)*(properties.output_set[i]-denormalized_O)**2
         results.append(denormalized_O)
-        
-    return results
+
+    return (results, error)
 
 # Tests perceptron using a given weight vector and gets the metrics for it
 def test(properties:Properties, w, metrics_function):
-    results = get_results(properties, w)
+    (results, error) = get_results(properties, w)
 
     metrics = metrics_function(properties.output_set, results, properties.perceptron.problem)
 
-    return metrics
+    return (metrics, error)
 
 
 def cross_validate(properties:Properties):
@@ -123,7 +125,7 @@ def cross_validate(properties:Properties):
         # Test the neural network
         properties.training_set = test_set
         properties.output_set = test_output_set
-        observables.metrics = test(properties, observables.w, properties.metrics_function)
+        (observables.metrics, observables.error) = test(properties, observables.w, properties.metrics_function)
         
         # Update best run
         if observables.metrics.accuracy > max_accuracy:

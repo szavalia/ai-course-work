@@ -1,14 +1,14 @@
 {
-    "perceptron_type" : "non_linear",
+    "perceptron_type" : "multilayer",
     "hidden_layers": [2],
-    "entry_file": "resources/linear.txt",
+    "entry_file": "resources/multilayer.txt",
     "output_file": "resources/zeta_linear.txt",
-    "problem": "XOR",
+    "problem": "numbers",
     "learning_rate" : 0.1,
     "max_epochs" : 25,
     "min_error": 1e-2,
     "sigmoid_type" : "tanh",
     "beta": 0.4,
-    "cross_validate":"False",
+    "cross_validate":"True",
     "test_proportion": 0.2
 }
