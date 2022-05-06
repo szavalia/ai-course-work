@@ -16,6 +16,18 @@ def generate_output(properties:Properties, observables:Observables):
     print("Error: {0}".format(observables.error))
     print("Epochs: {0}".format(observables.epochs))
 
+def save_error(epoch, error, data_size):
+    path = "resources/errors.csv"
+    # Delete contents of the file
+    if epoch == 0:
+        file = open(path,"w")
+    else:
+        file = open(path,"a")
+
+    entry = "{0},{1},{2}\n".format(epoch, error, error/data_size)
+    file.write(entry)
+    file.close()
+
 
 def parse_properties():
     file = open('config.json')

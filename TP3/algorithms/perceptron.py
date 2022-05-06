@@ -1,20 +1,8 @@
 import numpy as np
 import random
 from models import Observables, Properties,Perceptron
-from io_parser import generate_output
+from io_parser import generate_output, save_error
 import sys 
-
-def save_error(epoch, error):
-    path = "resources/errors.csv"
-    # Delete contents of the file
-    if epoch == 0:
-        file = open(path,"w")
-    else:
-        file = open(path,"a")
-
-    entry = "{0},{1}\n".format(epoch, error)
-    file.write(entry)
-    file.close()
 
 def execute(properties:Properties):
     perceptron:Perceptron = build_perceptron(properties)    
@@ -35,7 +23,7 @@ def execute(properties:Properties):
         #pos = random.randint(0, len(training_set) - 1)
         if(i == len(training_set)):
             if not properties.cross_validate and not properties.perceptron.type == "step":
-                save_error(epochs, min_error)
+                save_error(epochs, min_error, len(training_set))
             epochs+=1
             indexes = random.sample(list(range(len(training_set))),len(list(range(len(training_set)))))
             i = 0
@@ -92,7 +80,7 @@ def get_results(properties:Properties, w):
         O = perceptron.function(h)
         denormalized_O = properties.normalized_function(properties.sigmoid_max,properties.sigmoid_min,properties.output_max,properties.output_min,O)
         results.append(denormalized_O)
-    
+        
     return results
 
 # Tests perceptron using a given weight vector and gets the metrics for it
