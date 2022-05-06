@@ -4,6 +4,18 @@ from models import Observables, Properties,Perceptron
 from io_parser import generate_output
 import sys 
 
+def save_error(epoch, error):
+    path = "resources/errors.csv"
+    # Delete contents of the file
+    if epoch == 0:
+        file = open(path,"w")
+    else:
+        file = open(path,"a")
+
+    entry = "{0},{1}\n".format(epoch, error)
+    file.write(entry)
+    file.close()
+
 def execute(properties:Properties):
     perceptron:Perceptron = build_perceptron(properties)    
     # Add threshold to training set
@@ -22,6 +34,8 @@ def execute(properties:Properties):
         # Always pick at random or random until covered whole training set and then random again?
         #pos = random.randint(0, len(training_set) - 1)
         if(i == len(training_set)):
+            if not properties.cross_validate and not properties.perceptron.type == "step":
+                save_error(epochs, min_error)
             epochs+=1
             indexes = random.sample(list(range(len(training_set))),len(list(range(len(training_set)))))
             i = 0
@@ -91,7 +105,6 @@ def test(properties:Properties, w, metrics_function):
 
 
 def cross_validate(properties:Properties):
-    print("Hola salus")
     # Split input into chunks
     # ATTENTION! This product should be an integer in order not to lose entries
     segment_members = int(len(properties.training_set)*properties.test_proportion)

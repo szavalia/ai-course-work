@@ -1,12 +1,14 @@
 {
-    "perceptron_type" : "multilayer",
+    "perceptron_type" : "step",
     "hidden_layers": [2],
-    "entry_file": "resources/multilayer.txt",
-    "output_file": "resources/zeta_numbers.txt",
-    "problem": "numbers",
+    "entry_file": "resources/linear.txt",
+    "output_file": "resources/zeta_linear.txt",
+    "problem": "XOR",
     "learning_rate" : 0.1,
-    "max_epochs" : 500,
+    "max_epochs" : 50,
     "min_error": 1e-2,
     "sigmoid_type" : "tanh",
-    "beta": 0.8
+    "beta": 0.8,
+    "cross_validate":"False",
+    "test_proportion": 0.2
 }
