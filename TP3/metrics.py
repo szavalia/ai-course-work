@@ -116,9 +116,6 @@ def get_discrete_metrics(expected, calculated, problem):
 def get_continuous_metrics(expected, calculated, problem=None):
     # The problem has a continuous answer space
     ERROR_THRESHOLD = 1 # Every class is separated by ERROR THRESHHOLD
-    minval = (min(min(expected), min(calculated))//ERROR_THRESHOLD)*ERROR_THRESHOLD # Gets bottom limit divisible by error threshold
-    maxval = ((max(max(expected), max(calculated))+ERROR_THRESHOLD)//ERROR_THRESHOLD)*ERROR_THRESHOLD # Gets top limit divisible by error threshold
-    classes = np.arange(minval, maxval, ERROR_THRESHOLD)   
     
     hitcount = 0
     # Adjust values to map onto those of the classes
@@ -126,25 +123,4 @@ def get_continuous_metrics(expected, calculated, problem=None):
         if abs(expected[i]-calculated[i]) < ERROR_THRESHOLD:
             hitcount += 1
 
-        #print("PREVIOUS:"+str(expected[i])+" - "+str(calculated[i]))
-        expected[i] = (expected[i]//ERROR_THRESHOLD)*ERROR_THRESHOLD
-        calculated[i] = (calculated[i]//ERROR_THRESHOLD)*ERROR_THRESHOLD
-        #print("AFTER:"+str(expected[i])+" - "+str(calculated[i]))
-
-
-    classes_dictionary = build_classes_dictionary(classes)    
-    confusion_matrix = get_confusion_matrix(classes, classes_dictionary, expected, calculated)
-    print("EPSILON HITCOUNT:"+str(hitcount))
-    print("HITS:"+str(np.sum(np.diag(confusion_matrix))))
-    print("TOTAL:"+str(np.sum(confusion_matrix)))
-    return Metrics(accuracy=np.sum(np.diag(confusion_matrix))/np.sum(confusion_matrix))
-
-"""
-expected = ["M","M","M","M","M","M","M","M","N","N","N","N","N","N","D","D","D","D","D","D","D","D","D","D","D","D","D"]
-calculated=["M","M","M","M","M","N","N","N","M","M","M","N","N","D","N","N","D","D","D","D","D","D","D","D","D","D","D"]
-classes = ["M","N","D"]
-classes_dictionary = build_classes_dictionary(classes)
-confusion_matrix = get_confusion_matrix(classes, classes_dictionary, expected, calculated)
-print(confusion_matrix)
-print(get_metrics(confusion_matrix, "D", classes_dictionary))
-"""
+    return Metrics(accuracy=hitcount/len(expected))
