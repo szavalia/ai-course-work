@@ -11,13 +11,13 @@ def __main__():
 
     #Execute the training algorithm based on the properties, then test the algorithm
     if(properties.perceptron.type == "multilayer"):
-        if(properties.perceptron.problem != "XOR"):
-            observables = multi_cross_validate(properties, 0.2)
+        if(properties.perceptron.problem != "XOR" and properties.cross_validate):
+            observables = multi_cross_validate(properties)
         else:
             observables = multi_execute(properties)
     else:
-        if(properties.perceptron.type != "step"):
-            observables = simple_cross_validate(properties, 0.2)
+        if(properties.perceptron.type != "step" and properties.cross_validate):
+            observables = simple_cross_validate(properties)
         else:
             observables = simple_execute(properties)
     #Process metrics for data visualization

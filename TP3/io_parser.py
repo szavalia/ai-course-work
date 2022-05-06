@@ -28,6 +28,14 @@ def parse_properties():
         print("Perceptron type required")
         exit(-1)
 
+    cross_validate = (json_values.get("cross_validate") == "True")
+
+    test_proportion = json_values.get("test_proportion")
+
+    if cross_validate and (test_proportion == None or test_proportion < 0 or test_proportion > 1):
+        print("Test proportion required")
+        exit(-1)
+
     sigmoid_type = json_values.get("sigmoid_type")
     beta = json_values.get("beta")
     if perceptron_type == "non_linear" and sigmoid_type == None:
@@ -84,6 +92,6 @@ def parse_properties():
 
     hidden_layers = json_values.get("hidden_layers")
 
-    return Properties(Perceptron(perceptron_type,learning_rate,epochs,min_error,problem,perceptron_function,sigmoid_type,perceptron_d_function,hidden_layers),training_set,output_set,normalize_function, metrics_function)
+    return Properties(Perceptron(perceptron_type,learning_rate,epochs,min_error,problem,perceptron_function,sigmoid_type,perceptron_d_function,hidden_layers),training_set,output_set,normalize_function, metrics_function,cross_validate,test_proportion)
     
 

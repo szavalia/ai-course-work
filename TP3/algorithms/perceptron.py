@@ -90,11 +90,12 @@ def test(properties:Properties, w, metrics_function):
     return metrics
 
 
-def cross_validate(properties:Properties, TEST_PROPORTION):
+def cross_validate(properties:Properties):
+    print("Hola salus")
     # Split input into chunks
     # ATTENTION! This product should be an integer in order not to lose entries
-    segment_members = int(len(properties.training_set)*TEST_PROPORTION)
-    segment_count = int(1/TEST_PROPORTION)
+    segment_members = int(len(properties.training_set)*properties.test_proportion)
+    segment_count = int(1/properties.test_proportion)
     sets = np.array_split(properties.training_set, segment_count)
 
     max_accuracy = -1
