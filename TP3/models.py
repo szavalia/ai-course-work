@@ -14,6 +14,7 @@ class Perceptron:
 
 class Properties:
     beta = 0
+    softmax = False 
     def __init__(self,perceptron:Perceptron,training_set,output_set,normalized_function, metrics_function,cross_validate,test_proportion):
         self.perceptron = perceptron
         self.training_set = training_set

@@ -1,5 +1,6 @@
 import sys
 import numpy as np
+from scipy.special import softmax
 import random
 from models import Observables, Properties,Perceptron,Neuron,Layer,ThresholdNeuron
 from algorithms.problems import generate_noise_test_set
@@ -35,6 +36,11 @@ def execute(properties:Properties):
         # Calculate activations (and save them)
         for (idx, layer) in enumerate(layers):
             activations.append(layer.get_activations(activations[idx]))
+
+        # If softmax was requested then apply it on the output layer activations
+        if (Properties.softmax):
+            activations[-1] = softmax(activations[-1]).tolist()
+            
         
         deltas = []
         # Calculate error in output and one below output
@@ -75,8 +81,14 @@ def calculate_error(properties:Properties, training_set, output_set, layers):
         activations.append(entry)
         for (j, layer) in enumerate(layers):
             activations.append(layer.get_activations(activations[j]))
+
+        # If softmax was requested then apply it on the output layer activations
+        if (Properties.softmax):
+            activations[-1] = softmax(activations[-1]).tolist()
+
         for (idx,output_value) in enumerate(output_set[i]):
             error += (output_value - properties.normalized_function(properties.sigmoid_max,properties.sigmoid_min,properties.output_max,properties.output_min,activations[-1][idx]))**2
+    
     return error*(1/2)
 
 def build_perceptron(properties:Properties, test_w=None):
@@ -89,16 +101,17 @@ def build_perceptron(properties:Properties, test_w=None):
 
     perceptron = properties.perceptron
 
-    if(perceptron.sigmoid_type == "tanh"):
+    if(perceptron.sigmoid_type == "tanh" and not Properties.softmax):
         properties.sigmoid_max = 1
         properties.sigmoid_min = -1
         properties.output_max = np.max(properties.output_set)
         properties.output_min = np.min(properties.output_set)
-    elif(perceptron.sigmoid_type == "logistic"):
+    elif(perceptron.sigmoid_type == "logistic" or Properties.softmax):
         properties.sigmoid_max = 1
         properties.sigmoid_min = 0
         properties.output_max = np.max(properties.output_set)
         properties.output_min = np.min(properties.output_set)
+   
 
     hidden_neuron_count = 0
     # Add hidden layer layers
@@ -149,7 +162,11 @@ def get_results(properties:Properties, w):
         for (idx, layer) in enumerate(layers):
             activations.append(layer.get_activations(activations[idx]))
             
+            
             if layer == layers[-1]: # I'm in the outer layer
+                # If softmax was requested then apply it on the output layer activations
+                if (Properties.softmax):
+                    activations[-1] = softmax(activations[-1]).tolist()
                 results.append(activations[-1])
                 for (idx,output_value) in enumerate(properties.output_set[i]):
                     error += (1/2)*(output_value - activations[-1][idx])**2

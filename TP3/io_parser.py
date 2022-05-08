@@ -114,6 +114,8 @@ def parse_properties():
 
     hidden_layers = json_values.get("hidden_layers")
 
+    Properties.softmax = (json_values.get("softmax") == "True")
+
     return Properties(Perceptron(perceptron_type,learning_rate,epochs,min_error,problem,perceptron_function,sigmoid_type,perceptron_d_function,hidden_layers),training_set,output_set,normalize_function, metrics_function,cross_validate,test_proportion)
     
 
