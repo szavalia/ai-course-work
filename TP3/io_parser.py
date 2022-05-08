@@ -16,9 +16,9 @@ def generate_output(properties:Properties, observables:Observables):
     print("Training Error: {0}".format(observables.training_error)) 
     if(observables.test_error != 0): 
         print("Test Error: {0}".format(observables.test_error)) 
-    if(observables.metrics != None and properties.perceptron == "multilayer"): 
+    if(observables.metrics != None and properties.perceptron.type == "multilayer"): 
         print("Accuracy: {0}".format(observables.metrics[0].accuracy)) 
-    elif(observables.metrics != None and properties.perceptron != "multilayer"):
+    elif(observables.metrics != None and properties.perceptron.type != "multilayer"):
         print("Accuracy: {0}".format(observables.metrics.accuracy))
     print("Epochs: {0}".format(observables.epochs))
 
