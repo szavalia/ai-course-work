@@ -7,7 +7,8 @@ import sys
 def execute(properties:Properties):
     perceptron:Perceptron = build_perceptron(properties)    
     # Add threshold to training set
-    training_set = np.insert(properties.training_set, 0, 1, axis=1)
+    BIAS = 1
+    training_set = np.insert(properties.training_set, 0, BIAS, axis=1)
     w = np.zeros(len(training_set[0]))
     error = sys.maxsize
     min_error = sys.maxsize #2 * len(training_set)

@@ -8,9 +8,9 @@ from algorithms.problems import generate_noise_test_set
 def execute(properties:Properties):
     
     (perceptron, layers) = build_perceptron(properties)
+    BIAS = -1
     # Add threshold to training set
-    training_set = np.insert(properties.training_set, 0, -1, axis=1)
-
+    training_set = np.insert(properties.training_set, 0, BIAS, axis=1)
 
     error = sys.maxsize
     min_error = sys.maxsize

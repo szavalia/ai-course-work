@@ -1,5 +1,3 @@
-TP1/solution.txt
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -136,4 +134,4 @@ dmypy.json
 #Output
 *.csv
 
-*.txt
+.vscode/launch.json
