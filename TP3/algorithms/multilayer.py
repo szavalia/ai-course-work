@@ -38,7 +38,7 @@ def execute(properties:Properties):
         
         deltas = []
         # Calculate error in output and one below output
-        deltas.append(layer.get_deltas(properties.output_set[pos%(len(training_set))],None, activations[-1]))
+        deltas.append(layer.get_deltas(properties.output_set[pos],None, activations[-1],False,properties))
         deltas.insert(0, layers[-2].get_deltas(deltas[0],layers[-1], None, True))
 
         # Calculate deltas (and save them)
@@ -51,7 +51,7 @@ def execute(properties:Properties):
             layer.update_neurons(deltas[idx],activations[idx],isOutput)
         
         # Calculate error
-        error = calculate_error(training_set, properties.output_set, layers)
+        error = calculate_error(properties, training_set, properties.output_set, layers)
         i+=1
         if error < min_error:
             min_error = error
@@ -68,7 +68,7 @@ def execute(properties:Properties):
     return Observables(min_w, min_error,epochs)
 
 
-def calculate_error(training_set, output_set, layers):
+def calculate_error(properties:Properties, training_set, output_set, layers):
     error = 0
     for (i,entry) in enumerate(training_set):
         activations = []
@@ -76,7 +76,7 @@ def calculate_error(training_set, output_set, layers):
         for (j, layer) in enumerate(layers):
             activations.append(layer.get_activations(activations[j]))
         for (idx,output_value) in enumerate(output_set[i]):
-            error += (output_value - activations[-1][idx])**2
+            error += (output_value - properties.normalized_function(properties.sigmoid_max,properties.sigmoid_min,properties.output_max,properties.output_min,activations[-1][idx]))**2
     return error*(1/2)
 
 def build_perceptron(properties:Properties, test_w=None):
@@ -87,7 +87,18 @@ def build_perceptron(properties:Properties, test_w=None):
     Neuron.d_function = perceptron.d_function
     layers = []
 
-   
+    perceptron = properties.perceptron
+
+    if(perceptron.sigmoid_type == "tanh"):
+        properties.sigmoid_max = 1
+        properties.sigmoid_min = -1
+        properties.output_max = np.max(properties.output_set)
+        properties.output_min = np.min(properties.output_set)
+    elif(perceptron.sigmoid_type == "logistic"):
+        properties.sigmoid_max = 1
+        properties.sigmoid_min = 0
+        properties.output_max = np.max(properties.output_set)
+        properties.output_min = np.min(properties.output_set)
 
     hidden_neuron_count = 0
     # Add hidden layer layers
@@ -157,7 +168,6 @@ def test(properties:Properties, w, metrics_function):
 
 def noise_test(properties:Properties, observables:Observables):
     probabilities = np.arange(0.0, 0.11, 0.01)
-    print(probabilities)
 
     original_training_set =  properties.training_set
     errors = []

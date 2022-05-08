@@ -10,7 +10,6 @@ def normalize_identity(function_max,function_min,output_max,output_min,value):
 
 def generate_noise_test_set(training_set, prob):
     noise_test_set = []
-    print(prob)
     for entry in training_set:
         noise_test_set.append([])
         for value in entry:
@@ -97,13 +96,13 @@ def get_problem_sets(type,problem,entry_file=None,output_file=None):
                     output_set.append([1])
                 else:
                     output_set.append([0])
-            return(parse_entry_file(entry_file,type,problem),output_set,normalize_identity, get_discrete_metrics)
+            return(parse_entry_file(entry_file,type,problem),output_set,normalize_function, get_discrete_metrics)
         if(problem == "numbers"):
             output_set = []
             for i in range(0,10):
                 output_set.append(np.zeros(10,int))
                 output_set[i][i] = 1
-            return(parse_entry_file(entry_file,type,problem),output_set,normalize_identity, get_discrete_metrics)
+            return(parse_entry_file(entry_file,type,problem),output_set,normalize_function, get_discrete_metrics)
         else:
             print("No problem found")
             exit(-1)

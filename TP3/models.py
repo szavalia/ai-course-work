@@ -12,6 +12,21 @@ class Perceptron:
         self.d_function = dfunction
         self.neurons_per_layer = neurons_per_layer
 
+class Properties:
+    beta = 0
+    def __init__(self,perceptron:Perceptron,training_set,output_set,normalized_function, metrics_function,cross_validate,test_proportion):
+        self.perceptron = perceptron
+        self.training_set = training_set
+        self.output_set = output_set
+        self.normalized_function = normalized_function
+        self.metrics_function = metrics_function
+        self.cross_validate = cross_validate
+        self.test_proportion = test_proportion
+        self.output_max = 0
+        self.output_min = 0
+        self.sigmoid_max = 0
+        self.sigmoid_min = 0
+
 class Neuron:
     function = None
     d_function = None
@@ -56,7 +71,7 @@ class Layer:
         return activations
     
     # Returns the deltas for the neurons
-    def get_deltas(self, superior_error,superior_layer=None,activations=None,isBelowOutput=False):
+    def get_deltas(self, superior_error,superior_layer=None,activations=None,isBelowOutput=False,properties:Properties=None):
         deltas = []
         superior_weights = []
         if(superior_layer != None):
@@ -69,7 +84,7 @@ class Layer:
         for (idx,neuron) in enumerate(self.neurons):
             if(activations != None):
                 # If the activation value is set, it means that it's an output layer
-                deltas.append(neuron.calculate_output_delta(superior_error[idx],activations[idx]))
+                deltas.append(neuron.calculate_output_delta(properties.normalized_function(properties.output_max,properties.output_min,properties.sigmoid_max,properties.sigmoid_min,superior_error[idx]),activations[idx]))
             else:
                 if(idx != 0):
                     w_aux = []
@@ -86,23 +101,6 @@ class Layer:
                 neuron.update_w(deltas[idx],activations)
             else:
                 neuron.update_w(deltas[idx-1],activations)
-
-
-class Properties:
-    beta = 0
-    def __init__(self,perceptron:Perceptron,training_set,output_set,normalized_function, metrics_function,cross_validate,test_proportion):
-        self.perceptron = perceptron
-        self.training_set = training_set
-        self.output_set = output_set
-        self.normalized_function = normalized_function
-        self.metrics_function = metrics_function
-        self.cross_validate = cross_validate
-        self.test_proportion = test_proportion
-        self.output_max = 0
-        self.output_min = 0
-        self.sigmoid_max = 0
-        self.sigmoid_min = 0
-
 
 class Observables:
     def __init__(self,w,error,epochs,metrics=None):
