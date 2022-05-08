@@ -2,6 +2,7 @@ import sys
 import numpy as np
 import random
 from models import Observables, Properties,Perceptron,Neuron,Layer,ThresholdNeuron
+from algorithms.problems import generate_noise_test_set
 
 def execute(properties:Properties):
     
@@ -128,7 +129,6 @@ def get_results(properties:Properties, w):
     (perceptron, layers) = build_perceptron(properties, w)
     results = []
     input_set = np.insert(properties.training_set,0,1,axis=1)
-        
     activations = []
     results = []
     error = 0
@@ -140,7 +140,8 @@ def get_results(properties:Properties, w):
             
             if layer == layers[-1]: # I'm in the outer layer
                 results.append(activations[-1])
-                error += (1/2)*(properties.output_set[i]-activations[-1])**2
+                for (idx,output_value) in enumerate(properties.output_set[i]):
+                    error += (1/2)*(output_value - activations[-1][idx])**2
 
                 activations.clear()
     
@@ -153,6 +154,23 @@ def test(properties:Properties, w, metrics_function):
     metrics = metrics_function(properties.output_set, results, properties.perceptron.problem)
 
     return (metrics, error)
+
+def noise_test(properties:Properties, observables:Observables):
+    probabilities = np.arange(0.0, 0.11, 0.01)
+    print(probabilities)
+
+    original_training_set =  properties.training_set
+    errors = []
+    for prob in probabilities:
+        if(prob == 0):
+            errors.append(observables.error)
+            continue
+        noise_test_set = generate_noise_test_set(properties.training_set, prob)
+        properties.training_set = noise_test_set
+        (results,error) = get_results(properties, observables.w)
+        errors.append(error)
+        properties.training_set = original_training_set
+    return (errors, probabilities)
 
 def cross_validate(properties:Properties):
     execute(properties)

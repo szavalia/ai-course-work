@@ -8,6 +8,19 @@ def normalize_function(function_max,function_min,output_max,output_min,value):
 def normalize_identity(function_max,function_min,output_max,output_min,value):
     return value
 
+def generate_noise_test_set(training_set, prob):
+    noise_test_set = []
+    print(prob)
+    for entry in training_set:
+        noise_test_set.append([])
+        for value in entry:
+            p = random.random()
+            if(p >= prob):
+                noise_test_set[-1].append(value)
+            else:
+                noise_test_set[-1].append(1-value)
+    return noise_test_set
+
 def parse_simple_entry_file(entry_file):
     training_set = []
     file = open(entry_file)
@@ -41,38 +54,12 @@ def parse_multilayer_entry_file(entry_file):
         k+=1 
     return training_set
 
-def parse_noise_multilayer_entry_file(entry_file):
-    training_set = []
-    file = open(entry_file)
-    lines = file.readlines()
-
-    i = 0
-    k = 0
-    while i < len(lines):
-        training_set.append([])
-        for j in range(0,7):
-            if(i != len(lines) -1):
-                tokens = lines[i].replace(" \n", "").split(" ")
-            else:
-                tokens = lines[i].split(" ")[:-1]
-            for token in tokens[0:len(tokens)]:
-                p = random.random()
-                if(p > 0.02):
-                    training_set[k].append(int(token))
-                else:
-                    training_set[k].append(1-int(token))
-            i+=1
-        k+=1 
-    return training_set
-
 def parse_entry_file(entry_file,type,problem):
     if(type == "linear" or type == "non_linear"):
         return parse_simple_entry_file(entry_file)
     elif(type == "multilayer"):
         if(problem == "numbers" or problem == "odd_number"):
             return parse_multilayer_entry_file(entry_file)
-        if(problem == "noise_numbers"):
-            return parse_noise_multilayer_entry_file(entry_file)
 
 
 def parse_output_file(output_file, type):
@@ -111,7 +98,7 @@ def get_problem_sets(type,problem,entry_file=None,output_file=None):
                 else:
                     output_set.append([0])
             return(parse_entry_file(entry_file,type,problem),output_set,normalize_identity, get_discrete_metrics)
-        if(problem == "numbers" or problem == "noise_numbers"):
+        if(problem == "numbers"):
             output_set = []
             for i in range(0,10):
                 output_set.append(np.zeros(10,int))

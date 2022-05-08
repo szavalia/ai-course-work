@@ -21,6 +21,7 @@ def save_error(epoch, error, data_size):
     # Delete contents of the file
     if epoch == 0:
         file = open(path,"w")
+        file.write("Epoch,Error,Avg_error")
     else:
         file = open(path,"a")
 
@@ -28,6 +29,15 @@ def save_error(epoch, error, data_size):
     file.write(entry)
     file.close()
 
+def save_noise_error(errors, probabilities):
+    path = "resources/noise_errors.csv"
+    file = open(path,"w")
+    file.write("Error,Probability\n")
+    
+    for (i,error) in enumerate(errors):
+        file.write("{0},{1}\n".format(error, probabilities[i]))
+    
+    file.close()    
 
 def parse_properties():
     file = open('config.json')

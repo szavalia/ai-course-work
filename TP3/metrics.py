@@ -115,10 +115,9 @@ def get_discrete_metrics(expected, calculated, problem):
 # Get metrics for continuous answer spaces, the field problem is added for compatibility's sake
 def get_continuous_metrics(expected, calculated, problem=None):
     # The problem has a continuous answer space
-    ERROR_THRESHOLD = 1 # Every class is separated by ERROR THRESHHOLD
+    ERROR_THRESHOLD = 1 
     
     hitcount = 0
-    # Adjust values to map onto those of the classes
     for i in range(0, len(expected)):
         if abs(expected[i]-calculated[i]) < ERROR_THRESHOLD:
             hitcount += 1

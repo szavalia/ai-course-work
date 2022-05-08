@@ -22,9 +22,9 @@ def execute(properties:Properties):
         # Always pick at random or random until covered whole training set and then random again?
         #pos = random.randint(0, len(training_set) - 1)
         if(i == len(training_set)):
+            epochs+=1
             if not properties.cross_validate and not properties.perceptron.type == "step":
                 save_error(epochs, min_error, len(training_set))
-            epochs+=1
             indexes = random.sample(list(range(len(training_set))),len(list(range(len(training_set)))))
             i = 0
         pos = indexes[i]

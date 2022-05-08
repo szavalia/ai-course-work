@@ -1,8 +1,8 @@
-from io_parser import parse_properties,generate_output
+from io_parser import parse_properties,generate_output, save_noise_error
 from metrics import get_continuous_metrics, get_discrete_metrics
 from models import Properties,Observables
 from algorithms.perceptron import cross_validate as simple_cross_validate, execute as simple_execute
-from algorithms.multilayer import cross_validate as multi_cross_validate, execute as multi_execute
+from algorithms.multilayer import cross_validate as multi_cross_validate, execute as multi_execute,noise_test
 
 def __main__():
 
@@ -15,6 +15,9 @@ def __main__():
             observables = multi_cross_validate(properties)
         else:
             observables = multi_execute(properties)
+            if(properties.perceptron.problem != "XOR"):
+                (errors,probabilities) = noise_test(properties,observables)
+                save_noise_error(errors,probabilities)
     else:
         if(properties.perceptron.type != "step" and properties.cross_validate):
             observables = simple_cross_validate(properties)
