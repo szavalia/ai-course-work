@@ -3,6 +3,7 @@ from algorithms.perceptron_functions import function_chooser
 from algorithms.problems import get_problem_sets
 from models import Perceptron,Properties,Observables
 from constants import DEFAULT_ERROR, MIN_EPOCHS
+import numpy as np
 
 def generate_output(properties:Properties, observables:Observables):
     print("Perceptron type: {0}".format(properties.perceptron.type))
@@ -15,8 +16,10 @@ def generate_output(properties:Properties, observables:Observables):
     print("Training Error: {0}".format(observables.training_error)) 
     if(observables.test_error != 0): 
         print("Test Error: {0}".format(observables.test_error)) 
-    if(observables.metrics != None): 
+    if(observables.metrics != None and properties.perceptron == "multilayer"): 
         print("Accuracy: {0}".format(observables.metrics[0].accuracy)) 
+    elif(observables.metrics != None and properties.perceptron != "multilayer"):
+        print("Accuracy: {0}".format(observables.metrics.accuracy))
     print("Epochs: {0}".format(observables.epochs))
 
 def save_error(epoch, error, data_size):
@@ -115,6 +118,10 @@ def parse_properties():
         print("Invalid problem for perceptron {0}", perceptron_type)
         exit(-1)
 
+    (training_set, output_set) = unison_shuffled_copies(np.array(training_set), np.array(output_set))
+    training_set = training_set.tolist()
+    output_set = output_set.tolist()
+
     hidden_layers = json_values.get("hidden_layers")
 
     Properties.softmax = (json_values.get("softmax") == "True")
@@ -122,3 +129,7 @@ def parse_properties():
     return Properties(Perceptron(perceptron_type,learning_rate,epochs,min_error,problem,perceptron_function,sigmoid_type,perceptron_d_function,hidden_layers),training_set,output_set,normalize_function, metrics_function,cross_validate,test_proportion)
     
 
+def unison_shuffled_copies(a, b):
+    assert len(a) == len(b)
+    p = np.random.permutation(len(a))
+    return a[p], b[p]
