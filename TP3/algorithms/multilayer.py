@@ -190,7 +190,7 @@ def noise_test(properties:Properties, observables:Observables):
     errors = []
     for prob in probabilities:
         if(prob == 0):
-            errors.append(observables.error)
+            errors.append(observables.training_error)
             continue
         noise_test_set = generate_noise_test_set(properties.training_set, prob)
         properties.training_set = noise_test_set
@@ -232,7 +232,7 @@ def cross_validate(properties:Properties):
         # Test the neural network
         properties.training_set = test_set
         properties.output_set = test_output_set
-        (observables.metrics, observables.error) = test(properties, observables.w, properties.metrics_function)
+        (observables.metrics, observables.test_error) = test(properties, observables.w, properties.metrics_function)
 
         # Update best run
         if observables.metrics[0].accuracy > max_accuracy:

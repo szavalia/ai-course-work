@@ -106,7 +106,7 @@ def cross_validate(properties:Properties):
     original_input = properties.training_set.copy()
     original_output = properties.output_set.copy()
 
-    for k in range(0, segment_count-1):
+    for k in range(0, segment_count):
         # Build datasets by splitting into testing and training segments
         test_set = sets[k]
         test_output_set = properties.output_set[k*segment_members:(k+1)*segment_members]
@@ -125,7 +125,7 @@ def cross_validate(properties:Properties):
         # Test the neural network
         properties.training_set = test_set
         properties.output_set = test_output_set
-        (observables.metrics, observables.error) = test(properties, observables.w, properties.metrics_function)
+        (observables.metrics, observables.test_error) = test(properties, observables.w, properties.metrics_function)
         
         # Update best run
         if observables.metrics.accuracy > max_accuracy:

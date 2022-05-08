@@ -104,11 +104,12 @@ class Layer:
                 neuron.update_w(deltas[idx-1],activations)
 
 class Observables:
-    def __init__(self,w,error,epochs,metrics=None):
+    def __init__(self,w,training_error,epochs,metrics=None):
         self.w = w
-        self.error = error
+        self.training_error = training_error
         self.epochs = epochs
         self.metrics = metrics
+        self.test_error = 0
 
 # Metrics for a given class
 class Metrics:

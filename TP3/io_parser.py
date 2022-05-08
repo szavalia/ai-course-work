@@ -12,8 +12,11 @@ def generate_output(properties:Properties, observables:Observables):
         print("Sigmoid type: {0} Beta:{1}".format(properties.perceptron.sigmoid_type, properties.beta))
     print("Learning rate: {0}".format(properties.perceptron.learning_rate))
     print("Max Epochs: {0}".format(properties.perceptron.max_epochs))
-    print("w: {0}".format(observables.w))
-    print("Error: {0}".format(observables.error))
+    print("Training Error: {0}".format(observables.training_error)) 
+    if(observables.test_error != 0): 
+        print("Test Error: {0}".format(observables.test_error)) 
+    if(observables.metrics != None): 
+        print("Accuracy: {0}".format(observables.metrics[0].accuracy)) 
     print("Epochs: {0}".format(observables.epochs))
 
 def save_error(epoch, error, data_size):
@@ -21,7 +24,7 @@ def save_error(epoch, error, data_size):
     # Delete contents of the file
     if epoch == 0:
         file = open(path,"w")
-        file.write("Epoch,Error,Avg_error")
+        file.write("Epoch,Error,Avg_error\n") 
     else:
         file = open(path,"a")
 

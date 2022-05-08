@@ -83,7 +83,7 @@ def get_discrete_metrics(expected, calculated, problem):
         fp = sum([row[index_in_matrix] for row in confusion_matrix]) - tp
         fn = sum(confusion_matrix[index_in_matrix]) - tp
         
-        accuracy = (tp + tn) / sum(confusion_matrix[index_in_matrix])
+        accuracy = (tp + tn) / (tp+tn+fp+fn)
         if (tp == 0 and fp == 0):
             precision = 0
         else:
