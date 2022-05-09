@@ -9,7 +9,7 @@ def generate_output(properties:Properties, observables:Observables):
     print("Perceptron type: {0}".format(properties.perceptron.type))
     if(properties.perceptron.problem != None):
         print("Problem: {0}".format(properties.perceptron.problem))
-    if(properties.perceptron.sigmoid_type != None):
+    if(properties.perceptron.sigmoid_type != None and properties.perceptron.type != "step" and properties.perceptron.type != "linear"):
         print("Sigmoid type: {0} Beta:{1}".format(properties.perceptron.sigmoid_type, properties.beta))
     print("Learning rate: {0}".format(properties.perceptron.learning_rate))
     print("Max Epochs: {0}".format(properties.perceptron.max_epochs))

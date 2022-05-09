@@ -169,7 +169,7 @@ def get_results(properties:Properties, w):
                     activations[-1] = softmax(activations[-1]).tolist()
                 results.append(activations[-1])
                 for (idx,output_value) in enumerate(properties.output_set[i]):
-                    error += (1/2)*(output_value - activations[-1][idx])**2
+                    error += (1/2)*(output_value - properties.normalized_function(properties.sigmoid_max,properties.sigmoid_min,properties.output_max,properties.output_min,activations[-1][idx]))**2
 
                 activations.clear()
     
@@ -186,17 +186,16 @@ def test(properties:Properties, w, metrics_function):
 def noise_test(properties:Properties, observables:Observables):
     probabilities = np.arange(0.0, 0.11, 0.01)
 
-    original_training_set =  properties.training_set
+    original_training_set =  properties.training_set.copy()
     errors = []
     for prob in probabilities:
         if(prob == 0):
             errors.append(observables.training_error)
             continue
-        noise_test_set = generate_noise_test_set(properties.training_set, prob)
+        noise_test_set = generate_noise_test_set(original_training_set, prob)
         properties.training_set = noise_test_set
         (results,error) = get_results(properties, observables.w)
         errors.append(error)
-        properties.training_set = original_training_set
     return (errors, probabilities)
 
 def cross_validate(properties:Properties):
