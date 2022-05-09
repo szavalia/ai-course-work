@@ -18,6 +18,7 @@ def execute(properties:Properties):
 
     i = len(training_set)
     indexes = []
+    previous_inc = None
     epochs = -1
     while error > perceptron.min_error and epochs < perceptron.max_epochs:
         # Always pick at random or random until covered whole training set and then random again?
@@ -35,6 +36,10 @@ def execute(properties:Properties):
         normalized_output = properties.normalized_function(properties.output_max,properties.output_min,properties.sigmoid_max,properties.sigmoid_min,output_set[pos])
         delta_w = perceptron.learning_rate * (normalized_output - O) * entry * perceptron.d_function(h)
         w += delta_w
+        if(Properties.alpha > 0):
+            if (previous_inc is not None):
+                w += Properties.alpha * previous_inc
+            previous_inc = np.array(delta_w)
         error = calculate_error(perceptron.function,training_set, output_set, w,properties)
 
         if error < min_error:
