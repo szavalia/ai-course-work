@@ -36,6 +36,7 @@ class Neuron:
         self.w = w
         self.learning_rate = learning_rate
         self.excitement = 0
+        self.previous_inc = None
         
     def get_activation(self, entry):
         self.excitement = np.dot(self.w, entry)
@@ -54,6 +55,10 @@ class Neuron:
         for activation in activations:
             increments.append(self.learning_rate*activation*delta)
         self.w += increments
+        if(Properties.alpha > 0):
+            if (self.previous_inc is not None):
+                self.w += Properties.alpha * self.previous_inc
+            self.previous_inc = np.array(increments)
 
 class ThresholdNeuron:
 
