@@ -125,3 +125,4 @@ class Metrics:
         self.f1_score=f1_score
         self.true_positive_rate=true_positive_rate
         self.false_positive_rate=false_positive_rate
+        self.studied_class=studied_class

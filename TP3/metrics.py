@@ -72,7 +72,7 @@ def get_confusion_matrix(classes, classes_dictionary, expected, calculated):
 def get_discrete_metrics(expected, calculated, problem):
     (corrected_expected,corrected_calculated,classes) = correct_results(problem,calculated,expected)
     classes_dictionary = build_classes_dictionary(classes)
-    confusion_matrix = get_confusion_matrix(classes, classes_dictionary,corrected_expected, corrected_calculated)
+    confusion_matrix = get_confusion_matrix(classes, classes_dictionary, corrected_expected, corrected_calculated)
 
     metrics_by_class = []
 
@@ -84,11 +84,11 @@ def get_discrete_metrics(expected, calculated, problem):
         fn = sum(confusion_matrix[index_in_matrix]) - tp
         
         accuracy = (tp + tn) / (tp+tn+fp+fn)
-        if (tp == 0 and fp == 0):
+        if (tp + fp == 0):
             precision = 0
         else:
             precision = tp / (tp + fp)
-        if(tp == 0 and fn == 0):
+        if(tp + fn == 0):
             recall = 0
         else:
             recall = tp / (tp + fn)
@@ -97,10 +97,12 @@ def get_discrete_metrics(expected, calculated, problem):
             f1_score = 0
         else:
             f1_score = (2 * precision * recall) / (precision + recall)
+
         if tp + fn == 0:
             true_positives_rate = 0
         else:
             true_positives_rate = tp / (tp + fn)
+            
         if fp + tn == 0:
             false_positives_rate = 0
         else:
@@ -115,7 +117,7 @@ def get_discrete_metrics(expected, calculated, problem):
 # Get metrics for continuous answer spaces, the field problem is added for compatibility's sake
 def get_continuous_metrics(expected, calculated, problem=None):
     # The problem has a continuous answer space
-    ERROR_THRESHOLD = 1 
+    ERROR_THRESHOLD = 0.5
     
     hitcount = 0
     for i in range(0, len(expected)):

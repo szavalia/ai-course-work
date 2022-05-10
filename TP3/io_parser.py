@@ -15,12 +15,11 @@ def generate_output(properties:Properties, observables:Observables):
     print("Max Epochs: {0}".format(properties.perceptron.max_epochs))
     print("Training Error: {0}".format(observables.training_error)) 
     if(observables.test_error != 0): 
-        print("Test Error: {0}".format(observables.test_error)) 
-    if(observables.metrics != None and properties.perceptron.type == "multilayer"): 
-        print("Accuracy: {0}".format(observables.metrics[0].accuracy)) 
-    elif(observables.metrics != None and properties.perceptron.type != "multilayer"):
-        print("Accuracy: {0}".format(observables.metrics.accuracy))
+        print("Test Error: {0}".format(observables.test_error))
     print("Epochs: {0}".format(observables.epochs))
+    
+    if properties.cross_validate and (properties.perceptron.type == "multilayer"):
+        save_discrete_metrics (observables)
 
 def save_error(epoch, error, data_size):
     path = "resources/errors.csv"
@@ -34,6 +33,13 @@ def save_error(epoch, error, data_size):
     entry = "{0},{1},{2}\n".format(epoch, error, error/data_size)
     file.write(entry)
     file.close()
+
+def save_discrete_metrics(observable:Observables):
+    path = "resources/metrics.csv"
+    file = open(path,"w")
+    file.write("studied_class,accuracy,precision,recall,f1_score,true_positives_rate,false_positives_rate\n")
+    for metric in observable.metrics:
+        file.write("{0},{1},{2},{3},{4},{5},{6}\n".format(metric.studied_class, metric.accuracy, metric.precision, metric.recall, metric.f1_score, metric.true_positive_rate, metric.false_positive_rate))
 
 def save_noise_error(errors, probabilities):
     path = "resources/noise_errors.csv"
