@@ -23,7 +23,7 @@ def execute_single(w, pattern):
     pattern = np.array(pattern)
     state = pattern.copy()
     stop = False
-    states = [state]
+    states = [state.copy()]
     while not stop:
 
         # Calculate h
@@ -38,5 +38,6 @@ def execute_single(w, pattern):
         # Check end condition
         if ((state == states[-1]).all()):
             stop = True
-        states.append(state)
+            continue
+        states.append(state.copy())
     return states

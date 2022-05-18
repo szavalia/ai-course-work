@@ -2,6 +2,6 @@
     "method" : "hopfield",
     "hopfield_props": {
         "patterns": ["A", "V", "F", "L"],
-        "noise_prob": 0.2
+        "noise_prob": 0.1
     }
 }
