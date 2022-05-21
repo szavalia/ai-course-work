@@ -136,5 +136,6 @@ TP1/*.csv
 TP2/*.csv
 TP3/*.csv
 TP3/resources/*.csv
+TP4/*txt
 
 .vscode/launch.json
