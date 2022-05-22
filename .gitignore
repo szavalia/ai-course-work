@@ -132,6 +132,9 @@ dmypy.json
 .idea/
 
 #Output
-*.csv
+TP1/*.csv
+TP2/*.csv
+TP3/resources/*.csv
+
 
 .vscode/launch.json

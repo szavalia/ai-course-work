@@ -1,1 +1,3 @@
 *.txt
+/resources/classifications.csv
+/resources/u_matrix.csv
