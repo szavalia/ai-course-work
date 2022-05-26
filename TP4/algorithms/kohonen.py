@@ -36,6 +36,7 @@ def execute(properties:KohonenProperties):
     # Initialize epochs, eta and radius
     total_epochs = properties.epochs
     eta = properties.eta
+    starting_r = properties.r
     r = properties.r
 
     # Loop through inputs
@@ -51,11 +52,11 @@ def execute(properties:KohonenProperties):
             update_neighbours(neurons, winner_neuron, eta, r, entry)
             
         # Update epochs, eta and r
-        curr_epochs += 1
-        eta = eta / curr_epochs
         # r updates 4 times: [0 ; epochs/5] => r, [epochs/5 ; 2*epochs/5] => r/(r * 1/4), ..., [4*epochs/5 ; epochs] => r/r
         if (curr_epochs > total_epochs/5):
-            r = r / (r * (int(curr_epochs / (total_epochs/5)) / 4))
+            r = starting_r - (int(curr_epochs / (total_epochs/5)) * (starting_r-1) / 4)
+        curr_epochs += 1
+        eta = eta / curr_epochs   
     
     return get_observables(neurons, properties)
 
