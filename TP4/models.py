@@ -9,8 +9,9 @@ class HopfieldProperties:
         self.noise_prob = noise_prob
 
 class HopfieldObservables:
-    def __init__(self,pattern_states):
+    def __init__(self,pattern_states,energies):
         self.pattern_states = pattern_states
+        self.energies = energies
 
 class KohonenProperties:
     def __init__(self,input_names,input_set,eta,k,r,epochs):

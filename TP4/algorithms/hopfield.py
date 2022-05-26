@@ -14,16 +14,25 @@ def execute(properties:HopfieldProperties):
 
     # Execute algorithm for each letter with noise
     pattern_states = []
+    pattern_energies = []
     for pattern in properties.noise_patterns:
-        states = execute_single(w, pattern)
+        (states,energies)  = execute_single(w, pattern)
         pattern_states.append(states)
-    return HopfieldObservables(pattern_states)
+        pattern_energies.append(energies)
+    return HopfieldObservables(pattern_states,pattern_energies)
+
+def get_energy(w,state):
+    energy = 0
+    for (row_index, row) in enumerate(w):
+        energy += (np.dot(row,state) * state[row_index]) 
+    return -(0.5) * energy
 
 def execute_single(w, pattern):
     pattern = np.array(pattern)
     state = pattern.copy()
     stop = False
     states = [state.copy()]
+    energies = [get_energy(w,pattern)]
     while not stop:
 
         # Calculate h
@@ -35,9 +44,11 @@ def execute_single(w, pattern):
                 continue
             state[index] = np.sign(hi)
 
+        energies.append(get_energy(w,state))
+
         # Check end condition
         if ((state == states[-1]).all()):
             stop = True
             continue
         states.append(state.copy())
-    return states
+    return (states,energies)

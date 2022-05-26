@@ -4,11 +4,13 @@ from letters import get_patterns,get_noise_patterns
 from models import HopfieldObservables, HopfieldProperties, KohonenObservables, KohonenProperties, OjaObservables,OjaProperties
 import pandas as pd
 
-def generate_hopfield_results(observables:HopfieldObservables):
+def generate_hopfield_results(properties:HopfieldProperties ,observables:HopfieldObservables):
+    energy_file = open("resources/energies.csv", "w")
+    energy_file.write("Desired_Pattern,Step,Energy\n")
     for (index,states) in enumerate(observables.pattern_states):
-        file_name = "resources/hopfield_{0}.txt".format(index+1)
+        file_name = "resources/hopfield_{0}.txt".format(properties.letters[index])
         file = open(file_name, "w")
-        for state in states:
+        for (state_index,state) in enumerate(states):
             state_splits = np.array_split(state,5)
             for state_split in state_splits:
                 symbols = []
@@ -18,15 +20,27 @@ def generate_hopfield_results(observables:HopfieldObservables):
                     else:
                         symbols.append("*")
                 file.write("{0} {1} {2} {3} {4}\n".format(symbols[0], symbols[1], symbols[2], symbols[3], symbols[4]))
+            energy_file.write("{0},{1},{2}\n".format(properties.letters[index],state_index,observables.energies[index][state_index]))
             file.write("\n")
         file.close()
+    energy_file.close()
+    result_file = open("resources/hopfield_results.csv", "w")
+    result_file.write("Pattern,State,Accuracy\n")
+    for (index,pattern) in enumerate(properties.patterns):
+        accuracy = 0
+        final_pattern = observables.pattern_states[index][-1]
+        for (index_value, value) in enumerate(pattern):
+            accuracy += (((value * final_pattern[index_value]) + 1) / 2) #if equals, adds 1, else 0
+        accuracy /= (len(pattern))
+        result_file.write("{0},{1},{2}\n".format(properties.letters[index], True if accuracy == 1 else False, accuracy))
+
         
 def generate_hopfield_output(properties:HopfieldProperties,observables:HopfieldObservables):
     print("Method: {0}".format(properties.method))
     print("Patterns: {0}".format(properties.letters))
     print("Noise probability: {0}".format(properties.noise_prob))
     print("See hopfield_n.txt files for results")
-    generate_hopfield_results(observables)
+    generate_hopfield_results(properties,observables)
 
 def generate_kohonen_results(properties:KohonenProperties, observables:KohonenObservables):
     with open("resources/classifications.csv", "w") as f:
