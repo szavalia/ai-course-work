@@ -35,3 +35,16 @@ class KohonenNeuron:
     
     def update_w(self,xp,eta):
         self.w += eta * (np.array(xp) - np.array(self.w))
+
+class OjaProperties:
+    def __init__(self,input_names,input_set,eta,epochs):
+        self.method = "oja"
+        self.input_names = input_names
+        self.input_set = input_set
+        self.eta = eta
+        self.epochs = epochs
+
+class OjaObservables:
+    def __init__(self,principal_component, loadings):
+        self.principal_component = principal_component
+        self.loadings = loadings
