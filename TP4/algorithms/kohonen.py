@@ -9,7 +9,6 @@ def standardize_input(input_set):
     field_set = np.array(input_set).transpose()
     field_aggregations = []
     for field in field_set:
-        #field = np.array(field)
         field_aggregations.append([np.mean(field), np.std(field)])
     
     # Build standardized set
@@ -35,6 +34,7 @@ def execute(properties:KohonenProperties):
 
     # Initialize epochs, eta and radius
     total_epochs = properties.epochs
+    starting_eta = properties.eta
     eta = properties.eta
     starting_r = properties.r
     r = properties.r
@@ -53,12 +53,13 @@ def execute(properties:KohonenProperties):
             
         # Update epochs, eta and r
         # r updates 4 times: [0 ; epochs/5] => r, [epochs/5 ; 2*epochs/5] => r/(r * 1/4), ..., [4*epochs/5 ; epochs] => r/r
-        if (curr_epochs > total_epochs/5):
+        if (curr_epochs != 0 and curr_epochs % (total_epochs/5) == 0):
             r = starting_r - (int(curr_epochs / (total_epochs/5)) * (starting_r-1) / 4)
+        if (curr_epochs != 0 and curr_epochs % (total_epochs/100) == 0):
+            eta = starting_eta - (int(curr_epochs / (total_epochs/100)) * starting_eta / 100)
         curr_epochs += 1
-        eta = eta / curr_epochs   
     
-    return get_observables(neurons, properties)
+    return get_observables(neurons, input_set, properties)
 
 def find_winner_neuron(entry, neurons):
     winner_neuron = None
@@ -96,12 +97,12 @@ def update_neighbours(neurons, central_neuron, eta, r, input_value):
         neighbourhood[i].update_w(input_value, eta)
 
 # Calculates the U-Matrix and associates an input to each neuron
-def get_observables(neurons, properties:KohonenProperties):
+def get_observables(neurons, standardized_input, properties:KohonenProperties):
     input_map = {}
     # Find associated neuron for each input
-    for i, entry in enumerate(properties.input_set):
+    for i, entry in enumerate(standardized_input):
         input_map[properties.input_names[i][0]] = find_winner_neuron(entry, neurons)
-
+        
     u_matrix = {}
     for neuron in neurons:
         neighbourhood = find_neighbours(neurons, neuron, properties.r, properties.k)

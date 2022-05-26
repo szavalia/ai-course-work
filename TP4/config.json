@@ -1,5 +1,5 @@
 {
-    "method" : "oja",
+    "method" : "kohonen",
     "hopfield_props": {
         "patterns": ["A", "V", "F", "L"],
         "noise_prob": 0.1
@@ -8,8 +8,8 @@
         "dataset_path" : "resources/europe.csv",
         "eta" : 0.1,
         "k" : 4,
-        "r" : 1,
-        "epochs" : 500
+        "r" : 4,
+        "epochs" : 1000
     },
     "oja_props":{
         "dataset_path" : "resources/europe.csv",
