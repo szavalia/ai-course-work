@@ -78,8 +78,8 @@ def find_winner_neuron(entry, neurons):
 def find_neighbours(neurons,central_neuron,r,k):
     neighbourhood = []
     # Find neighbours
-    for i in range(math.floor(central_neuron.i - r), math.ceil(central_neuron.i + r)):
-        for j in range(math.floor(central_neuron.j - r), math.ceil(central_neuron.j + r)):
+    for i in range(math.floor(central_neuron.i - r), math.ceil(central_neuron.i + r + 1)):
+        for j in range(math.floor(central_neuron.j - r), math.ceil(central_neuron.j + r + 1)):
             # Check bounds
             if i >= 0 and i < k and j >= 0 and j < k:
                 # Check distance
@@ -105,11 +105,15 @@ def get_observables(neurons, standardized_input, properties:KohonenProperties):
         
     u_matrix = {}
     for neuron in neurons:
-        neighbourhood = find_neighbours(neurons, neuron, properties.r, properties.k)
+        neighbourhood = find_neighbours(neurons, neuron, 1, properties.k)
         avg_distance = 0
         for neighbour in neighbourhood:
-            avg_distance += math.sqrt((neighbour.i - neuron.i)**2 + (neighbour.j - neuron.j)**2)
-        avg_distance /= len(neighbourhood)
+            avg_distance += np.sum(np.abs(np.subtract(neuron.w, neighbour.w)))
+        avg_distance /= len(neighbourhood) - 1
         u_matrix[(neuron.i, neuron.j)] = avg_distance
     
+    sum = 0
+    for i in range(0, 4):
+        for j in range(0, 4):
+            sum += u_matrix[(i,j)]
     return KohonenObservables(input_map,u_matrix)
