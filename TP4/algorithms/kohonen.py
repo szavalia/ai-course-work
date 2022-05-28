@@ -4,7 +4,7 @@ import random as rn
 import sys
 import math
 
-def standardize_input(input_set):
+def standarize_input(input_set):
     # Calculates standard deviations and means for each field
     field_set = np.array(input_set).transpose()
     field_aggregations = []
@@ -23,7 +23,7 @@ def standardize_input(input_set):
     
 def execute(properties:KohonenProperties):
     # Initialize input values
-    input_set = standardize_input(properties.input_set)
+    input_set = standarize_input(properties.input_set)
     
     # Create lattice of k x k neurons and initialize weights with values of entry chosen at random
     neurons = []
@@ -97,10 +97,10 @@ def update_neighbours(neurons, central_neuron, eta, r, input_value):
         neighbourhood[i].update_w(input_value, eta)
 
 # Calculates the U-Matrix and associates an input to each neuron
-def get_observables(neurons, standardized_input, properties:KohonenProperties):
+def get_observables(neurons, standarized_input, properties:KohonenProperties):
     input_map = {}
     # Find associated neuron for each input
-    for i, entry in enumerate(standardized_input):
+    for i, entry in enumerate(standarized_input):
         input_map[properties.input_names[i][0]] = find_winner_neuron(entry, neurons)
         
     u_matrix = {}
