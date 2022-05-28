@@ -24,9 +24,10 @@ class KohonenProperties:
         self.epochs = epochs
     
 class KohonenObservables:
-    def __init__(self,classifications,u_matrix):
+    def __init__(self,classifications,u_matrix,weights_matrix):
         self.classifications = classifications
         self.u_matrix = u_matrix
+        self.weights_matrix = weights_matrix
 
 class KohonenNeuron:
     def __init__(self,w,i,j):
