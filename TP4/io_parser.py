@@ -53,6 +53,12 @@ def generate_kohonen_results(properties:KohonenProperties, observables:KohonenOb
         for (row_index, col_index) in observables.u_matrix.keys(): 
             f.write("{0},{1},{2}\n".format(row_index,col_index,observables.u_matrix.get((row_index,col_index))))
 
+    with open("resources/weights_matrix.csv", "w") as f:
+        f.write("Row,Colum,Area,GDP,Inflation,Life expectancy,Military,Pop growth,Unemployment\n")
+        for (row_index, col_index) in observables.weights_matrix.keys(): 
+            values = observables.weights_matrix.get((row_index,col_index))
+            f.write("{0},{1},{2},{3},{4},{5},{6},{7},{8}\n".format(row_index,col_index,values[0],values[1],values[2],values[3],values[4],values[5],values[6]))
+
 def generate_kohonen_output(properties:KohonenProperties, observables:KohonenObservables):
     print("Method: {0}".format(properties.method))
     print("Eta: {0}".format(properties.eta))

@@ -104,6 +104,7 @@ def get_observables(neurons, standarized_input, properties:KohonenProperties):
         input_map[properties.input_names[i][0]] = find_winner_neuron(entry, neurons)
         
     u_matrix = {}
+    weights_matrix = {}
     for neuron in neurons:
         neighbourhood = find_neighbours(neurons, neuron, 1, properties.k)
         avg_distance = 0
@@ -111,9 +112,11 @@ def get_observables(neurons, standarized_input, properties:KohonenProperties):
             avg_distance += np.sum(np.abs(np.subtract(neuron.w, neighbour.w)))
         avg_distance /= len(neighbourhood) - 1
         u_matrix[(neuron.i, neuron.j)] = avg_distance
+
+        for weight in neuron.w:
+            if (neuron.i, neuron.j) in weights_matrix:
+                weights_matrix[(neuron.i, neuron.j)].append(weight)
+            else:
+                weights_matrix[(neuron.i, neuron.j)] = [weight]
     
-    sum = 0
-    for i in range(0, 4):
-        for j in range(0, 4):
-            sum += u_matrix[(i,j)]
-    return KohonenObservables(input_map,u_matrix)
+    return KohonenObservables(input_map,u_matrix,weights_matrix)
