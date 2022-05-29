@@ -2,6 +2,7 @@ import json
 import numpy as np
 from letters import get_patterns,get_noise_patterns
 from models import HopfieldObservables, HopfieldProperties, KohonenObservables, KohonenProperties, OjaObservables,OjaProperties
+from library_PCA import execute as library_PCA
 import pandas as pd
 
 def generate_hopfield_results(properties:HopfieldProperties ,observables:HopfieldObservables):
@@ -69,15 +70,16 @@ def generate_kohonen_output(properties:KohonenProperties, observables:KohonenObs
     generate_kohonen_results(properties,observables)
 
 def generate_oja_results(properties:OjaProperties,observables:OjaObservables):
+    (principal_components, loadings) = library_PCA(properties.input_set)
     with open("resources/components.csv", "w") as f:
-        f.write("Country,Component\n")
+        f.write("Country,Component, Error\n")
         for (index, country) in enumerate(properties.input_names):
-            f.write("{0},{1}\n".format(country,observables.principal_component[index]))
+            f.write("{0},{1},{2}\n".format(country,observables.principal_component[index], abs(observables.principal_component[index] - principal_components[index][0])))
     
     with open("resources/loadings.csv", "w") as f:
         f.write("Variable,Loading\n")
         for (index,loading) in enumerate(observables.loadings):
-            f.write("{0},{1}\n".format(index+1, loading))
+            f.write("{0},{1}\n".format(index+1, loading,))
 
 
 def generate_oja_output(properties:OjaProperties,observables:OjaObservables):
