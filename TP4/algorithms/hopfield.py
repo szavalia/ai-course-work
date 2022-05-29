@@ -44,11 +44,11 @@ def execute_single(w, pattern):
                 continue
             state[index] = np.sign(hi)
 
-        energies.append(get_energy(w,state))
-
         # Check end condition
         if ((state == states[-1]).all()):
             stop = True
             continue
+        
+        energies.append(get_energy(w,state))
         states.append(state.copy())
     return (states,energies)
