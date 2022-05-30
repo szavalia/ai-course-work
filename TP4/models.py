@@ -39,14 +39,16 @@ class KohonenNeuron:
         self.w += eta * (np.array(xp) - np.array(self.w))
 
 class OjaProperties:
-    def __init__(self,input_names,input_set,eta,epochs):
+    def __init__(self,input_names,input_set,eta,epochs,lib_components):
         self.method = "oja"
         self.input_names = input_names
         self.input_set = input_set
         self.eta = eta
         self.epochs = epochs
+        self.lib_components = lib_components
 
 class OjaObservables:
-    def __init__(self,principal_component, loadings):
+    def __init__(self,principal_component, loadings,error_values):
         self.principal_component = principal_component
         self.loadings = loadings
+        self.error_values = error_values

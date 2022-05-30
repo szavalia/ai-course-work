@@ -27,14 +27,25 @@ def execute(properties:OjaProperties):
     
     w = np.random.uniform(-1,1,len(input_set[0]))
 
+    error_values = []
     for i in range(properties.epochs):
+        errors = []
+        avg_error = 0
+        
         for input in input_set:
             s = np.dot(input,w)
             w += properties.eta * s * (input- s*w)
-    
+        
+        for (index,input) in enumerate(input_set):
+           errors.append(abs(np.dot(input,w) - properties.lib_components[index][0]))
+           avg_error+=errors[-1]
+        
+        avg_error/=len(errors)
+        error_values.append([avg_error, np.std(errors)])
+
     principal_component = []
     for input in input_set:
         s = np.dot(input,w)
         principal_component.append(s)
     
-    return OjaObservables(principal_component,w)
+    return OjaObservables(principal_component,w,error_values)

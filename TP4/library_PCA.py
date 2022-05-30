@@ -10,5 +10,5 @@ def execute(dataset):
     # Executing pca
     pca_config = PCA()
     principalComponents = pca_config.fit_transform(x)
-    return (principalComponents, pca_config.components_[:2])
+    return principalComponents
 
