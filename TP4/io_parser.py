@@ -24,6 +24,8 @@ def generate_hopfield_results(properties:HopfieldProperties ,observables:Hopfiel
             energy_file.write("{0},{1},{2}\n".format(properties.letters[index],state_index,observables.energies[index][state_index]))
             file.write("\n")
         file.close()
+        energy_file.write("{0},{1},{2}\n".format(properties.letters[index],state_index,observables.energies[index][state_index]))
+
     energy_file.close()
     result_file = open("resources/hopfield_results.csv", "w")
     result_file.write("Pattern,State,Accuracy\n")
