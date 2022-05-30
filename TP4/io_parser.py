@@ -75,7 +75,7 @@ def generate_oja_results(properties:OjaProperties,observables:OjaObservables):
     with open("resources/components.csv", "w") as f:
         f.write("Country,Component\n")
         for (index, country) in enumerate(properties.input_names):
-            f.write("{0},{1}\n".format(country,observables.principal_component[index]))
+            f.write("{0},{1}\n".format(country[0],observables.principal_component[index]))
     
     with open("resources/loadings.csv", "w") as f:
         f.write("Variable,Loading\n")
@@ -92,7 +92,7 @@ def generate_oja_output(properties:OjaProperties,observables:OjaObservables):
     print("Method: {0}".format(properties.method))
     print("Eta: {0}".format(properties.eta))
     print("Epochs: {0}".format(properties.epochs))
-    print("See component.csv and loadings.csv")
+    print("See component.csv, loadings.csv and oja_errors.csv")
     generate_oja_results(properties,observables)
     
 
