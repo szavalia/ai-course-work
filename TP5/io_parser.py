@@ -2,17 +2,20 @@ import json
 import numpy as np
 from models import Properties
 import fonts
+from algorithms.noiser import noise_font
 
 def parse_properties():
     with open("config.json") as json_file:
         json_values = json.load(json_file)
     
-    #TODO: Add "mode" field to config.json
 
     neurons_per_layer = get_hidden_layer_neurons(json_values.get("neurons_per_layer"), json_values.get("latent_layer_neurons"))
     
     font = json_values.get("font_set")
     training_set = get_training_set(font)
+    output_set = training_set
+    if (json_values.get("mode") == "DAE"):
+        training_set = noise_font(training_set, json_values.get("noise_probability"))
 
     learning_rate = json_values.get("learning_rate")
     if learning_rate == None or learning_rate <= 0:
@@ -30,7 +33,7 @@ def parse_properties():
         print("Positive epochs required")
         exit(-1)
       
-    return Properties(neurons_per_layer,font,learning_rate,epochs,training_set,training_set)
+    return Properties(neurons_per_layer,font,learning_rate,epochs,training_set,output_set)
 
 # Assembles a decoder with the given neurons_per_layer, a latent layer with the given latent_layer_neurons, and a decoder reversing the encoder.
 def get_hidden_layer_neurons(neurons_per_layer, latent_layer_neurons):
@@ -61,7 +64,6 @@ def get_training_set(font_set):
 
     return training_set
 
-    #TODO: if "mode" is "DAE", add noise to the training set and set the original as output set
 
 
 

@@ -1,4 +1,6 @@
 {
+    "mode": "DEFAULT",
+    "noise_probability": 0.1,
     "neurons_per_layer": [5], 
     "latent_layer_neurons": 2, 
     "font_set": "font1", 
