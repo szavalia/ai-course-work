@@ -1,8 +1,8 @@
 {
-    "neurons_per_layer": [5, 4, 3], 
+    "neurons_per_layer": [5], 
     "latent_layer_neurons": 2, 
     "font_set": "font1", 
     "learning_rate": 0.01,
     "beta": 0.1,
-    "epochs": 100
+    "epochs": 2
 }
