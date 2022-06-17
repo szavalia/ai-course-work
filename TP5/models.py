@@ -43,7 +43,8 @@ class Autoencoder:
 
             for (idx,output_value) in enumerate(output):
                 error += (output_value - expected[idx])**2
-        
+                      
+        print("Error: " + str(error))
         return error*(1/2)
 
 

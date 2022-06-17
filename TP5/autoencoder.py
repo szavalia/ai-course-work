@@ -1,6 +1,4 @@
 from models import Autoencoder, Properties
-#import tensorflow as tf
-#from tensorflow.keras.optimizers import Adam
 import numpy as np
 import numdifftools as nd
 from autograd.misc.optimizers import adam
@@ -14,13 +12,17 @@ def execute(properties:Properties):
 
     print("\nTrained weights:\n\n" + str(trained_weigths))
 
+def callback(x, i, g):
+    print("x: " + str(x))
+    print("i: " + str(i))
+    print("g: " + str(g))
+
 def train_autoencoder(autoencoder:Autoencoder,properties:Properties):
     flattened_weights = np.array([])
     for (i,layer) in enumerate(autoencoder.weights):
         flattened_weights =  np.append(flattened_weights,layer.flatten())
     flattened_weights = flattened_weights.flatten()
-    print("\nEpochs: " + str(properties.epochs))
-    trained_weights = adam(nd.Gradient(autoencoder.error),flattened_weights,callback=None,num_iters=properties.epochs,step_size=0.001, b1=0.9, b2=0.999, eps=10**-8) 
+    trained_weights = adam(nd.Gradient(autoencoder.error), flattened_weights, callback=callback, num_iters=properties.epochs, step_size=0.1, b1=0.9, b2=0.999, eps=10**-2) 
     return trained_weights
 
 def build_autoencoder(properties:Properties):
