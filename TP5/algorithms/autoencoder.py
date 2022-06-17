@@ -1,3 +1,4 @@
+from distutils.log import error
 from models import Autoencoder, Properties
 import numpy as np
 import numdifftools as nd
@@ -12,16 +13,26 @@ def execute(properties:Properties):
 
     print("\nTrained weights:\n\n" + str(trained_weigths))
 
-def callback(x, i, g):
-    print("x: " + str(x))
-    print("i: " + str(i))
-    print("g: " + str(g))
+    print(autoencoder.error(trained_weigths,0))
 
-def train_autoencoder(autoencoder:Autoencoder,properties:Properties):
+    autoencoder.weights = autoencoder.unflatten_weights(trained_weigths)
+
+
+def callback(x, i, g):
+    #print("x: " + str(x))
+    #print("i: " + str(i))
+    #print("g: " + str(g))
+    print("Step: {0}".format(i))
+    print("Error: {0}".format(g))
+
+def flatten_weights(weigths):
     flattened_weights = np.array([])
-    for (i,layer) in enumerate(autoencoder.weights):
+    for (i,layer) in enumerate(weigths):
         flattened_weights =  np.append(flattened_weights,layer.flatten())
-    flattened_weights = flattened_weights.flatten()
+    return flattened_weights.flatten() 
+    
+def train_autoencoder(autoencoder:Autoencoder,properties:Properties):
+    flattened_weights = flatten_weights(autoencoder.weights)
     trained_weights = adam(nd.Gradient(autoencoder.error), flattened_weights, callback=callback, num_iters=properties.epochs, step_size=0.1, b1=0.9, b2=0.999, eps=10**-2) 
     return trained_weights
 
