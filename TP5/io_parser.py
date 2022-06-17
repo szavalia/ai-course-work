@@ -30,7 +30,7 @@ def parse_properties():
         print("Positive epochs required")
         exit(-1)
       
-    return Properties(neurons_per_layer,font,learning_rate,epochs,list(zeros(35)),list(zeros(35)))
+    return Properties(neurons_per_layer,font,learning_rate,epochs,training_set,training_set)
 
 # Assembles a decoder with the given neurons_per_layer, a latent layer with the given latent_layer_neurons, and a decoder reversing the encoder.
 def get_hidden_layer_neurons(neurons_per_layer, latent_layer_neurons):
