@@ -1,6 +1,6 @@
 from models import Properties
 from io_parser import parse_properties
-from autoencoder import execute
+from algorithms.autoencoder import execute
 def __main__():
 
     #Parse parameters
