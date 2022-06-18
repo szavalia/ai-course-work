@@ -1,5 +1,4 @@
-from distutils.log import error
-from models import Autoencoder, Properties
+from models import Autoencoder, Observables, Properties
 import numpy as np
 import scipy.optimize as sco
 
@@ -16,22 +15,9 @@ def execute(properties:Properties):
 
     autoencoder.weights = autoencoder.unflatten_weights(trained_weigths)
 
-def flatten_weights(weigths):
-    flattened_weights = np.array([])
-    for (i,layer) in enumerate(weigths):
-        flattened_weights =  np.append(flattened_weights,layer.flatten())
-    return flattened_weights.flatten() 
-    
-def train_autoencoder(autoencoder:Autoencoder,properties:Properties):
-    flattened_weights = flatten_weights(autoencoder.weights)
+    latent_outputs = get_latent_outputs(autoencoder)
 
-    trained_weights = sco.minimize(
-            autoencoder.error, flattened_weights, method='Powell', callback=autoencoder.callback, 
-            options={'maxiter': properties.epochs}
-        ).x
-
-    print("Corrí el método!")
-    return trained_weights
+    return Observables(autoencoder.errors_per_step,latent_outputs)
 
 def build_autoencoder(properties:Properties):
     weights = []
@@ -58,3 +44,25 @@ def build_autoencoder(properties:Properties):
         weights[i] = np.array(layer, dtype=float)
 
     return Autoencoder(np.array(weights, dtype=object),int((len(properties.neurons_per_layer))/2),properties.training_set,properties.output_set,properties.neurons_per_layer)
+
+def flatten_weights(weigths):
+    flattened_weights = np.array([])
+    for (i,layer) in enumerate(weigths):
+        flattened_weights =  np.append(flattened_weights,layer.flatten())
+    return flattened_weights.flatten() 
+    
+def train_autoencoder(autoencoder:Autoencoder,properties:Properties):
+    flattened_weights = flatten_weights(autoencoder.weights)
+
+    trained_weights = sco.minimize(
+            autoencoder.error, flattened_weights, method='Powell', callback=autoencoder.callback, 
+            options={'maxiter': properties.epochs}
+        ).x
+
+    return trained_weights
+
+def get_latent_outputs(autoencoder:Autoencoder):
+    outputs = []
+    for input in autoencoder.training_set:
+        outputs.append(autoencoder.get_latent_output(input))
+    return outputs

@@ -3,9 +3,7 @@
     "noise_probability": 0.1,
     "neurons_per_layer": [10,5,3], 
     "latent_layer_neurons": 2, 
-    "font_set": "font1",
-    "font_subset_size": 10,
-    "learning_rate": 0.5,
+    "font_set": "font2",
     "beta": 0.1,
-    "epochs": 10
+    "epochs": 2
 }
