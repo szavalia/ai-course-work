@@ -12,7 +12,8 @@ def parse_properties():
     neurons_per_layer = get_hidden_layer_neurons(json_values.get("neurons_per_layer"), json_values.get("latent_layer_neurons"))
     
     font = json_values.get("font_set")
-    training_set = get_training_set(font)
+    font_subset_size = json_values.get("font_subset_size")
+    training_set = get_training_set(font, font_subset_size)
     output_set = training_set
     if (json_values.get("mode") == "DAE"):
         training_set = noise_font(training_set, json_values.get("noise_probability"))
@@ -50,7 +51,7 @@ def get_hidden_layer_neurons(neurons_per_layer, latent_layer_neurons):
     return hidden_layer_neurons
 
 # Sets the training set of the given properties to the given font set
-def get_training_set(font_set):
+def get_training_set(font_set, font_subset_size=None):
     if font_set == None:
         return None
     if font_set not in fonts.font_sets:
@@ -62,6 +63,9 @@ def get_training_set(font_set):
         binary_array = fonts.font_char_to_bin_arr(letter)
         training_set.append(binary_array)
 
+    if font_subset_size != None and font_subset_size < len(training_set):
+        training_set = training_set[:font_subset_size]
+        
     return training_set
 
 

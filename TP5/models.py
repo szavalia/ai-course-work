@@ -32,7 +32,7 @@ class Autoencoder:
         print("Error: {0}".format(self.error(x)))
 
     def relu(self,x):
-        return np.where(x <= 0, x, 0)
+        return np.where(x <= 0, 0, x)
     
     def logistic(self,x):
         ret = []
@@ -51,7 +51,6 @@ class Autoencoder:
             h = np.dot(layer, input)
             # Transform dot products into activations
             input = self.functions[i](h)
-            #print(input)
         
         # Return results of last layer (network outputs)
         return input
@@ -79,6 +78,6 @@ class Autoencoder:
             new_arr.append(flatted.reshape(layer.shape))
             i += curr_size
         new_arr = np.array(new_arr, dtype=object)
-        self.weights = new_arr
+        #self.weights = new_arr
         #print("After unflatten: " + str(self.weights))
         return new_arr
