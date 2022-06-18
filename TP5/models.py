@@ -37,7 +37,12 @@ class Autoencoder:
         return np.array(ret)
     
     def logistic(self, x):
-        return 1 / (1 + np.exp(-Properties.beta * x))
+        
+        try:
+            result = 1 / (1 + np.exp(-Properties.beta * x))
+        except OverflowError:
+            result = 1
+        return result
 
     def linear(self,x):
         return x
@@ -53,8 +58,8 @@ class Autoencoder:
         return input
 
 
-    def error(self, weights,step):
-        #print("Step: " + str(step))
+    def error(self, weights):
+        # print("Step: " + str(step))
         error = 0
         unflattened_weights = self.unflatten_weights(weights)
         for (i,entry) in enumerate(self.training_set):

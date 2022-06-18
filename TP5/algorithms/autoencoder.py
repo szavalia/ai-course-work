@@ -3,6 +3,7 @@ from models import Autoencoder, Properties
 import numpy as np
 import numdifftools as nd
 from autograd.misc.optimizers import adam
+import scipy.optimize as sco
 
 def execute(properties:Properties):
     # Create autoencoder
@@ -19,7 +20,7 @@ def execute(properties:Properties):
 
 
 def callback(x, i, g):
-    #print("x: " + str(x))
+    print("x: " + str(x))
     #print("i: " + str(i))
     #print("g: " + str(g))
     print("Step: {0}".format(i))
@@ -33,7 +34,12 @@ def flatten_weights(weigths):
     
 def train_autoencoder(autoencoder:Autoencoder,properties:Properties):
     flattened_weights = flatten_weights(autoencoder.weights)
-    trained_weights = adam(nd.Gradient(autoencoder.error), flattened_weights, callback=callback, num_iters=properties.epochs, step_size=0.1, b1=0.9, b2=0.999, eps=10**-2) 
+    trained_weights = sco.minimize(
+        autoencoder.error, flattened_weights, method='Powell', callback=None, 
+        options={'maxiter': properties.epochs}
+    ).x
+    # adam(nd.Gradient(autoencoder.error), flattened_weights, callback=callback, num_iters=properties.epochs, step_size=0.1, b1=0.9, b2=0.999, eps=10**-2) 
+    print("Corrí el método!")
     return trained_weights
 
 def build_autoencoder(properties:Properties):
