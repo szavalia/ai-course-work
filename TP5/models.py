@@ -4,14 +4,15 @@ import scipy.optimize as sco
 
 class Properties:
     beta = 0
-    def __init__(self,mode,neurons_per_layer,font,font_chars,epochs,training_set,output_set):
-        self.mode = mode
+    def __init__(self,neurons_per_layer,font,font_chars,epochs,training_set,output_set,mode,noise_prob):
         self.neurons_per_layer = neurons_per_layer
         self.font = font
         self.font_chars = font_chars
         self.epochs = epochs
         self.training_set = training_set
         self.output_set = output_set
+        self.mode = mode
+        self.noise_prob = noise_prob
 
 class Observables:
     def __init__(self,errors_per_step,latent_outputs):
@@ -25,6 +26,7 @@ class Autoencoder:
         self.training_set = training_set
         self.output_set = output_set
         self.neurons_per_layer = neurons_per_layer
+        self.curr_epoch = 0
         self.functions = []
         self.set_functions()
         self.errors_per_step = []
@@ -40,7 +42,8 @@ class Autoencoder:
 
     def callback(self,x):
         self.errors_per_step.append(self.error(x))
-        print("Error: {0}".format(self.errors_per_step[-1]))
+        self.curr_epoch += 1
+        print("Epoch: {1}. Error: {0}".format(self.errors_per_step[-1], self.curr_epoch))
 
     def relu(self,x):
         return np.where(x <= 0, 0, x)
@@ -88,6 +91,19 @@ class Autoencoder:
                       
         return error*(1/2)
 
+
+    # For DAE where we need to pass new noised data
+    def error_given_sets(self, weights, input_set):
+        error = 0
+        unflattened_weights = self.unflatten_weights(weights)
+        for (i,entry) in enumerate(input_set):
+            expected = np.array(self.output_set[i])
+            output = np.array(self.get_output(entry, unflattened_weights))
+
+            for (idx,output_value) in enumerate(output):
+                error += (output_value - expected[idx])**2
+                      
+        return error*(1/2)
 
     # Converts from 1D array back to 3D structure
     def unflatten_weights(self, array):

@@ -122,12 +122,16 @@ def font_char_to_bin_arr(hex_arr):
    return bin_arr
 
 
-# From flattened 0/1s to matrix for graphication
+# From full flattened 0/1s to matrix for graphication
 # e.g.: [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, ...] -> [[0, 0, 1, 0, 0], [0, 0, 1, 0, 0, ], ...]
 def bin_arr_to_bin_mat(bin_arr):
    bin_mat = []
-   for i in range(0, len(bin_arr), 5):
-      bin_mat.append(bin_arr[i:i+5])
+   for char in bin_arr:
+      char_mat = []
+      for i in range(0, len(char), 5):
+         char_mat.append(char[i:i+5])
+      bin_mat.append(char_mat)
+
    return bin_mat
 
 

@@ -1,6 +1,7 @@
 from models import Autoencoder, Observables, Properties
 import numpy as np
 import scipy.optimize as sco
+from algorithms.noiser import noise_font
 
 def execute(properties:Properties):
     # Create autoencoder
@@ -11,7 +12,44 @@ def execute(properties:Properties):
 
     print("\nTrained weights:\n\n" + str(trained_weigths))
 
-    print(autoencoder.error(trained_weigths))
+    print("Final error: " + str(autoencoder.error(trained_weigths)))
+    
+    # After training: 
+    # Get outputs for inputs
+    unflattened = autoencoder.unflatten_weights(trained_weigths)
+    output = []
+    for letter in properties.training_set:
+        output.append(autoencoder.get_output(letter,unflattened))
+
+    # If mode was DAE, get new noised font and see how well it denoises
+    if properties.mode == "DAE":
+        noised_font = noise_font(properties.training_set, properties.noise_prob)
+        noised_output = []
+        for letter in noised_font:
+            noised_output.append(autoencoder.get_output(letter,unflattened))
+        # print error for noised font
+        print("\nError for new noised font: " + str(autoencoder.error_given_sets(trained_weigths, noised_font)))
+
+    f = open("outputs.csv", "w")
+    f.write("Calculated,Letter,Row,Column,Value\n")
+    for (k,letter) in enumerate(properties.training_set):
+        for i in range(7):
+            for j in range(5):
+                f.write(str(0) + "," + str(k) + "," + str(i) + "," + str(j) + "," + str(letter[i*5+j]) + "\n")
+    for (k,letter) in enumerate(output):
+        for i in range(7):
+            for j in range(5):
+                f.write(str(1) + "," + str(k) + "," + str(i) + "," + str(j) + "," + str(letter[i*5+j]) + "\n")
+    if properties.mode == "DAE":
+        for (k,letter) in enumerate(noised_font):
+            for i in range(7):
+                for j in range(5):
+                    f.write(str(2) + "," + str(k) + "," + str(i) + "," + str(j) + "," + str(letter[i*5+j]) + "\n")
+        for (k,letter) in enumerate(noised_output):
+            for i in range(7):
+                for j in range(5):
+                    f.write(str(3) + "," + str(k) + "," + str(i) + "," + str(j) + "," + str(letter[i*5+j]) + "\n")
+    f.close()
 
     autoencoder.weights = autoencoder.unflatten_weights(trained_weigths)
 
