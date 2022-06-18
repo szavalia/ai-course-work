@@ -1,8 +1,6 @@
 from distutils.log import error
 from models import Autoencoder, Properties
 import numpy as np
-import numdifftools as nd
-from autograd.misc.optimizers import adam
 import scipy.optimize as sco
 
 def execute(properties:Properties):
@@ -14,17 +12,9 @@ def execute(properties:Properties):
 
     print("\nTrained weights:\n\n" + str(trained_weigths))
 
-    print(autoencoder.error(trained_weigths,0))
+    print(autoencoder.error(trained_weigths))
 
     autoencoder.weights = autoencoder.unflatten_weights(trained_weigths)
-
-
-def callback(x, i, g):
-    print("x: " + str(x))
-    #print("i: " + str(i))
-    #print("g: " + str(g))
-    print("Step: {0}".format(i))
-    print("Error: {0}".format(g))
 
 def flatten_weights(weigths):
     flattened_weights = np.array([])
@@ -34,11 +24,12 @@ def flatten_weights(weigths):
     
 def train_autoencoder(autoencoder:Autoencoder,properties:Properties):
     flattened_weights = flatten_weights(autoencoder.weights)
+
     trained_weights = sco.minimize(
-        autoencoder.error, flattened_weights, method='Powell', callback=None, 
-        options={'maxiter': properties.epochs}
-    ).x
-    # adam(nd.Gradient(autoencoder.error), flattened_weights, callback=callback, num_iters=properties.epochs, step_size=0.1, b1=0.9, b2=0.999, eps=10**-2) 
+            autoencoder.error, flattened_weights, method='Powell', callback=autoencoder.callback, 
+            options={'maxiter': properties.epochs}
+        ).x
+
     print("Corrí el método!")
     return trained_weights
 
@@ -66,4 +57,4 @@ def build_autoencoder(properties:Properties):
     for (i, layer) in enumerate(weights):
         weights[i] = np.array(layer, dtype=float)
 
-    return Autoencoder(np.array(weights, dtype=object),(len(properties.neurons_per_layer) + 1)/ 2,properties.training_set,properties.output_set,properties.neurons_per_layer)
+    return Autoencoder(np.array(weights, dtype=object),int((len(properties.neurons_per_layer))/2),properties.training_set,properties.output_set,properties.neurons_per_layer)

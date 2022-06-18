@@ -1,4 +1,6 @@
 import numpy as np
+import math
+import scipy.optimize as sco
 
 class Properties:
     beta = 0
@@ -25,24 +27,21 @@ class Autoencoder:
                 self.functions.append(self.relu)
             else:
                 self.functions.append(self.logistic)
-        
+
+    def callback(self,x):
+        print("Error: {0}".format(self.error(x)))
+
     def relu(self,x):
-        ret = []
-        
-        for value in x:
-            ret.append(value)
-            if(value <= 0):
-                ret[-1] = 0
-        
-        return np.array(ret)
+        return np.where(x <= 0, x, 0)
     
-    def logistic(self, x):
-        
-        try:
-            result = 1 / (1 + np.exp(-Properties.beta * x))
-        except OverflowError:
-            result = 1
-        return result
+    def logistic(self,x):
+        ret = []
+        for value in x:
+            try:
+                ret.append(1 / (1 + math.exp(-2 * Properties.beta * value)))
+            except:
+                ret.append(1)
+        return np.array(ret)
 
     def linear(self,x):
         return x
@@ -57,9 +56,7 @@ class Autoencoder:
         # Return results of last layer (network outputs)
         return input
 
-
     def error(self, weights):
-        # print("Step: " + str(step))
         error = 0
         unflattened_weights = self.unflatten_weights(weights)
         for (i,entry) in enumerate(self.training_set):
@@ -69,7 +66,6 @@ class Autoencoder:
             for (idx,output_value) in enumerate(output):
                 error += (output_value - expected[idx])**2
                       
-        #print("Error: " + str(error))
         return error*(1/2)
 
 
