@@ -37,11 +37,12 @@ def parse_properties():
     training_set = get_training_set(font, font_subset_size)
     orig_training_set = training_set
     output_set = training_set
-    noise_prob = json_values.get("noise_probability")
+    noise_prob = 0
     mode = json_values.get("mode")
     if (mode == "DAE"):
         orig_training_set = training_set.copy()
         orig_output_set = output_set.copy()
+        noise_prob = json_values.get("noise_probability")
         training_set = noise_font(orig_training_set, noise_prob)
         for i in range(4):
             output_set += orig_output_set

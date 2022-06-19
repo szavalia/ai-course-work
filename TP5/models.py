@@ -1,6 +1,8 @@
 import numpy as np
 import math
 import scipy.optimize as sco
+import warnings
+warnings.filterwarnings(action='error', category=RuntimeWarning)
 
 class Properties:
     beta = 0
@@ -19,6 +21,11 @@ class Observables:
     def __init__(self,errors_per_step,latent_outputs):
         self.errors_per_step = errors_per_step
         self.latent_outputs = latent_outputs
+
+class VAEObservables:
+    def __init__(self,latent_outputs,colors):
+        self.latent_outputs = latent_outputs
+        self.colors = colors
     
 class Autoencoder:
     def __init__(self,weights,latent_index,training_set,output_set,neurons_per_layer):
@@ -50,20 +57,18 @@ class Autoencoder:
         return np.where(x <= 0, 0, x)
     
     def logistic(self,x):
-        ret = []
-        for value in x:
-            try:
-                ret.append(1 / (1 + math.exp(-2 * Properties.beta * value)))
-            except:
-                ret.append(1)
-        return np.array(ret)
+        try:
+            value = 1 / (1 + np.exp(-Properties.beta * x))
+        except RuntimeWarning:
+            value = np.zeros(x.shape)
+        return value
 
     def linear(self,x):
         return x
 
     def get_output(self, input, weights):
         for (i,layer) in enumerate(weights):
-            h = np.dot(layer, input)
+            h = np.dot(input, layer.T)
             # Transform dot products into activations
             input = self.functions[i](h)
         
@@ -83,12 +88,9 @@ class Autoencoder:
     def error(self, weights):
         error = 0
         unflattened_weights = self.unflatten_weights(weights)
-        for (i,entry) in enumerate(self.training_set):
-            expected = np.array(self.output_set[i])
-            output = np.array(self.get_output(entry, unflattened_weights))
-
-            for (idx,output_value) in enumerate(output):
-                error += (output_value - expected[idx])**2
+        expected = np.array(self.output_set)
+        output = self.get_output(self.training_set,unflattened_weights)
+        error = np.sum(np.power(output-expected,2)) 
                       
         return error*(1/2)
 
@@ -112,9 +114,8 @@ class Autoencoder:
         i = 0
         for layer in self.weights:
             curr_size = layer.size
-            flatted = np.array(array[i:i+curr_size])
+            flatted = np.array(array[i:i+curr_size],dtype=float)
             new_arr.append(flatted.reshape(layer.shape))
             i += curr_size
         new_arr = np.array(new_arr, dtype=object)
-        #self.weights = new_arr
         return new_arr
