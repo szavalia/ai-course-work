@@ -41,11 +41,15 @@ class Autoencoder:
     
     def set_functions(self):
         for i in range(0,len(self.weights)):
-            if i < self.latent_index:
-                self.functions.append(self.linear)
-            elif i == self.latent_index:
+            print(i)
+            if i != self.latent_index and i != (len(self.weights) -1):
+                print("Relu")
                 self.functions.append(self.relu)
+            elif i == self.latent_index:
+                print("Linear")
+                self.functions.append(self.linear)
             else:
+                print("Sigmoid")
                 self.functions.append(self.logistic)
 
     def callback(self,x):
