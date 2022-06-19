@@ -23,7 +23,7 @@ def execute(properties:Properties):
 
     # If mode was DAE, get new noised font and see how well it denoises
     if properties.mode == "DAE":
-        noised_font = noise_font(properties.training_set, properties.noise_prob)
+        noised_font = noise_font(properties.orig_training_set, properties.noise_prob)
         noised_output = []
         for letter in noised_font:
             noised_output.append(autoencoder.get_output(letter,unflattened))

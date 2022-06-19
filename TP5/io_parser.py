@@ -35,11 +35,17 @@ def parse_properties():
     font_chars = get_font_characters(font)
     font_subset_size = json_values.get("font_subset_size")
     training_set = get_training_set(font, font_subset_size)
+    orig_training_set = training_set
     output_set = training_set
     noise_prob = json_values.get("noise_probability")
     mode = json_values.get("mode")
     if (mode == "DAE"):
-        training_set = noise_font(training_set, noise_prob)
+        orig_training_set = training_set.copy()
+        orig_output_set = output_set.copy()
+        training_set = noise_font(orig_training_set, noise_prob)
+        for i in range(4):
+            output_set += orig_output_set
+            training_set += noise_font(orig_training_set, noise_prob)
 
     beta = json_values.get("beta")
     if beta == None or beta <= 0:
@@ -52,7 +58,7 @@ def parse_properties():
         print("Positive epochs required")
         exit(-1)
       
-    return Properties(neurons_per_layer,font,font_chars,epochs,training_set,output_set,mode,noise_prob)
+    return Properties(neurons_per_layer,font,font_chars,epochs,training_set,output_set,mode,noise_prob,orig_training_set)
 
 # Assembles a decoder with the given neurons_per_layer, a latent layer with the given latent_layer_neurons, and a decoder reversing the encoder.
 def get_hidden_layer_neurons(neurons_per_layer, latent_layer_neurons):

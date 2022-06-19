@@ -4,7 +4,7 @@ import scipy.optimize as sco
 
 class Properties:
     beta = 0
-    def __init__(self,neurons_per_layer,font,font_chars,epochs,training_set,output_set,mode,noise_prob):
+    def __init__(self,neurons_per_layer,font,font_chars,epochs,training_set,output_set,mode,noise_prob,orig_training_set):
         self.neurons_per_layer = neurons_per_layer
         self.font = font
         self.font_chars = font_chars
@@ -13,6 +13,7 @@ class Properties:
         self.output_set = output_set
         self.mode = mode
         self.noise_prob = noise_prob
+        self.orig_training_set = orig_training_set
 
 class Observables:
     def __init__(self,errors_per_step,latent_outputs):
