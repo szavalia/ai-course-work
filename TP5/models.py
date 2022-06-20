@@ -1,5 +1,4 @@
 import numpy as np
-import math
 import scipy.optimize as sco
 import warnings
 warnings.filterwarnings(action='ignore', category=RuntimeWarning)
@@ -17,7 +16,7 @@ class Properties:
         self.noise_prob = noise_prob
         self.orig_training_set = orig_training_set
         self.VAE_dataset = VAE_dataset
-
+    
 class Observables:
     def __init__(self,errors_per_step,latent_outputs):
         self.errors_per_step = errors_per_step
@@ -56,7 +55,7 @@ class Autoencoder:
         return np.where(x <= 0, 0, x)
     
     def logistic(self,x):
-        return  1 / (1 + np.exp(-Properties.beta * x))
+        return  1 / (1 + np.exp(-2*Properties.beta * x))
 
     def linear(self,x):
         return x
@@ -76,6 +75,16 @@ class Autoencoder:
 
             # Transform dot products into activations
             input = self.functions[i](h)
+        
+        # Return results of latent layer
+        return input
+
+    def get_decoder_output(self,input):
+        for(i,layer) in enumerate(self.weights[self.latent_index+1:]):
+            h = np.dot(input, layer.T)
+
+            # Transform dot products into activations
+            input = self.functions[i+self.latent_index+1](h)
         
         # Return results of latent layer
         return input

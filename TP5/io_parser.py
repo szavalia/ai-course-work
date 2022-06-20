@@ -12,6 +12,39 @@ def generate_output(properties:Properties, observables:Observables):
     generate_latent_outputs(observables.latent_outputs,properties.font_chars)
     generate_errors_output(observables.errors_per_step)
 
+def generate_output_file(mode,training_set,output,noised_font,noised_output):
+    f = open("outputs.csv", "w")
+    f.write("Calculated,Letter,Row,Column,Value\n")
+    for (k,letter) in enumerate(training_set):
+        for i in range(7):
+            for j in range(5):
+                f.write(str(0) + "," + str(k) + "," + str(i) + "," + str(j) + "," + str(letter[i*5+j]) + "\n")
+    for (k,letter) in enumerate(output):
+        for i in range(7):
+            for j in range(5):
+                f.write(str(1) + "," + str(k) + "," + str(i) + "," + str(j) + "," + str(letter[i*5+j]) + "\n")
+    if mode == "DAE":
+        for (k,letter) in enumerate(noised_font):
+            for i in range(7):
+                for j in range(5):
+                    f.write(str(2) + "," + str(k) + "," + str(i) + "," + str(j) + "," + str(letter[i*5+j]) + "\n")
+        for (k,letter) in enumerate(noised_output):
+            for i in range(7):
+                for j in range(5):
+                    f.write(str(3) + "," + str(k) + "," + str(i) + "," + str(j) + "," + str(letter[i*5+j]) + "\n")
+    f.close()
+
+def generate_samples_file(char_pairs,samples):
+    f = open("samples.csv", "w")
+    f.write("Char1,Char2,Sample,Row,Column,Value\n")
+    for (h,char_pair) in enumerate(char_pairs):
+        for (k,sample) in enumerate(samples[h]):
+            for i in range(7):
+                for j in range(5):
+                    f.write("{0},{1},{2},{3},{4},{5}\n".format(char_pair[0], char_pair[1], k, i, j,sample[i*5+j]))
+    f.close()        
+
+
 def generate_latent_outputs(latent_outputs, font_chars):
     with open("latent.csv", "w") as f:
         f.write("Char,X,Y\n")
