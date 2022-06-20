@@ -2,7 +2,7 @@ import numpy as np
 import math
 import scipy.optimize as sco
 import warnings
-warnings.filterwarnings(action='error', category=RuntimeWarning)
+warnings.filterwarnings(action='ignore', category=RuntimeWarning)
 
 class Properties:
     beta = 0
@@ -58,21 +58,7 @@ class Autoencoder:
         return np.where(x <= 0, 0, x)
     
     def logistic(self,x):
-        ret = []
-        for value in x:
-            try:
-                ret.append(1 / (1 + np.exp(-Properties.beta * value)))
-            except RuntimeWarning:
-                shape = x[0].shape
-                ret.append(np.zeros(shape))
-        return np.array(ret)
-        #try:
-        #    value = 1 / (1 + np.exp(-Properties.beta * x))
-        #except RuntimeWarning:
-        #    value = np.zeros(x.shape)
-        #    print("Exception")
-        #    print("\nReturning: {0}\n".format(value))
-        #return value
+        return  1 / (1 + np.exp(-Properties.beta * x))
 
     def linear(self,x):
         return x
@@ -88,7 +74,7 @@ class Autoencoder:
 
     def get_latent_output(self,input):
         for(i,layer) in enumerate(self.weights[:self.latent_index+1]):
-            h = np.dot(layer, input)
+            h = np.dot(input, layer.T)
 
             # Transform dot products into activations
             input = self.functions[i](h)
@@ -125,7 +111,7 @@ class Autoencoder:
         i = 0
         for layer in self.weights:
             curr_size = layer.size
-            flatted = np.array(array[i:i+curr_size],dtype=float)
+            flatted = np.array(array[i:i+curr_size])
             new_arr.append(flatted.reshape(layer.shape))
             i += curr_size
         new_arr = np.array(new_arr, dtype=object)

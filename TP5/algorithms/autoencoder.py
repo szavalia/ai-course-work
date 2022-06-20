@@ -10,6 +10,8 @@ def execute(properties:Properties):
     # Train
     trained_weigths = train_autoencoder(autoencoder,properties)
 
+    autoencoder.weights = autoencoder.unflatten_weights(trained_weigths)
+
     print("\nTrained weights:\n\n" + str(trained_weigths))
 
     print("Final error: " + str(autoencoder.error(trained_weigths)))
@@ -17,9 +19,7 @@ def execute(properties:Properties):
     # After training: 
     # Get outputs for inputs
     unflattened = autoencoder.unflatten_weights(trained_weigths)
-    output = []
-    for letter in properties.training_set:
-        output.append(autoencoder.get_output(letter,unflattened))
+    output = autoencoder.get_output(properties.training_set, unflattened)
 
     # If mode was DAE, get new noised font and see how well it denoises
     if properties.mode == "DAE":
@@ -51,9 +51,7 @@ def execute(properties:Properties):
                     f.write(str(3) + "," + str(k) + "," + str(i) + "," + str(j) + "," + str(letter[i*5+j]) + "\n")
     f.close()
 
-    autoencoder.weights = autoencoder.unflatten_weights(trained_weigths)
-
-    latent_outputs = get_latent_outputs(autoencoder)
+    latent_outputs = get_latent_outputs(autoencoder,properties)
 
     return Observables(autoencoder.errors_per_step,latent_outputs)
 
@@ -99,8 +97,5 @@ def train_autoencoder(autoencoder:Autoencoder,properties:Properties):
 
     return trained_weights
 
-def get_latent_outputs(autoencoder:Autoencoder):
-    outputs = []
-    for input in autoencoder.training_set:
-        outputs.append(autoencoder.get_latent_output(input))
-    return outputs
+def get_latent_outputs(autoencoder:Autoencoder,properties:Properties):
+    return autoencoder.get_latent_output(properties.training_set)
