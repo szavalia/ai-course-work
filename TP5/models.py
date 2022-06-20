@@ -42,7 +42,6 @@ class Autoencoder:
     
     def set_functions(self):
         for i in range(0,len(self.weights)):
-            print(i)
             if i != self.latent_index and i != (len(self.weights) -1):
                 self.functions.append(self.relu)
             elif i == self.latent_index:
@@ -59,11 +58,21 @@ class Autoencoder:
         return np.where(x <= 0, 0, x)
     
     def logistic(self,x):
-        try:
-            value = 1 / (1 + np.exp(-Properties.beta * x))
-        except RuntimeWarning:
-            value = np.zeros(x.shape)
-        return value
+        ret = []
+        for value in x:
+            try:
+                ret.append(1 / (1 + np.exp(-Properties.beta * value)))
+            except RuntimeWarning:
+                shape = x[0].shape
+                ret.append(np.zeros(shape))
+        return np.array(ret)
+        #try:
+        #    value = 1 / (1 + np.exp(-Properties.beta * x))
+        #except RuntimeWarning:
+        #    value = np.zeros(x.shape)
+        #    print("Exception")
+        #    print("\nReturning: {0}\n".format(value))
+        #return value
 
     def linear(self,x):
         return x

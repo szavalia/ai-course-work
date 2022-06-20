@@ -2,9 +2,10 @@
     "mode": "VAE",
     "vae_dataset" : "fashion_mnist",
     "noise_probability": 0.1,
-    "neurons_per_layer": [20,10,2], 
-    "latent_layer_neurons": 2, 
+    "neurons_per_layer": [20], 
+    "latent_layer_neurons": 10, 
     "font_set": "font2",
-    "beta": 0.1,
-    "epochs": 50
+    "font_subset_size": 40,
+    "beta": 0.9,
+    "epochs": 100
 }
