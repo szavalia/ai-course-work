@@ -3,6 +3,8 @@ import numpy as np
 import scipy.optimize as sco
 from algorithms.noiser import noise_font
 from io_parser import generate_output_file,generate_samples_file
+from autograd.misc.optimizers import adam 
+import numdifftools as nd 
 
 def execute(properties:Properties):
     # Create autoencoder
@@ -32,7 +34,7 @@ def execute(properties:Properties):
     generate_output_file(properties.mode,properties.training_set,output,noise_font,noised_output)
     latent_outputs = get_latent_outputs(autoencoder,properties)
 
-    if properties.mode == "DEFAULT":
+    if properties.mode == "DEFAULT" and properties.neurons_per_layer[autoencoder.latent_index] == 2:
         distances = get_distances(latent_outputs)
         pairs = [distances[0][:2],distances[int(len(distances)/2)][:2],distances[-1][:2]]
 
@@ -83,10 +85,14 @@ def flatten_weights(weigths):
 def train_autoencoder(autoencoder:Autoencoder,properties:Properties):
     flattened_weights = flatten_weights(autoencoder.weights)
 
-    trained_weights = sco.minimize(
-            autoencoder.error, flattened_weights, method='Powell', callback=autoencoder.callback, 
-            options={'maxiter': properties.epochs}
-        ).x
+    # Optimize
+    if properties.minimizer == "powell":
+        trained_weights = sco.minimize(
+                autoencoder.error, flattened_weights, method='Powell', callback=autoencoder.callback, 
+                options={'maxiter': properties.epochs}
+            ).x
+    elif properties.minimizer == "adam":
+        trained_weights = adam(nd.Gradient(autoencoder.error), flattened_weights, callback=autoencoder.callback, num_iters=properties.epochs, step_size=0.1, b1=0.9, b2=0.999, eps=10**-2)    
 
     return trained_weights
 

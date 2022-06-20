@@ -5,7 +5,7 @@ warnings.filterwarnings(action='ignore', category=RuntimeWarning)
 
 class Properties:
     beta = 0
-    def __init__(self,neurons_per_layer,font,font_chars,epochs,training_set,output_set,mode,noise_prob,orig_training_set,VAE_dataset):
+    def __init__(self,neurons_per_layer,font,font_chars,epochs,training_set,output_set,mode,noise_prob,orig_training_set,VAE_dataset,minimizer):
         self.neurons_per_layer = neurons_per_layer
         self.font = font
         self.font_chars = font_chars
@@ -16,7 +16,8 @@ class Properties:
         self.noise_prob = noise_prob
         self.orig_training_set = orig_training_set
         self.VAE_dataset = VAE_dataset
-    
+        self.minimizer = minimizer
+
 class Observables:
     def __init__(self,errors_per_step,latent_outputs):
         self.errors_per_step = errors_per_step
@@ -46,7 +47,7 @@ class Autoencoder:
             else:
                 self.functions.append(self.logistic)
 
-    def callback(self,x):
+    def callback(self,x,i=None,g=None): # Optional parameters needed for ADAM callback
         self.errors_per_step.append(self.error(x))
         self.curr_epoch += 1
         print("Epoch: {1}. Error: {0}".format(self.errors_per_step[-1], self.curr_epoch))
@@ -89,7 +90,7 @@ class Autoencoder:
         # Return results of latent layer
         return input
 
-    def error(self, weights):
+    def error(self, weights, step=None):
         error = 0
         unflattened_weights = self.unflatten_weights(weights)
         expected = np.array(self.output_set)

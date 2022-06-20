@@ -116,8 +116,13 @@ def parse_properties():
         if(dataset == None or dataset != "mnist" or dataset != "fashion_mnist"):
             print("Valid dataset for VAE required")
             exit(-1)
+    
+    minimizer = json_values.get("minimizer")
+    if minimizer == None or (minimizer != "adam" and minimizer != "powell"):
+        print("Valid minimizer required: adam or powell")
+        exit(-1)
       
-    return Properties(neurons_per_layer,font,font_chars,epochs,training_set,output_set,mode,noise_prob,orig_training_set,dataset)
+    return Properties(neurons_per_layer,font,font_chars,epochs,training_set,output_set,mode,noise_prob,orig_training_set,dataset, minimizer)
 
 # Assembles a decoder with the given neurons_per_layer, a latent layer with the given latent_layer_neurons, and a decoder reversing the encoder.
 def get_hidden_layer_neurons(neurons_per_layer, latent_layer_neurons):
