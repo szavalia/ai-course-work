@@ -6,7 +6,7 @@ warnings.filterwarnings(action='error', category=RuntimeWarning)
 
 class Properties:
     beta = 0
-    def __init__(self,neurons_per_layer,font,font_chars,epochs,training_set,output_set,mode,noise_prob,orig_training_set):
+    def __init__(self,neurons_per_layer,font,font_chars,epochs,training_set,output_set,mode,noise_prob,orig_training_set,VAE_dataset):
         self.neurons_per_layer = neurons_per_layer
         self.font = font
         self.font_chars = font_chars
@@ -16,6 +16,7 @@ class Properties:
         self.mode = mode
         self.noise_prob = noise_prob
         self.orig_training_set = orig_training_set
+        self.VAE_dataset = VAE_dataset
 
 class Observables:
     def __init__(self,errors_per_step,latent_outputs):
@@ -43,13 +44,10 @@ class Autoencoder:
         for i in range(0,len(self.weights)):
             print(i)
             if i != self.latent_index and i != (len(self.weights) -1):
-                print("Relu")
                 self.functions.append(self.relu)
             elif i == self.latent_index:
-                print("Linear")
                 self.functions.append(self.linear)
             else:
-                print("Sigmoid")
                 self.functions.append(self.logistic)
 
     def callback(self,x):

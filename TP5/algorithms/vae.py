@@ -5,20 +5,23 @@ from keras import backend as K
 from keras import metrics
 import tensorflow as tf
 import numpy as np
-from keras.datasets import mnist
+from keras.datasets import mnist,fashion_mnist
 
 from tensorflow.python.framework.ops import disable_eager_execution
 disable_eager_execution()
 
 def execute(properties:Properties):
-    (x_train, y_train), (x_test, y_test) = mnist.load_data()
+    if(properties.VAE_dataset == "mnist"):
+        (x_train, y_train), (x_test, y_test) = mnist.load_data()
+    else:
+        (x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
     x_train = x_train.astype('float32') / 255.
     x_test = x_test.astype('float32') / 255.
     x_train = x_train.reshape((len(x_train), np.prod(x_train.shape[1:])))
     x_test = x_test.reshape((len(x_test), np.prod(x_test.shape[1:])))
     vae = VAE(2,28*28,[256])
     vae.train(x_train,properties.epochs,100)
-    latent_outputs = vae.encoder.predict(x_test, batch_size=len(properties.training_set))[0]
+    latent_outputs = vae.encoder.predict(x_test, batch_size=100)[0]
     return VAEObservables(latent_outputs,y_test)
 
 def flatten_set(training_set):
@@ -54,10 +57,9 @@ class VAE:
         # intermediate layers
         if(len(self.intermediate_layers) != 0):
             aux_h = x
-            for (i,neurons) in enumerate(self.intermediate_layers[:-1]):
-                h = Dense(neurons, name="encoding_{0}".format(i))(aux_h)
+            for (i,neurons) in enumerate(self.intermediate_layers):
+                h = Dense(neurons,activation='relu', name="encoding_{0}".format(i))(aux_h)
                 aux_h = h
-            h = Dense(self.intermediate_layers[-1],activation='relu', name="encoding_{0}".format(len(self.intermediate_layers)-1))(aux_h)
         # defining the mean of the latent space
         self.z_mean = Dense(self.latent_neurons, name="mean")(h)
         # defining the log variance of the latent space
@@ -76,10 +78,9 @@ class VAE:
         reversed_layers.reverse()
         if(len(self.intermediate_layers) != 0):
             aux_h = input_decoder
-            for (i,neurons) in enumerate(reversed_layers[:-1]):
-                h = Dense(neurons, name="encoding_{0}".format(i))(aux_h)
+            for (i,neurons) in enumerate(reversed_layers):
+                h = Dense(neurons,activation='relu',name="encoding_{0}".format(i))(aux_h)
                 aux_h = h
-            h = Dense(reversed_layers[-1],activation='relu', name="encoding_{0}".format(len(self.intermediate_layers)-1))(aux_h)
         #getting the mean from the original dimension
         x_decoded = Dense(self.dim, activation='sigmoid', name="flat_decoded")(h)
         # defining the decoder as a keras model

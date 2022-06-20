@@ -1,6 +1,6 @@
 import json
 import numpy as np
-from models import Properties,Observables
+from models import Properties,Observables, VAEObservables
 import fonts
 from algorithms.noiser import noise_font
 
@@ -24,6 +24,18 @@ def generate_errors_output(errors):
         for (i,error) in enumerate(errors):
             f.write("{0},{1}\n".format(i+1, error))
 
+def generate_VAE_output(properties:Properties,observables:VAEObservables):
+    print("Mode: {0}".format(properties.mode))
+    print("Neurons per layer: {0}".format(properties.neurons_per_layer))
+    print("Epochs: {0}".format(properties.epochs))
+    generate_VAE_latent_outputs(observables)
+
+def generate_VAE_latent_outputs(observables:VAEObservables):
+   with open("VAE_latent.csv", "w") as f:
+        f.write("X,Y,Value\n")
+        for (i,output) in enumerate(observables.latent_outputs):
+            f.write("{0},{1},{2}\n".format(output[0], output[1],observables.colors[i]))
+
 def parse_properties():
     with open("config.json") as json_file:
         json_values = json.load(json_file)
@@ -31,35 +43,48 @@ def parse_properties():
 
     neurons_per_layer = get_hidden_layer_neurons(json_values.get("neurons_per_layer"), json_values.get("latent_layer_neurons"))
     
-    font = json_values.get("font_set")
-    font_chars = get_font_characters(font)
-    font_subset_size = json_values.get("font_subset_size")
-    training_set = get_training_set(font, font_subset_size)
-    orig_training_set = training_set
-    output_set = training_set
+    training_set = None
+    font = None
+    font_chars = None
+    output_set = None
     noise_prob = 0
+    orig_training_set = None
     mode = json_values.get("mode")
-    if (mode == "DAE"):
-        orig_training_set = training_set.copy()
-        orig_output_set = output_set.copy()
-        noise_prob = json_values.get("noise_probability")
-        training_set = noise_font(orig_training_set, noise_prob)
-        for i in range(4):
-            output_set += orig_output_set
-            training_set += noise_font(orig_training_set, noise_prob)
-
-    beta = json_values.get("beta")
-    if beta == None or beta <= 0:
-        print("Positive beta required")
-        exit(-1)
-    Properties.beta = beta
+    if(mode == "DAE" or mode == "DEFAULT"):
+        beta = json_values.get("beta")
+        if beta == None or beta <= 0:
+            print("Positive beta required")
+            exit(-1)
+        Properties.beta = beta
+        font = json_values.get("font_set")
+        font_chars = get_font_characters(font)
+        font_subset_size = json_values.get("font_subset_size")
+        training_set = get_training_set(font, font_subset_size)
+        orig_training_set = training_set
+        output_set = training_set
+        noise_prob = 0
+        if (mode == "DAE"):
+            orig_training_set = training_set.copy()
+            orig_output_set = output_set.copy()
+            noise_prob = json_values.get("noise_probability")
+            training_set = noise_font(orig_training_set, noise_prob)
+            for i in range(4):
+                output_set += orig_output_set
+                training_set += noise_font(orig_training_set, noise_prob)
 
     epochs = json_values.get("epochs")
     if epochs == None or epochs <= 0:
         print("Positive epochs required")
         exit(-1)
+
+    dataset = None
+    if(mode == "VAE"):
+        dataset = json_values.get("vae_dataset")
+        if(dataset == None or dataset != "mnist" or dataset != "fashion_mnist"):
+            print("Valid dataset for VAE required")
+            exit(-1)
       
-    return Properties(neurons_per_layer,font,font_chars,epochs,training_set,output_set,mode,noise_prob,orig_training_set)
+    return Properties(neurons_per_layer,font,font_chars,epochs,training_set,output_set,mode,noise_prob,orig_training_set,dataset)
 
 # Assembles a decoder with the given neurons_per_layer, a latent layer with the given latent_layer_neurons, and a decoder reversing the encoder.
 def get_hidden_layer_neurons(neurons_per_layer, latent_layer_neurons):

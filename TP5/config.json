@@ -1,5 +1,6 @@
 {
-    "mode": "DEFAULT",
+    "mode": "VAE",
+    "vae_dataset" : "fashion_mnist",
     "noise_probability": 0.1,
     "neurons_per_layer": [20,10,2], 
     "latent_layer_neurons": 2, 
