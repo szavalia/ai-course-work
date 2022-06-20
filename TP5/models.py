@@ -42,9 +42,7 @@ class Autoencoder:
     
     def set_functions(self):
         for i in range(0,len(self.weights)):
-            if i != self.latent_index and i != (len(self.weights) -1):
-                self.functions.append(self.relu)
-            elif i == self.latent_index:
+            if i <= self.latent_index:
                 self.functions.append(self.linear)
             else:
                 self.functions.append(self.logistic)
