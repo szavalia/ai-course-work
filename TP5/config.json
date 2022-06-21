@@ -1,0 +1,12 @@
+{
+    "mode": "DEFAULT",
+    "vae_dataset" : "fashion_mnist",
+    "minimizer": "powell",
+    "noise_probability": 0.1,
+    "neurons_per_layer": [20], 
+    "latent_layer_neurons": 2, 
+    "font_set": "font2",
+    "font_subset_size": 10,
+    "beta": 1,
+    "epochs": 10
+}
