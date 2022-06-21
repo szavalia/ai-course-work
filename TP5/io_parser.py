@@ -113,7 +113,7 @@ def parse_properties():
     dataset = None
     if(mode == "VAE"):
         dataset = json_values.get("vae_dataset")
-        if(dataset == None or dataset != "mnist" or dataset != "fashion_mnist"):
+        if(dataset == None or (dataset != "mnist" and dataset != "fashion_mnist")):
             print("Valid dataset for VAE required")
             exit(-1)
     

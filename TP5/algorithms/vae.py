@@ -6,27 +6,12 @@ from keras import metrics
 import tensorflow as tf
 import numpy as np
 from keras.datasets import mnist,fashion_mnist
+import matplotlib.pyplot as plt
+from scipy.stats import norm
 
 from tensorflow.python.framework.ops import disable_eager_execution
 disable_eager_execution()
 
-def execute(properties:Properties):
-    if(properties.VAE_dataset == "mnist"):
-        (x_train, y_train), (x_test, y_test) = mnist.load_data()
-    else:
-        (x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
-    x_train = x_train.astype('float32') / 255.
-    x_test = x_test.astype('float32') / 255.
-    x_train = x_train.reshape((len(x_train), np.prod(x_train.shape[1:])))
-    x_test = x_test.reshape((len(x_test), np.prod(x_test.shape[1:])))
-    vae = VAE(2,28*28,[256])
-    vae.train(x_train,properties.epochs,100)
-    latent_outputs = vae.encoder.predict(x_test, batch_size=100)[0]
-    return VAEObservables(latent_outputs,y_test)
-
-def flatten_set(training_set):
-    return np.array(training_set).reshape((len(training_set), np.prod(np.array(training_set).shape[1:])))
-    
 class VAE:
     def __init__(self,latent_neurons,dim,intermediate_layers):
         self.latent_neurons = latent_neurons
@@ -101,3 +86,45 @@ class VAE:
         kl_loss = - 0.5 * K.sum(1 + self.z_log_var - K.square(self.z_mean) - K.exp(self.z_log_var), axis=-1)
         vae_loss = K.mean(xent_loss + kl_loss)
         return vae_loss
+
+def generate_samples(dataset,vae:VAE):
+    n = 15  # figure with 15x15 digits
+    digit_size = 28
+    figure = np.zeros((digit_size * n, digit_size * n))
+    # linearly spaced coordinates on the unit square were transformed through the inverse CDF (ppf) of the Gaussian
+    # to produce values of the latent variables z, since the prior of the latent space is Gaussian
+    grid_x = norm.ppf(np.linspace(0.05, 0.95, n))
+    grid_y = norm.ppf(np.linspace(0.05, 0.95, n))
+
+    for i, yi in enumerate(grid_x):
+        for j, xi in enumerate(grid_y):
+            z_sample = np.array([[xi, yi]])
+            x_decoded = vae.decoder.predict(z_sample)
+            digit = x_decoded[0].reshape(digit_size, digit_size)
+            figure[i * digit_size: (i + 1) * digit_size,
+               j * digit_size: (j + 1) * digit_size] = digit
+
+    plt.figure(figsize=(10, 10))
+    plt.imshow(figure, cmap='Greys_r')
+    if(dataset == "mnist"):
+        plt.savefig("mnist.png")
+    else:
+        plt.savefig("fashion_mnist.png")
+
+def execute(properties:Properties):
+    if(properties.VAE_dataset == "mnist"):
+        (x_train, y_train), (x_test, y_test) = mnist.load_data()
+    else:
+        (x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
+    x_train = x_train.astype('float32') / 255.
+    x_test = x_test.astype('float32') / 255.
+    x_train = x_train.reshape((len(x_train), np.prod(x_train.shape[1:])))
+    x_test = x_test.reshape((len(x_test), np.prod(x_test.shape[1:])))
+    vae = VAE(2,28*28,[256])
+    vae.train(x_train,properties.epochs,100)
+    latent_outputs = vae.encoder.predict(x_test, batch_size=100)[0]
+    generate_samples(properties.VAE_dataset,vae)
+    return VAEObservables(latent_outputs,y_test)
+
+def flatten_set(training_set):
+    return np.array(training_set).reshape((len(training_set), np.prod(np.array(training_set).shape[1:])))
